@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Types of Energy</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 20px;
+        }
+
+        #progress-container {
+            background-color: #ccc;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+
+        #progress-bar {
+            height: 20px;
+            width: 0%;
+            background-color: #28a745;
+            position: relative;
+        }
+
+        #progress-text {
+            position: absolute;
+            width: 100%;
+            text-align: center;
+            font-weight: bold;
+            color: white;
+        }
+
+        .waste-type {
+            background-color: #fff;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .waste-type img {
+            width: 100%;
+            max-width: 300px;
+            height: auto;
+            border-radius: 5px;
+            margin-bottom: 15px;
+        }
+
+        button {
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .completed {
+            background-color: #28a745;
+        }
+
+        /* Congratulatory popup styles */
+        #congratulations-popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #fff;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            text-align: center;
+            animation: popup 0.5s ease-out;
+        }
+
+        #congratulations-popup h2 {
+            color: #28a745;
+        }
+
+        #congratulations-popup button {
+            margin-top: 15px;
+            background-color: #ff9800;
+        }
+
+        @keyframes popup {
+            0% {
+                transform: translate(-50%, -50%) scale(0.5);
+                opacity: 0;
+            }
+
+            100% {
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 1;
+            }
+        }
+
+        .backButton:hover {
+            background-color: #d32f2f;
+        }
+
+        .backButton {
+            width: 120px;
+        }
+    </style>
+</head>
+
+<body>
+    <button class="backButton" onclick="goTo()">Back</button>
+    <h1>Types of Energy</h1>
+    <div id="progress-container">
+        <div id="progress-bar"><span id="progress-text"></span></div>
+    </div>
+
+    <!-- Mechanical Energy Section -->
+    <div class="waste-type" id="mechanical">
+        <h2>Mechanical Energy</h2>
+        <img src="/Game2-Learning/pics/classificationImages/mechanicalenergy.png" alt="Mechanical Energy Image">
+        <p>Energy possessed by an object due to its motion and position are called mechanical energy. Mechanical energy can be classified into two: Kinetic energy and Potential energy. <br><br><strong>Kinetic Energy:</strong> Energy possessed by a moving object is known as kinetic energy. It is also known as energy of motion. <br><br><strong>Potential Energy:</strong> Energy possessed by an object which is at rest is known as potential energy. It is also known as stored energy of position.</p>
+        <button onclick="speakText('mechanical')">Read Aloud</button>
+    </div>
+
+    <!-- Wind Energy Section -->
+    <div class="waste-type" id="wind">
+        <h2>Wind Energy</h2>
+        <img src="/Game2-Learning/pics/classificationImages/windenergy.jpg" alt="Wind Energy Image">
+        <p>Energy possessed by the wind is known as wind energy. For example, Wind mills use wind energy to generate electricity.</p>
+        <button onclick="speakText('wind')">Read Aloud</button>
+    </div>
+
+    <!-- Heat Energy Section -->
+    <div class="waste-type" id="heat">
+        <h2>Heat Energy</h2>
+        <img src="/Game2-Learning/pics/classificationImages/heatenergy.jpg" alt="Heat Energy Image">
+        <p>When the temperature of a substance is raised, its atoms and molecules begin to vibrate and release a kind of energy. This energy is known as heat energy or thermal energy.</p>
+        <button onclick="speakText('heat')">Read Aloud</button>
+    </div>
+
+    <!-- Light Energy Section -->
+    <div class="waste-type" id="light">
+        <h2>Light Energy</h2>
+        <img src="/Game2-Learning/pics/classificationImages/lightenergy.jpg" alt="Light Energy Image">
+        <p>Light is a form of energy which travels in the form of waves. It contains a particle called photon, which are the minute packets of energy. It is the only form of energy visible to the human eye.</p>
+        <button onclick="speakText('light')">Read Aloud</button>
+    </div>
+
+    <!-- Electrical Energy Section -->
+    <div class="waste-type" id="electric">
+        <h2>Electrical Energy</h2>
+        <img src="/Game2-Learning/pics/classificationImages/electricalenergy.jpg" alt="Electrical Energy Image">
+        <p>We know that all things are made up of atoms. Atoms possess particles like protons, electrons, and neutrons. The movement of electrons in the objects causes an energy known as electric energy.</p>
+        <button onclick="speakText('electric')">Read Aloud</button>
+    </div>
+
+    <!-- Chemical Energy Section -->
+    <div class="waste-type" id="chemical">
+        <h2>Chemical Energy</h2>
+        <img src="/Game2-Learning/pics/classificationImages/chemicalenergy.png" alt="Chemical Energy Image">
+        <p>Chemical energy is stored in substances when atoms join together to form chemical compounds. When two or more chemical substances react with each other, this energy is released.</p>
+        <button onclick="speakText('chemical')">Read Aloud</button>
+    </div>
+
+    <div id="congratulations-popup">
+        <h2>Congratulations!</h2>
+        <p>Great job! You have learned about all the types of energy. Would you like to play a fun matching game now?</p>
+        <button onclick="selectLevel(2)">Let's play</button>
+    </div>
+
+    <script>
+
+         localStorage.setItem('selectedLevel',2); 
+         const level = 2;
+        let completedSections = 0;
+        let progress = 0;
+        const totalSections = 6;
+        const ttsProgress = 50 / totalSections; // Percentage progress per section based on TTS completion
+        let maxScrollProgress = 0; // To keep track of the maximum scroll progress achieved
+
+        const username = localStorage.getItem("username");
+        console.log("Roll Number : ", username);
+
+        function speakText(sectionId) {
+            if (window.speechSynthesis.speaking) {
+                window.speechSynthesis.cancel();
+            }
+            const section = document.getElementById(sectionId);
+            const text = section.querySelector('p').innerText;
+
+            const speech = new SpeechSynthesisUtterance();
+            speech.text = text;
+            speech.lang = 'en-US';
+            speech.volume = 1;
+            speech.rate = 16;
+            speech.pitch = 1;
+
+            window.speechSynthesis.speak(speech);
+
+            speech.onend = () => {
+                markCompleted(sectionId);
+            };
+        }
+        function checkCompletion() {
+            if (progress === 100) {
+                let completedTopics = JSON.parse(localStorage.getItem('completedTopics')) || [];
+
+                // Mark topic as completed if not already marked
+                if (!completedTopics.includes(level)) {
+                    completedTopics.push(level);
+                    localStorage.setItem('completedTopics', JSON.stringify(completedTopics));
+                }
+                showCongratulationsPopup();
+            }
+        }
+
+        function markCompleted(sectionId) {
+            const section = document.getElementById(sectionId);
+
+            if (!section.classList.contains('completed')) {
+                section.classList.add('completed');
+                completedSections++;
+                updateProgressBar();
+            }
+        }
+        let totalProgress = 0;
+        function updateProgressBar() {
+            // Calculate progress based on completed sections and maximum scroll position achieved
+            const ttsCompletion = completedSections * ttsProgress;
+             totalProgress = ttsCompletion + maxScrollProgress;
+            
+            const progressBar = document.getElementById('progress-bar');
+            const progressText = document.getElementById('progress-text');
+
+            progressBar.style.width = totalProgress +'%';
+            progressText.textContent = Math.round(totalProgress)+ '% Completed';
+            console.log(totalProgress);
+            progress = totalProgress;
+            if (Math.round(totalProgress) >= 100) {
+            //showCongratulationsPopup();
+                checkCompletion();
+                updateUserScoreInDatabase();
+            }
+        }
+        function selectLevel(level) {
+            window.location.href = 'level.html';
+        }
+        function updateUserScoreInDatabase() { // Assuming this contains the roll number
+            const experience = 10; // Increment score by 10
+
+            const data = { rollNumber: username, experience: experience }; // Ensure roll number is a number
+
+            console.log("Sending data to update score:", data); // Log the data being sent
+
+            fetch('http://localhost:5000/api/students/update-score', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Failed to update score');
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('Score updated:', data);
+            })
+            .catch(error => {
+                console.error('Error updating score:', error);
+            });
+        }
+
+        function showCongratulationsPopup() {
+            const popup = document.getElementById('congratulations-popup');
+            popup.style.display = 'block';
+        }
+
+        function goTo() {
+            window.location.href = "main.html"; // Redirect to levels.html
+        }
+
+        // Scroll event to update scroll progress
+        window.addEventListener('scroll', () => {
+            const scrollTop = window.scrollY || document.documentElement.scrollTop;
+            const windowHeight = window.innerHeight;
+            const documentHeight = document.documentElement.scrollHeight;
+
+            const scrollProgress = (scrollTop / (documentHeight - windowHeight)) * 50;
+
+            if (scrollProgress > maxScrollProgress) {
+                maxScrollProgress = scrollProgress;
+                updateProgressBar();
+            }
+        });
+    </script>
+</body>
+
+</html>

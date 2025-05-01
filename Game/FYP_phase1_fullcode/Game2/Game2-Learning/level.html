@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head> 
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sorting Game</title>
+  <link rel="stylesheet" href="waste.css">
+</head>
+<body>
+  <div id="level-buttons" class="level-buttons">
+    <button onclick="backToindex()">Back</button>
+  </div>
+  <h1 id="level-heading">Waste Sorting Game</h1>
+  <div id="waste-container">
+    <img id="waste-item" draggable="true" alt="waste item">
+    <p id="waste-item-name"></p>
+  </div>
+  
+  <div id="bins"></div>
+
+  <div id="custom-alert" class="alert-box">
+    <div class="alert-content">
+      <p id="alert-message">Incorrect</p>
+      <button id="close-alert" onclick="closeAlert()">OK</button>
+    </div>
+  </div>
+
+  <script>
+    const level = localStorage.getItem('selectedLevel');
+
+    // Change the heading based on the level
+    const levelHeading = document.getElementById('level-heading');
+    if (level == '1') {
+      levelHeading.textContent = 'Waste Sorting Game';
+    } else if (level == '2') {
+      levelHeading.textContent = 'Energy Sorting Game';
+    } else if (level == '3') {
+      levelHeading.textContent = 'Reversible & Irreversible';
+    } else if (level == '4') {
+      levelHeading.textContent = 'Fibres Sorting Game';
+    } else if (level == '5') {
+      levelHeading.textContent = 'Sinking & Floating';
+    }
+
+    const binsData = {
+      1: [
+        { id: 'organic', label: 'Organic Waste', img: './pics/waste/organic-bin.png' },
+        { id: 'toxic', label: 'Toxic Waste', img: './pics/waste/toxic-bin.png' },
+        { id: 'recyclable', label: 'Recyclable Waste', img: './pics/waste/recyclable-bin.png' },
+        { id: 'soiled', label: 'Soiled Waste', img: './pics/waste/soiled-bin.png' },
+        { id: 'ewaste', label: 'E-Waste', img: './pics/waste/e-waste-bin.png' }
+      ],
+      2: [
+        { id: 'thermal', label: 'Thermal Energy', img: './pics/energy/thermal.png' },
+        { id: 'light', label: 'Light Energy', img: './pics/energy/light.png' },
+        { id: 'kinetic', label: 'Kinetic Energy', img: './pics/energy/kinetic.png' },
+        { id: 'electrical', label: 'Electrical Energy', img: './pics/energy/electrical.png' },
+        { id: 'sound', label: 'Sound Energy', img: './pics/energy/sound.png' },
+        { id: 'potential', label: 'Potential Energy', img: './pics/energy/potential.png' },
+        { id: 'wind', label: 'Wind Energy', img: './pics/energy/wind.png' }
+      ],
+      3: [
+        { id: 'reversible', label: 'Reversible', img: './pics/reversible/bin.png' },
+        { id: 'irreversible', label: 'Irreversible', img: './pics/reversible/bin2.png' },
+      ],
+      4: [
+        { id: 'natural', label: 'Natural Fibres', img: './pics/energy/thermal.png' },
+        { id: 'synthetic', label: 'Synthetic Fibres', img: './pics/energy/light.png' },
+      ],
+      5: [
+        { id: 'sinking', label: 'Sinking', img: './pics/energy/thermal.png' },
+        { id: 'floating', label: 'Floating', img: './pics/energy/light.png' },
+      ]
+    };
+
+    // Generate bins dynamically based on the selected level
+    const binsContainer = document.getElementById('bins');
+    binsData[level].forEach(bin => {
+      const binDiv = document.createElement('div');
+      binDiv.className = 'bin';
+      binDiv.id = bin.id;
+
+      const binLabel = document.createElement('p');
+      binLabel.textContent = bin.label;
+
+      const binImg = document.createElement('img');
+      binImg.src = bin.img;
+      binImg.alt = bin.label;
+      binImg.width = 200;
+      binImg.height = 200;
+
+      const binPoints = document.createElement('p');
+      binPoints.className = 'points';
+      binPoints.textContent = '0';
+
+      binDiv.appendChild(binLabel);
+      binDiv.appendChild(binImg);
+      binDiv.appendChild(binPoints);
+      binsContainer.appendChild(binDiv);
+    });
+
+    const bins = {
+      1: {
+        organic: ['apple', 'banana', 'leaves', 'plant-waste', 'eggshells'],
+        toxic: ['battery', 'chemical', 'mercury_thermometer', 'light_bulbs'],
+        recyclable: ['plastic', 'paper', 'bottle', 'cardboard', 'glass_bottles'],
+        soiled: ['diapers', 'tissue', 'gloves', 'face_mask', 'bandages'],
+        ewaste: ['phone', 'laptop', 'tv', 'circuit_board', 'charger_cable']
+      },
+      2: {
+        thermal: ['burning', 'sun', 'boiling_water'],
+        light: ['light_bulbs', 'sun', 'torch_light'],
+        kinetic: ['moving_car', 'flowing_water', 'running', 'falling_object'],
+        electrical: ['powerlines', 'lightning', 'battery'],
+        sound: ['speaker','vibrations', 'music', 'ringing'],
+        potential: ['dam', 'spring', 'stretch_rubber', 'boulder'],
+        wind: ['wind_turbins', 'sailing_boat', 'kites']
+      },
+      3: {
+        reversible: ['melting_ice', 'elastic_rubber', 'folding_paper', 'air_balloon', 'magnetic_nail', 'crystallined_salt', 'condensed_water', 'inflated_tire'],
+        irreversible: ['burning_wood', 'rusting_iron', 'cooking_bake', 'broken_egg', 'firecracking', 'frying_vegetables', 'burning_paper', 'souring_milk'],
+      },
+      4: {
+        natural: ['cotton', 'linen', 'jute'],
+        synthetic: ['polyester', 'nylon', 'rayon'],
+      },
+      5: {
+        sinking: ['coin', 'glass', 'keys', 'marble', 'pebble', 'plates', 'clay_pot', 'spoon'],
+        floating: ['boat', 'cork', 'bags', 'foam_boards', 'cans', 'life_jacket', 'fruits', 'balloons'],
+      }
+    };
+
+    let currentWaste = '';
+    let points = {
+      organic: 0,
+      toxic: 0,
+      recyclable: 0,
+      soiled: 0,
+      ewaste: 0,
+      thermal: 0,          
+      light: 0,           
+      kinetic: 0,         
+      electrical: 0,      
+      sound: 0,           
+      potential: 0,       
+      wind: 0,
+      reversible: 0,
+      irreversible: 0,
+      natural: 0,
+      synthetic: 0,
+      sinking: 0,
+      floating: 0
+    };
+
+    // Function to show the custom alert
+    function showAlert(message) {
+      const alertBox = document.getElementById('custom-alert');
+      const alertMessage = document.getElementById('alert-message');
+      alertMessage.textContent = message; // Set the custom message
+      alertBox.style.display = 'flex'; // Show the alert box
+    }
+
+    // Function to close the custom alert
+    function closeAlert() {
+      document.getElementById('custom-alert').style.display = 'none'; // Hide the alert box
+    }
+
+    function generateRandomWaste() {
+      const categories = Object.keys(bins[level]); // Get the available categories based on the level
+      const category = categories[Math.floor(Math.random() * categories.length)];
+      const items = bins[level][category];
+
+      if (items && items.length > 0) {
+        const item = items[Math.floor(Math.random() * items.length)];
+        currentWaste = item; // Store the waste item (not just the category)
+
+        const wasteItem = document.getElementById('waste-item');
+        const wasteItemName = document.getElementById('waste-item-name'); 
+
+        // Set image path based on the selected level
+        let folder = '';
+        if (level == '1') {
+          folder = './pics/waste/';  // Folder for level 1
+        } else if (level == '2') {
+          folder = './pics/energy/';  // Folder for level 2
+        } else if (level == '3') {
+          folder = './pics/reversible/';
+        } else if (level == '4') {
+          folder = './pics/fibres/';
+        } else if (level == '5') {
+          folder = './pics/float_sink/';
+        }
+
+        wasteItem.src = `${folder}${item}.png`; // Set the image source to the appropriate folder and item
+        wasteItem.setAttribute('data-category', category); // Set the category for matching
+        wasteItem.setAttribute('data-item', item); // Set the waste item itself
+        // Set the name of the waste item
+        wasteItemName.textContent = item.replace(/_/g, ' ');
+      } else {
+        console.error('No items found in category:', category);
+      }
+    }
+
+    function checkMatch(event) {
+      event.preventDefault();
+
+      const binCategory = event.currentTarget.id; 
+      const draggedWasteCategory = document.getElementById('waste-item').getAttribute('data-category'); 
+      const draggedWasteItem = document.getElementById('waste-item').getAttribute('data-item'); 
+
+      console.log("Bin Category:", binCategory);
+      console.log("Dragged Waste Category:", draggedWasteCategory);
+      console.log("Dragged Waste Item:", draggedWasteItem);
+      
+      // Check if the binCategory exists in the bins for the selected level
+      if (bins[level][binCategory] && bins[level][binCategory].includes(draggedWasteItem)) {
+          points[binCategory]++; 
+          document.querySelector(`#${binCategory} .points`).textContent = points[binCategory]; 
+          generateRandomWaste(); 
+      } else {
+          showAlert("Incorrect");
+      }
+    }
+
+    function backToindex(){
+      window.location.href = "main.html";
+    }
+
+    // Set up drag and drop event listeners
+    document.getElementById('waste-item').addEventListener('dragstart', (event) => {
+      event.dataTransfer.setData('text/plain', event.target.id); // Set the ID of the dragged element
+    });
+
+    // Allow bins to accept waste by preventing default behavior in the dragover event
+    document.querySelectorAll('.bin').forEach(bin => {
+      bin.addEventListener('dragover', (event) => {
+        event.preventDefault(); // Allow drop on this bin
+      });
+
+      // Call checkMatch when waste is dropped on a bin
+      bin.addEventListener('drop', checkMatch);
+    });
+
+    // Generate the initial waste item
+    generateRandomWaste();
+
+  </script>
+</body>
+</html>

@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>From Cotton Balls to Fabric</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #e0f7fa; 
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        h1 {
+            color: #00796b;
+            margin-top: 20px;
+        }
+        .flowchart {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 40px;
+            width: 100%;
+            max-width: 1200px;
+        }
+        .step-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            margin: 0 20px;
+        }
+        .step {
+            text-align: center;
+            cursor: pointer;
+            transition: transform 0.3s;
+            border: 3px solid transparent;
+            border-radius: 10px;
+            padding: 10px;
+        }
+        .step.active {
+            border: 3px solid #00796b;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        .step:hover {
+            transform: scale(1.05);
+        }
+        .step img {
+            width: 150px;
+            height: auto;
+            border-radius: 10px;
+        }
+        .number {
+            background-color: #00796b;
+            color: white;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+        .line {
+            width: 100px;
+            height: 0;
+            border-top: 2px dotted #00796b;
+            position: absolute;
+            top: 50%;
+            left: 100%;
+            z-index: -1;
+            margin-left: 5px;
+        }
+        .line::after {
+            content: '';
+            position: absolute;
+            right: -10px;
+            top: -5px;
+            border-top: 8px solid transparent;
+            border-bottom: 8px solid transparent;
+            border-left: 12px solid #00796b;
+        }
+        .step-container:last-child .line {
+            display: none;
+        }
+        #description {
+            margin-top: 20px;
+            padding: 20px;
+            width: 80%;
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            font-size: 1.2em;
+            color: #004d40;
+            text-align: center;
+        }
+        #message {
+            margin-top: 20px;
+            font-size: 1.2em;
+            color: #00796b;
+            text-align: center;
+        }
+
+        button {
+            margin-top: 50px;
+            margin-left: -1000px;
+            padding: 10px 20px;
+            font-size: large;
+            background-color: #00796b;
+            color: #e0f7fa;
+            border-radius: 5px;
+            border: none;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <button onclick="goTo()">Back</button>
+    <h1>From Cotton Balls to Fabric</h1>
+
+    <div class="flowchart">
+        <!-- Step 1: Harvesting -->
+        <div class="step-container">
+            <div class="number">1</div>
+            <div class="step" id="harvesting" onclick="displayStep(0)">
+                <img src="gifs/cotton_harversting.gif" alt="Harvesting">
+                <p>Harvesting</p>
+            </div>
+            <div class="line"></div>
+        </div>
+
+        <!-- Step 2: Ginning -->
+        <div class="step-container">
+            <div class="number">2</div>
+            <div class="step" id="ginning" onclick="displayStep(1)">
+                <img src="gifs/cotton_ginning.gif" alt="Ginning">
+                <p>Ginning</p>
+            </div>
+            <div class="line"></div>
+        </div>
+
+        <!-- Step 3: Spinning -->
+        <div class="step-container">
+            <div class="number">3</div>
+            <div class="step" id="spinning" onclick="displayStep(2)">
+                <img src="gifs/cotton_spinning.gif" alt="Spinning">
+                <p>Spinning</p>
+            </div>
+            <div class="line"></div>
+        </div>
+
+        <!-- Step 4: Weaving/Knitting -->
+        <div class="step-container">
+            <div class="number">4</div>
+            <div class="step" id="weaving" onclick="displayStep(3)">
+                <img src="gifs/cotton_weaving.gif" alt="Weaving or Knitting">
+                <p>Weaving/Knitting</p>
+            </div>
+            <div class="line"></div>
+        </div>
+
+        <!-- Step 5: Finishing -->
+        <div class="step-container">
+            <div class="number">5</div>
+            <div class="step" id="finishing" onclick="displayStep(4)">
+                <img src="gifs/cotton_fabric.gif" alt="Finishing">
+                <p>Finishing</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Description Section -->
+    <div id="description">
+        Click on a step to learn about the process of converting cotton balls to fabric.
+    </div>
+
+    <!-- Message Section -->
+    <div id="message"></div>
+
+    <script>
+        const steps = [
+            {
+                text: "Harvesting: Cotton is harvested from cotton plants, usually using machinery or by hand.",
+                tts: "Harvesting. Cotton is harvested from cotton plants, usually using machinery or by hand."
+            },
+            {
+                text: "Ginning: The harvested cotton is cleaned to remove seeds and other impurities through the ginning process.",
+                tts: "Ginning. The harvested cotton is cleaned to remove seeds and other impurities through the ginning process."
+            },
+            {
+                text: "Spinning: The cleaned cotton fibers are spun into yarn or thread, making them ready for weaving or knitting.",
+                tts: "Spinning. The cleaned cotton fibers are spun into yarn or thread, making them ready for weaving or knitting."
+            },
+            {
+                text: "Weaving/Knitting: The spun cotton yarn is then woven or knitted into fabric using various techniques.",
+                tts: "Weaving or Knitting. The spun cotton yarn is then woven or knitted into fabric using various techniques."
+            },
+            {
+                text: "Finishing: The fabric undergoes final processes such as dyeing, cutting, and ironing to make it ready for use.",
+                tts: "Finishing. The fabric undergoes final processes such as dyeing, cutting, and ironing to make it ready for use."
+            }
+        ];
+
+        let currentSpeech = null;
+        let currentStep = 0;
+        let level = 2;
+        // Initialize the first step to be highlighted
+        highlightStep(currentStep);
+
+        function displayStep(stepIndex) {
+            // Ensure the user follows the correct sequence
+            if (stepIndex !== currentStep) return;
+
+            // Stop the previous speech if it's playing
+            if (currentSpeech) {
+                window.speechSynthesis.cancel();
+            }
+
+            // Update description text
+            const description = document.getElementById("description");
+            description.innerText = steps[stepIndex].text;
+
+            // Initiate TTS for the current step
+            currentSpeech = new SpeechSynthesisUtterance(steps[stepIndex].tts);
+            currentSpeech.lang = 'en-US';
+            currentSpeech.rate = 100;
+            // When TTS ends, move to the next step
+            currentSpeech.onend = () => {
+                // Show alert or message after speech completion
+                if (currentStep < steps.length - 1) {
+                    document.getElementById("message").innerText = "You completed this step. Move to the next part.";
+                } else {
+                    checkCompletion(level);
+                    document.getElementById("message").innerText = "You have completed all the stages of converting cotton balls to fabric!";
+                }
+                // Move to the next step
+                currentStep++;
+                if (currentStep < steps.length) {
+                    highlightStep(currentStep);
+                }
+            };
+
+            window.speechSynthesis.speak(currentSpeech);
+        }
+
+        function highlightStep(stepIndex) {
+            // Remove the 'active' class from all steps
+            document.querySelectorAll('.step').forEach(step => {
+                step.classList.remove('active');
+            });
+
+            // Highlight the current step
+            document.querySelectorAll('.step')[stepIndex].classList.add('active');
+        }
+        function checkCompletion(level) {
+            let completedTopics = JSON.parse(localStorage.getItem('completedSbsTopics')) || [];
+
+            // Mark topic as completed if not already marked
+            if (!completedTopics.includes(level)) {
+                completedTopics.push(level);
+                localStorage.setItem('completedSbsTopics', JSON.stringify(completedTopics));
+            }
+
+            console.log("Completion recorded:", completedTopics);
+        }
+        function goTo() {
+            window.location.href = 'stepbystep.html';
+        }
+    </script>
+
+</body>
+</html>

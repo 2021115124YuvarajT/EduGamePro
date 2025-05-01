@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teacher Leaderboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            background-color: #fff;
+        }
+
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #3498db;
+            color: #ffffff;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        tr:hover {
+            background-color: #d1ecf1; /* Light blue for hover effect */
+        }
+
+        @media (max-width: 600px) {
+            table {
+                font-size: 14px;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+        }
+
+        /* Add a container for responsiveness */
+        .container {
+            max-width: 1200px;
+            margin: auto;
+            padding: 20px;
+        }
+        .logOut {
+            margin-left: 1200px;
+        }
+        button {
+            padding: 10px 20px;
+            margin: 10px;
+            font-size: 16px;
+            border-width: 1px;
+            border-radius: 10px;
+            background-color: #d32f2f;
+            cursor: pointer;
+            color: floralwhite;
+        }
+    </style>
+</head>
+<body>
+    <div class="logOut">
+        <button class="log_out" onclick="logout()">Back</button>
+    </div>
+    <div class="container">
+        <h1>Student Leaderboard (Based on Level & Score)</h1>
+        <table id="studentLeaderboardTable">
+            <thead>
+                <tr>
+                    <th>Rank</th>
+                    <th>Roll Number</th>
+                    <th>Level</th>
+                    <th>Score</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Rows will be inserted here -->
+            </tbody>
+        </table>
+
+        <h1>Student Evaluation Leaderboard (Based on Questions)</h1>
+        <table id="evalLeaderboardTable">
+            <thead>
+                <tr>
+                    <th>Rank</th>
+                    <th>Roll Number</th>
+                    <th>Correctly Answered Questions</th>
+                    <th>Total Answered Questions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Rows will be inserted here -->
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        // Fetch the student leaderboard
+        async function fetchStudentLeaderboard() {
+            try {
+                const response = await fetch('http://localhost:5000/api/students/leaderboard');
+                const studentLeaderboard = await response.json();
+
+                const studentTable = document.getElementById('studentLeaderboardTable').getElementsByTagName('tbody')[0];
+                studentLeaderboard.forEach((student, index) => {
+                    const row = studentTable.insertRow();
+                    row.insertCell(0).textContent = index + 1;
+                    row.insertCell(1).textContent = student.rollNumber;
+                    row.insertCell(2).textContent = student.level;
+                    row.insertCell(3).textContent = student.score;
+                });
+            } catch (error) {
+                console.error('Error fetching student leaderboard:', error);
+            }
+        }
+
+        // Fetch the student evaluation leaderboard
+        async function fetchEvalLeaderboard() {
+            try {
+                const response = await fetch('http://localhost:5000/api/students/eval-leaderboard');
+                
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+
+                const evalData = await response.json(); // Parse JSON data
+
+                // Update the Evaluation Leaderboard table
+                const evalTableBody = document.getElementById('evalLeaderboardTable').querySelector('tbody');
+                evalTableBody.innerHTML = ''; // Clear previous rows
+
+                evalData.forEach((studentEval, index) => {
+                    const row = `<tr>
+                        <td>${index + 1}</td>
+                        <td>${studentEval.rollNumber}</td>
+                        <td>${studentEval.correctlyAnsweredQuestions}</td>
+                        <td>${studentEval.totalAnsweredQuestions}</td>
+                    </tr>`;
+                    evalTableBody.innerHTML += row;
+                });
+            } catch (error) {
+                console.error('Error fetching evaluation leaderboard:', error);
+            }
+        }
+
+        // Call both functions when the page loads
+        window.onload = function() {
+            fetchStudentLeaderboard();
+            fetchEvalLeaderboard();
+        };
+
+        function logout() {
+            window.location.href = 'teacher_homepage.html';
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teachers' Section</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Raleway:wght@700&display=swap');
+
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-image: url('palace_bg.jpg');
+            background-repeat: no-repeat;
+            background-size: 100% 100%;
+            background-blend-mode: soft-light;
+            backdrop-filter: blur(2px); /* Apply blur to the background */
+            -webkit-backdrop-filter: blur(2px);
+        }
+        .outer-title {
+    position: absolute;
+    top: 20px;
+            -webkit-text-stroke: white;
+    width: 100%;
+    font-size: 42px;
+    font-weight: bold;
+    font-family: 'Poppins', sans-serif;
+    text-align: center;
+    text-transform: uppercase;
+    
+    text-shadow: 4px 4px 10px rgba(0, 0, 0, 0.3);
+    animation: fadeIn 1.5s ease-in-out;
+    padding: 10px 0;
+    z-index: 10;
+    color: rgb(0, 0, 0);
+}
+
+        /* Stylish h1 */
+        h1 {
+            font-size: 32px;
+            font-weight: bold;
+            font-family: 'Raleway', sans-serif;
+            text-align: center;
+            text-transform: uppercase;
+            
+            
+            text-shadow: 3px 3px 10px rgba(0, 0, 0, 0.5);
+            padding: 10px;
+        }
+
+        /* Container Styling */
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 25px;
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.4);
+            backdrop-filter: blur(50px);
+            width: 90%;
+            max-width: 600px;
+            height:300px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-top: -100px;
+            border: 1px black solid;
+        }
+
+        /* Button Styling */
+        .button-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+            width: 100%;
+            
+        }
+
+        .button-container button {
+            background: linear-gradient(to right, #e348de, #44b6e7);
+            color: #ffffff;
+            font-size: 18px;
+            font-weight: bold;
+            padding: 14px 28px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease-in-out;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+            flex: 1;
+            min-width: 140px;
+            max-width: 160px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border: 1px black solid;
+        }
+
+        .button-container button:hover {
+            background: linear-gradient(to right, #0056b3, #0090ff);
+            transform: scale(1.1);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .button-container button:active {
+            background: linear-gradient(to right, #003f7f, #007acc);
+            transform: scale(1);
+        }
+
+        @media (max-width: 600px) {
+            .button-container {
+                flex-direction: column;
+                align-items: center;
+            }
+            .button-container button {
+                width: 80%;
+            }
+        }
+        #backbtn:hover {
+            background: linear-gradient(to right, #b33000, #ff3300);
+            transform: scale(1.1);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+        }
+    </style>
+</head>
+<body>
+    <h1 class="outer-title">WELCOME TO EDUGAME PRO!!!</h1>
+    <div class="container">
+        <h1>📚 💖Let's enjoy Learning!!💖</h1><br>
+        <br>
+        <div class="button-container">
+            <button onclick="goto1()">Learning</button>
+            <button onclick="goto2()">Games</button>
+        </div><br><br>
+        <div class="button-container">
+            <button id="backbtn" onclick="back()">Back</button>
+        </div>
+    </div>
+    <script>
+        function goto1(){
+            window.location.href = "learning.html";
+        }
+        function goto2(){
+            window.location.href = "games.html";
+        }
+        function back() {
+            window.location.href = "../FYP_phase1_fullcode/Game2/frontend/game1.html";
+        }
+    </script>
+</body>
+</html>

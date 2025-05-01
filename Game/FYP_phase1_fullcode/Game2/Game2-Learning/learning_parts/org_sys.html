@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Organ Systems</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; }
+        .container { 
+            margin-top: 50px;
+            display: grid; 
+            grid-template-columns: repeat(3, 1fr); 
+            gap: 20px; 
+            justify-items: center; 
+        }
+        .button {
+            display: block; 
+            padding: 15px; 
+            background-color: #4CAF50; 
+            color: white; 
+            border: none; 
+            cursor: pointer; 
+            font-size: 18px; 
+            width: 200px; 
+            margin-bottom: 10px;
+        }
+        .button:hover { background-color: #45a049; }
+        .item {
+            text-align: center;
+        }
+        .item img {
+            width: 100px;
+            height: auto;
+        }
+        .full-width {
+            grid-column: span 3;
+            justify-self: center;
+        }
+        #backButton {
+            margin-top: 10px;
+            margin-left: 0px;
+            width: 100px;
+            background-color: red;
+        }
+        #play {
+            background-color: rgb(218, 197, 78);
+            color: black;
+        }
+    </style>
+</head>
+<body>
+    <button id="backButton" class="button" onclick="goTo()">Back</button>
+    <h1>Organ Systems</h1>
+    <div class="container">
+        <div class="item">
+            <button class="button" onclick="goToSystem('dig')">Digestive System</button>
+            <img src="./images/dig_sys.png" alt="Digestive System">
+        </div>
+        <div class="item">
+            <button class="button" onclick="goToSystem('resp')">Respiratory System</button>
+            <img src="./images/resp_sys.png" alt="Respiratory System">
+        </div>
+        <div class="item">
+            <button class="button" onclick="goToSystem('circ')">Circulatory System</button>
+            <img src="./images/circ_sys.png" alt="Circulatory System">
+        </div>
+        <div class="item">
+            <button class="button" onclick="goToSystem('exc')">Excretory System</button>
+            <img src="./images/exc_sys.png" alt="Excretory System">
+        </div>
+        <div class="item">
+            <button class="button" onclick="goToSystem('ner')">Nervous System</button>
+            <img src="./images/ner_sys.png" alt="Nervous System">
+        </div>
+        <div class="item">
+            <button class="button" id="play" onclick="goTo1()">Let's Play</button>
+        </div>
+    </div>
+
+    <script>
+        function goToSystem(system) {
+            window.location.href = system + '.html';
+        }
+        function goTo(){
+            window.location.href = '../../frontend/learning.html';
+        }
+        function goTo1(){
+            window.location.href = '../../new/order_steps.html';
+        }
+    </script>
+</body>
+</html>

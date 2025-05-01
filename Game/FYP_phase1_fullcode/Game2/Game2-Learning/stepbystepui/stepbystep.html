@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Learning Topics</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: linear-gradient(to right, #00796b, #004d40); /* Teal gradient background */
+            text-align: center;
+        }
+
+        .container {
+            border: 2px solid floralwhite;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px auto;
+            max-width: 600px;
+            background-color: transparent;
+            box-shadow: 0 4px 10px floralwhite;
+            color: floralwhite;
+            margin-top: -100px;
+        }
+
+        button {
+            padding: 10px 20px;
+            margin: 10px;
+            font-size: 16px;
+            border-width: 1px;
+            border-color: white;
+            border-radius: 10px;
+            background-color: transparent;
+            cursor: pointer;
+            color: rgb(240, 236, 228);
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        #log-out {
+            background-color: transparent;
+            box-shadow: 0 4px 10px rgb(10, 10, 9);
+            color: floralwhite;
+        }
+
+        #log-out:hover {
+            background-color: red;
+        }
+
+        .backButton {
+            position: fixed;
+            top: 20px;
+            /* Positioning it slightly down from the top */
+            left: 20px;
+            fill: #4CAF50;
+        }
+
+        #completedTopicsDisplay {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 200px;
+            padding: 15px;
+            border: 2px solid #4CAF50;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        #completedTopicsDisplay h2 {
+            font-size: 18px;
+            color: #4CAF50;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        #completedTopicsList {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+            font-size: 14px;
+            color: #333;
+        }
+
+        #completedTopicsList li {
+            padding: 4px 0;
+        }
+
+        #game {
+            background-color: rgb(214, 191, 58);
+            color: #333;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Select your Learning</h1>
+        <button onclick="goTo1()">Air Flow Path</button>
+        <button onclick="goTo2()">Cotton To Fabric</button>
+        <button onclick="goTo3()">Lifecycle Of Plant</button>
+        <button onclick="goTo4()">Water Cycle</button>
+        <button onclick="goTo5()">Sexual Reproduction in Plants</button>
+    </div>
+    <div class="backButton">
+        <button id="log-out" onclick="goTo()">Back</button>
+    </div>
+    <div id="completedTopicsDisplay">
+        <h2>Completed Topics:</h2>
+        <ul id="completedTopicsList"></ul>
+    </div>
+
+    <script>
+        const topicNames = {
+            1: "Air Flow Path",
+            2: "Cotton To Fabric",
+            3: "Lifecycle Of Plant",
+            4: "Water Cycle",
+            5: "Sexual Reproduction in Plants"
+        };
+        // Retrieve and parse stored data from localStorage
+        const badges = JSON.parse(localStorage.getItem('badges')) || [];
+        let shownSbs = parseInt(localStorage.getItem('shownSbs')) || 0;
+        let completedTopics = JSON.parse(localStorage.getItem('completedSbsTopics')) || [];
+        let experience = parseInt(localStorage.getItem('experience')) || 0;
+
+        console.log("Completed Topics:", completedTopics);
+        console.log("Shown:", shownSbs);
+
+        function goTo() {
+            window.location.href = '../../frontend/learning.html';
+        }
+
+        function goTo1() {
+            window.location.href = 'airflowpath.html';
+            markCompleted(1);
+        }
+
+        function goTo2() {
+            window.location.href = 'cottonBallstoFabric.html';
+            markCompleted(2);
+        }
+
+        function goTo3() {
+            window.location.href = 'lifecycle_of_flowering_plant.html';
+            markCompleted(3);
+        }
+
+        function goTo4() {
+            window.location.href = 'water_cycle.html';
+            markCompleted(4);
+        }
+
+        function goTo5() {
+            window.location.href = 'stagesOfsexualReproductioninPlants.html';
+            markCompleted(5);
+        }
+
+        async function markCompleted(level) {
+            if (!completedTopics.includes(level)) {
+                // Add new topic to the completed list
+                //completedTopics.push(level);
+                experience += 10;
+
+                // Save updated data to localStorage
+                //localStorage.setItem('completedSbsTopics', JSON.stringify(completedTopics));
+                localStorage.setItem('experience', experience);
+
+                console.log("Updated Completed Topics:", completedTopics);
+                console.log("Updated Experience:", experience);
+
+                await updateExperience(rollNumber); // Call server update
+
+                // If this is the first time completing a topic and badge not shown
+                if (completedTopics.length === 1 && shownSbs === 0) {
+                    localStorage.setItem('shownSbs', 1);
+                    showBadgeAnimation();
+                }
+            }
+        }
+
+        function showBadgeAnimation() {
+            // Set flag to prevent badge animation from repeating
+            localStorage.setItem('shownSbs', 1);
+            window.location.href = 'badge_animator.html';
+        }
+
+        // Check if badge should be shown when the page loads
+        function checkAllCompleted() {
+            if (completedTopics.length == 5 && shownSbs === 0) {
+                console.log("Badge Animation Triggered");
+                if (!badges.includes('Progressive_Learner')) {
+                    badges.push('Progressive_Learner');
+                }
+                localStorage.setItem("badges", JSON.stringify(badges));
+                showBadgeAnimation();
+            }
+            displayCompletedTopics()
+        }
+        function displayCompletedTopics() {
+            const completedTopicsList = document.getElementById('completedTopicsList');
+            completedTopicsList.innerHTML = ''; // Clear previous content
+            completedTopics.forEach(topicId => {
+                const li = document.createElement('li');
+                li.textContent = topicNames[topicId] || `Topic ${topicId}`;
+                completedTopicsList.appendChild(li);
+            });
+        }
+        // Call this function on page load
+        checkAllCompleted();
+    </script>
+</body>
+
+</html>

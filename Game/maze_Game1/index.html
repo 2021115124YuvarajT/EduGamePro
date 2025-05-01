@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maze Game - Select Level</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="level-container">
+        <h1>Select Maze Difficulty</h1>
+        <button onclick="startGame('easy')">Easy</button>
+        <button onclick="startGame('medium')">Medium</button>
+        <button onclick="startGame('hard')">Hard</button>
+    </div> 
+    <button onclick="back()">Back</button>
+
+    <script>
+        function startGame(level) {
+            localStorage.setItem("mazeLevel", level);
+            window.location.href = "game.html";
+        }
+
+        function back() {
+            window.location.href = "upload.html";
+        }
+
+        const topic = localStorage.getItem("selectedtopic");
+        localStorage.setItem("selectedtopic",topic)
+    </script>
+</body>
+</html>

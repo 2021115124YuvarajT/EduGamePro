@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Types of Waste</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 20px;
+        }
+
+        #progress-container {
+            background-color: #ccc;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+
+        #progress-bar {
+            height: 20px;
+            width: 0%;
+            background-color: #28a745;
+        }
+
+        .waste-type {
+            background-color: #fff;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .waste-type img {
+            width: 100%;
+            max-width: 300px;
+            height: auto;
+            border-radius: 5px;
+            margin-bottom: 15px;
+        }
+
+        button {
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .completed {
+            background-color: #28a745;
+        }
+
+        /* Congratulatory popup styles */
+        #congratulations-popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #fff;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            text-align: center;
+            animation: popup 0.5s ease-out;
+        }
+
+        #congratulations-popup h2 {
+            color: #28a745;
+        }
+
+        #congratulations-popup button {
+            margin-top: 15px;
+            background-color: #ff9800;
+        }
+
+        #progress-bar {
+            height: 20px;
+            width: 0%;
+            background-color: #28a745;
+            position: relative;
+        }
+
+        #progress-text {
+            position: absolute;
+            width: 100%;
+            text-align: center;
+            font-weight: bold;
+            color: white;
+        }
+
+        @keyframes popup {
+            0% {
+                transform: translate(-50%, -50%) scale(0.5);
+                opacity: 0;
+            }
+
+            100% {
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 1;
+            }
+        }
+
+        .backButton:hover {
+            background-color: #d32f2f;
+        }
+
+        .backButton {
+            width: 120px;
+        }
+    </style>
+</head>
+
+<body>
+    <button class="backButton" onclick="goTo()">Back</button>
+    <h1>Types of Fibres</h1>
+    <div id="progress-container">
+        <div id="progress-bar"><span id="progress-text"></span></div>
+    </div>
+
+    <!-- Organic Waste Section -->
+    <div class="waste-type" id="organic">
+        <h2>Natural Fibres</h2>
+        <img src="/Game2-Learning/pics/classificationImages/naturalfibres.jpg" alt="Natural Fibres Image">
+        <p>Natural fibres come from plants, animals, or minerals. Examples include cotton, wool, and silk. These fibres
+            are biodegradable and eco-friendly.</p>
+        <button onclick="speakText('organic')">Read Aloud</button>
+    </div>
+
+    <!-- Recyclable Waste Section -->
+    <div class="waste-type" id="recyclable">
+        <h2>Synthetic Fibres</h2>
+        <img src="/Game2-Learning/pics/classificationImages/syntheticfibres.jpg" alt="Synthetic Fibres Image">
+        <p>Synthetic fibres are man-made and produced from chemical substances. Examples include nylon, polyester, and
+            acrylic. These fibres are strong and durable, but not biodegradable.</p>
+        <button onclick="speakText('recyclable')">Read Aloud</button>
+    </div>
+
+    <div id="congratulations-popup">
+        <h2>Congratulations!</h2>
+        <p>Great job! You have learned about all the types of waste. Would you like to play a fun matching game now?</p>
+        <button onclick="selectLevel(4)">Let's play</button>
+    </div>
+
+    <script>
+        localStorage.setItem('selectedLevel',4); 
+        const level = 4;
+        let progress = 0;  // Declare progress as a global variable
+        let experience = 0;  // Declare experience as a global variable
+        const username = localStorage.getItem("username");
+        console.log("Roll Number : ", username);
+
+        function speakText(sectionId) {
+            if (window.speechSynthesis.speaking) {
+                window.speechSynthesis.cancel();
+            }
+            const section = document.getElementById(sectionId);
+            const text = section.querySelector('p').innerText;
+
+            const speech = new SpeechSynthesisUtterance();
+            speech.text = text;
+            speech.lang = 'en-US';
+            speech.volume = 1;
+            speech.rate = 1;
+            speech.pitch = 1;
+
+            speech.onend = function () {
+                markCompleted(sectionId);
+            };
+
+            window.speechSynthesis.speak(speech);
+        }
+
+        function markCompleted(sectionId) {
+            const section = document.getElementById(sectionId);
+            if (!section.classList.contains('completed')) {
+                section.classList.add('completed');
+                updateProgressBar();
+            }
+        }
+        function checkCompletion() {
+            if (progress === 100) {
+                let completedTopics = JSON.parse(localStorage.getItem('completedTopics')) || [];
+
+                // Mark topic as completed if not already marked
+                if (!completedTopics.includes(level)) {
+                    completedTopics.push(level);
+                    localStorage.setItem('completedTopics', JSON.stringify(completedTopics));
+                }
+                showCongratulations();
+            }
+        }
+        function updateUserScoreInDatabase() { // Assuming this contains the roll number
+            const experience = 10; // Increment score by 10
+
+            const data = { rollNumber: username, experience: experience }; // Ensure roll number is a number
+
+            console.log("Sending data to update score:", data); // Log the data being sent
+
+            fetch('http://localhost:5000/api/students/update-score', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Failed to update score');
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('Score updated:', data);
+            })
+            .catch(error => {
+                console.error('Error updating score:', error);
+            });
+        }
+
+        function updateScoreOnCompletion() {
+            if (progress === 100) {
+                experience += 10;  // Add experience
+                console.log("Experience updated to: ", experience);
+                checkCompletion();
+                updateUserScoreInDatabase();
+            }
+        }
+
+        function updateProgressBar() {
+            const totalSections = document.querySelectorAll('.waste-type').length;
+            const progressBar = document.getElementById('progress-bar');
+            const progressText = document.getElementById('progress-text');
+            const completedSections = document.querySelectorAll('.completed').length;
+
+            progress = (completedSections / totalSections) * 100;  // Update global progress variable
+
+            progressBar.style.width = progress + '%';
+            progressText.innerText = Math.round(progress) + '%';
+
+            if (progress === 100) {
+                showCongratulations();
+                updateScoreOnCompletion();
+            }
+        }
+
+        function showCongratulations() {
+            const popup = document.getElementById('congratulations-popup');
+            popup.style.display = 'block';
+        }
+
+        function selectLevel(level) {
+            localStorage.setItem('selectedLevel', level);
+            window.location.href = 'level.html';
+        }
+
+        function goTo() {
+            window.location.href = 'main.html';
+        }
+
+        // Track scroll progress
+        window.addEventListener('scroll', () => {
+            const scrollableHeight = document.documentElement.scrollHeight - window.innerHeight;
+            const scrolled = window.scrollY;
+
+            if (scrolled >= scrollableHeight) {
+                document.querySelectorAll('.waste-type').forEach(section => {
+                    if (!section.classList.contains('completed')) {
+                        section.classList.add('completed');
+                    }
+                });
+                updateProgressBar();
+            }
+        });
+    </script>
+</body>
+
+</html>

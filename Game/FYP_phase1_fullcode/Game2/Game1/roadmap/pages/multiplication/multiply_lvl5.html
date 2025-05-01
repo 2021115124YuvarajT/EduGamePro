@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multiplication Tutorial</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 90%;
+            max-width: 600px;
+            background-color: #ffffff;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            overflow: hidden;
+            flex-direction: column;
+        }
+
+        .animation-area {
+            width: 100%;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .number {
+            font-size: 28px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .step, .result, .carry {
+            font-size: 20px;
+            margin-top: 10px;
+            color: #555;
+        }
+
+        .final-result {
+            margin-top: 20px;
+            font-size: 24px;
+            font-weight: bold;
+            color: #007BFF;
+        }
+
+        .addition-step {
+            margin-top: 10px;
+            font-size: 18px;
+        }
+
+        .controls {
+            width: 100%;
+            padding: 10px;
+            background-color: #f8f8f8;
+            border-top: 1px solid #ddd;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+
+        button:hover:not(:disabled) {
+            background-color: #0056b3;
+        }
+
+        .notebook-format {
+            font-size: 24px;
+            text-align: right;
+            font-family: monospace;
+            margin-top: 20px;
+            color: #333;
+            max-width: 250px; /* Restrict the width to align properly */
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .notebook-format .line {
+            border-bottom: 2px solid black;
+            display: inline-block;
+            width: 100%;
+        }
+
+        /* Add spacing for the second partial product */
+        .notebook-format .shift-right {
+            padding-left: 20px;
+        }
+
+        /* Center align the final result */
+        .notebook-format .result-line {
+            margin-top: 10px;
+            border-bottom: 2px solid black;
+            width: 100%;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="animation-area" id="multiplication-process">
+            <!-- Animation elements will go here -->
+        </div>
+
+        <div class="controls">
+            <button id="step-back">Previous</button>
+            <!-- Add Refresh Button here -->
+            <button class="refresh-btn" onclick="refreshPage()">Refresh Page</button>
+            <button id="step-forward">Next</button>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const processDiv = document.getElementById('multiplication-process');
+            const stepForward = document.getElementById('step-forward');
+            const stepBack = document.getElementById('step-back');
+
+            // Generate random operands
+            const operand1 = Math.floor(Math.random() * 9000) + 1000; // Example value
+            const operand2 = Math.floor(Math.random() * 90) + 10; // Example value
+
+            // Extract digits from operands
+            const units1 = operand1 % 10;
+            const tens1 = Math.floor(operand1 / 10);
+            const units2 = operand2 % 10;
+            const tens2 = Math.floor(operand2 / 10);
+
+            // Compute intermediate and final results
+            const resultUnits = units1 * units2;
+            const resultTens1 = tens1 * units2;
+            const resultTens2 = units1 * tens2;
+            const resultHundreds = tens1 * tens2;
+            const partialProduct1 = resultUnits;
+            const partialProduct2 = resultTens1 * 10;
+            const partialProduct3 = resultTens2 * 10;
+            const partialProduct4 = resultHundreds * 100;
+            const finalResult = partialProduct1 + partialProduct2 + partialProduct3 + partialProduct4;
+
+            let step = 0;
+
+            function animateStep(step) {
+                gsap.killTweensOf(processDiv);
+                processDiv.innerHTML = '';
+
+                switch(step) {
+                    case 0:
+                        // Initial setup
+                        processDiv.innerHTML = `
+                            <div class="step" id="step0">
+                                <h2>Multiply ${operand1} by ${operand2}</h2>
+                                <p>1. Write ${operand1} and ${operand2} in columns.</p>
+                                <div>
+                                    <div class="number">${operand1}</div>
+                                    <div class="number">× ${operand2}</div>
+                                </div>
+                            </div>
+                        `;
+                        break;
+                    case 1:
+                        // Multiply units place
+                        processDiv.innerHTML = `
+                            <div class="step" id="step1">
+                                <p>2. Multiply ${units1} (units) by ${units2} (units).</p>
+                                <div>
+                                    <div class="number">${units1} × ${units2} = ${resultUnits}</div>
+                                    <div class="result">Write ${resultUnits} in the units column.</div>
+                                </div>
+                            </div>
+                        `;
+                        break;
+                    case 2:
+                        // Multiply tens place of operand1 by units place of operand2
+                        processDiv.innerHTML = `
+                            <div class="step" id="step2">
+                                <p>3. Multiply ${tens1} (tens of ${operand1}) by ${units2} (units of ${operand2}).</p>
+                                <div>
+                                    <div class="number">${tens1} × ${units2} = ${resultTens1}</div>
+                                    <div class="result">Write ${resultTens1} in the tens column.</div>
+                                </div>
+                            </div>
+                        `;
+                        break;
+                    case 3:
+                        // Multiply units place of operand1 by tens place of operand2
+                        processDiv.innerHTML = `
+                            <div class="step" id="step3">
+                                <p>4. Multiply ${units1} (units of ${operand1}) by ${tens2} (tens of ${operand2}).</p>
+                                <div>
+                                    <div class="number">${units1} × ${tens2} = ${resultTens2}</div>
+                                    <div class="result">Write ${resultTens2} in the tens column.</div>
+                                </div>
+                            </div>
+                        `;
+                        break;
+                    case 4:
+                        // Multiply tens place of both operands
+                        processDiv.innerHTML = `
+                            <div class="step" id="step4">
+                                <p>5. Multiply ${tens1} (tens of ${operand1}) by ${tens2} (tens of ${operand2}).</p>
+                                <div>
+                                    <div class="number">${tens1} × ${tens2} = ${resultHundreds}</div>
+                                    <div class="result">Write ${resultHundreds} in the hundreds column.</div>
+                                </div>
+                            </div>
+                        `;
+                        break;
+                    case 5:
+                        // Show final result
+                        processDiv.innerHTML = `
+                            <div class="step" id="step5">
+                                <h2>Result</h2>
+                                <p>Add up all the results:</p>
+                                <div class="addition-step">
+                                    <div>Units: ${partialProduct1}</div>
+                                    <div>Tens (from ${tens1} × ${units2}): ${partialProduct2}</div>
+                                    <div>Tens (from ${units1} × ${tens2}): ${partialProduct3}</div>
+                                    <div>Hundreds (from ${tens1} × ${tens2}): ${partialProduct4}</div>
+                                </div>
+                                <div class="final-result">
+                                    <h3>Total: ${finalResult}</h3>
+                                </div>
+                            </div>
+                        `;
+                        break;
+                    case 6:
+                        // Show the notebook-style format
+                        processDiv.innerHTML = `
+                            <div class="notebook-format">
+                                <div>${operand1}</div>
+                                <div>× ${operand2}</div>
+                                <div class="line"></div>
+                                <div>${partialProduct1}</div>
+                                <div class="shift-right">${partialProduct2}</div>
+                                <div class="shift-right">${partialProduct3}</div>
+                                <div class="shift-right">${partialProduct4}</div>
+                                <div class="result-line"></div>
+                                <div>${finalResult}</div>
+                            </div>
+                        `;
+                        break;
+                }
+
+                gsap.fromTo(
+                    processDiv.querySelector('.step') || processDiv.querySelector('.notebook-format'),
+                    { opacity: 0, y: 50 },
+                    { opacity: 1, y: 0, duration: 1 }
+                );
+
+                // Disable the "Next" button when the final step is reached
+                if (step === 6) {
+                    stepForward.disabled = true;
+                } else {
+                    stepForward.disabled = false;
+                }
+
+                // Disable the "Previous" button at the start
+                if (step === 0) {
+                    stepBack.disabled = true;
+                } else {
+                    stepBack.disabled = false;
+                }
+            }
+
+            stepForward.addEventListener('click', () => {
+                if (step < 6) {
+                    step++;
+                    animateStep(step);
+                }
+            });
+
+            stepBack.addEventListener('click', () => {
+                if (step > 0) {
+                    step--;
+                    animateStep(step);
+                }
+            });
+
+            // Initial load
+            animateStep(step);
+        });
+
+    // Function to refresh page(itself)
+    function refreshPage() {
+      location.reload();
+    }
+    </script>
+</body>
+</html>

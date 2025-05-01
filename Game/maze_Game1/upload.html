@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Question Generator</title>
+    <link rel="stylesheet" href="styles.css">
+    <script>
+        function generateQuestion() {
+            const topic = document.getElementById("topic").value.trim();
+            localStorage.setItem("selectedtopic", topic);
+
+            if (!topic) { 
+                alert("Please enter a topic.");
+                return;
+            }
+
+            // Show loading icon
+            const questionsContainer = document.getElementById("questionsContainer");
+            questionsContainer.innerHTML = '<p><img src="images/loading.gif" alt="Loading" width="150"></p>';
+
+            fetch("http://127.0.0.1:5101/generate_question", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ topic: topic }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log("✅ Received Data:", data); // Debugging
+
+                if (!Array.isArray(data) || data.length === 0) {
+                    console.error("❌ Error: Invalid response format", data);
+                    alert("Failed to generate questions. Please try again.");
+                    questionsContainer.innerHTML = "";
+                    return;
+                }
+
+                let questionHTML = "";
+                data.forEach((questionObj, index) => {
+                    if (!questionObj.options || questionObj.options.length !== 4) {
+                        console.error(`❌ Error: Invalid options format in question ${index + 1}`, questionObj);
+                        return;
+                    }
+
+                    questionHTML += `<h3>${questionObj.question}</h3><ul>`;
+                    questionObj.options.forEach(option => {
+                        questionHTML += `<li>${option}</li>`;
+                    });
+                    questionHTML += `</ul><p><strong>Correct Answer:</strong> ${questionObj.correctAnswer}</p><hr>`;
+                });
+
+                // Update the questions container
+                questionsContainer.innerHTML = questionHTML;
+            })
+            .catch(error => {
+                console.error("❌ Fetch Error:", error);
+                alert("An error occurred while generating questions. Please try again.");
+                questionsContainer.innerHTML = "";
+            });
+        }
+
+        function goTo(){
+            window.location.href = "index.html";
+        }
+        function back() {
+            window.location.href = "../template/games.html";
+        }
+    </script>
+    <style>
+        #back:hover {
+            background-color: red;
+        }
+        #go::after {
+            content: '🖢'; /* Left arrow */
+            position: absolute;
+            left: 220px;
+            top: 38%;
+            transform: translateY(-50%);
+            font-size: 50px;
+            color: #ffffff;
+            animation: moveLeft 1s infinite alternate;
+        }
+
+        @keyframes moveLeft {
+            from {
+                right: -30px;
+                opacity: 0.5;
+            }
+            to {
+                right: -40px;
+                opacity: 1;
+            }
+        }
+        #contain {
+            border: 2px solid white;
+            width: 800px;
+            margin-left: 400px;
+            margin-top: 50px;
+            align-items: center;
+            border-radius: 25px;
+        }
+    </style>
+</head> 
+<body>
+    <div>
+    <div id="contain">
+    <h2>Maze Game</h2>
+    <input type="text" id="topic" placeholder="Enter a topic ">
+    <button onclick="generateQuestion()">Generate</button><br><br>
+    <button onclick="back()" id="back">Back</button>
+    <button id="go" onclick="goTo()">Preview</button>
+    <br><br><br><br>
+    <h3>Generated Questions</h3>
+    <div id="questionsContainer"></div>
+    </div>
+    </div>
+</body>
+</html>

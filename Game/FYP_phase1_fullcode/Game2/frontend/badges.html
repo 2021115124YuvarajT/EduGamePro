@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Badges</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background-color: #333;
+            color: floralwhite;
+            background-image: url('dark_castle_wall.png');
+            background-size: cover;
+            /* Scales the image to cover the entire screen */
+            background-repeat: no-repeat;
+            /* Prevents the image from repeating */
+            background-position: center;
+            /* Centers the image on the screen */
+            background-attachment: fixed;
+        }
+
+        .badge-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+            padding: 20px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+            max-width: 800px;
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .badge {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 120px;
+            text-align: center;
+            margin:50px;
+        }
+
+        .badge img {
+            width: 100px;
+            height: 100px;
+            object-fit: contain;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(255, 255, 255, 0.2);
+        }
+
+        .badge-name {
+            margin-top: 8px;
+            font-size: 1.1em;
+            font-weight: 700;
+            color: #fbf300;
+        }
+
+        #backToDashboard {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            border-radius: 8px;
+            background-color: #007BFF;
+            color: floralwhite;
+            cursor: pointer;
+        }
+
+        #backToDashboard:hover {
+            background-color: #0056b3;
+        }
+
+        .no-badges {
+            font-size: 1.2em;
+            color: #f5c542;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Your Badges</h1>
+    <div class="badge-container" id="badgeContainer"></div>
+    <button id="backToDashboard" onclick="goBack()">Back to Dashboard</button>
+
+    <script>
+        // Fetch badges from localStorage
+        const badges = JSON.parse(localStorage.getItem('badges')) || [];
+
+        // Reference to badge container
+        const badgeContainer = document.getElementById('badgeContainer');
+
+        if (badges.length === 0) {
+            // Display message if no badges
+            const noBadgesMessage = document.createElement('div');
+            noBadgesMessage.className = 'no-badges';
+            noBadgesMessage.textContent = "You have not received any badges";
+            badgeContainer.appendChild(noBadgesMessage);
+        } else {
+            // Display badges
+            badges.forEach(badge => {
+                const badgeElement = document.createElement('div');
+                badgeElement.className = 'badge';
+
+                // Badge image
+                const badgeImage = document.createElement('img');
+                badgeImage.src = `${badge}.png`;
+                badgeImage.alt = `${badge} image`;
+
+                // Badge name
+                const badgeName = document.createElement('div');
+                badgeName.className = 'badge-name';
+                badgeName.textContent = badge;
+
+                badgeElement.appendChild(badgeImage);
+                badgeElement.appendChild(badgeName);
+
+                badgeContainer.appendChild(badgeElement);
+            });
+        }
+
+        // Go back to dashboard
+        function goBack() {
+            window.location.href = 'dashboard.html';
+        }
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Level 1</title>
+  <link rel="stylesheet" href="../css/level.css">
+  <link rel="stylesheet" href="../css/styles.css">
+  <style>
+    /* Cloud styling */
+    .cloud, .cloud1, .cloud2, .cloud3 {
+      position: absolute;
+      width: 550px;
+      height: 250px;
+      background: white;
+      border-radius: 100px;
+      box-shadow: 0 0 20px white;
+      opacity: 0;
+      transition: opacity 0.5s ease, transform 1s ease;
+    }
+
+    .cloud, .cloud1 {
+        background: black;
+    }
+
+    .cloud { bottom: -10px; left: -10px; }
+    .cloud1 { top: -10px; right: -10px; }
+    .cloud2 { top: -10px; left: -10px; }
+    .cloud3 { bottom: -10px; right: -10px; }
+
+    .cloud::before, .cloud1::before, .cloud2::before, .cloud3::before {
+      content: ' ';
+      position: absolute;
+      top: -80px;
+      left: 70px;
+      width: 180px;
+      height: 180px;
+      background: white;
+      border-radius: 50%;
+      box-shadow: 130px 0 0 40px white;
+    }
+
+    .cloud::before, .cloud1::before {
+        background: black;
+        box-shadow: 130px 0 0 40px black;
+    }
+
+    /* Center clouds over slide */
+    .center { transform: translate(100px, -10px); }
+    .center1 { transform: translate(-100px, 10px); }
+    .center2 { transform: translate(100px, 10px); }
+    .center3 { transform: translate(-100px, -10px); }
+  </style>
+</head>
+<body>
+  <div class="slideshow-container">
+      <button class="arrow prev" onclick="changeSlide(-1)">&#10094;</button>
+      <div class="slides">
+        <img src="../pics/1.png" alt="Image 1">
+        <img src="../pics/2.png" alt="Image 2">
+        <img src="../pics/3.png" alt="Image 3">
+        <img src="../pics/4.png" alt="Image 4">
+        <img src="../pics/5.png" alt="Image 5">
+        <!-- Trigger Modal -->
+        <button class="open-modal-btn" onclick="openModal('myModal')">Learn To Survive</button>
+        <img src="../pics/20.png" alt="Next">
+        <div class="cloud" id="cloud"></div>
+        <div class="cloud1" id="cloud1"></div>
+        <div class="cloud2" id="cloud2"></div>
+        <div class="cloud3" id="cloud3"></div>
+      </div>
+      <button class="arrow next" onclick="changeSlide(1)">&#10095;</button>
+  </div>
+  <div class="back">
+      <button id="backButton">Next</button>
+  </div>
+
+  <!-- Modal Structure 1 -->
+  <div id="myModal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeModal('myModal')">&#8656;</span>
+      <iframe src="../pages/addition/add_lvl1.html" class="modal-iframe"></iframe>
+      <span class="sub" onclick="openModal('myModal2')">&minus;</span>
+    </div>
+  </div>
+
+  <!-- Modal Structure 2 -->
+  <div id="myModal2" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeModal('myModal2')">&#8656;</span>
+      <iframe src="../pages/subtraction/sub_lvl1.html" class="modal-iframe"></iframe>
+    </div>
+  </div>
+
+  <!-- JavaScript -->
+  <script src="../scripts/level1.js"></script>
+</body>
+</html>
+ 

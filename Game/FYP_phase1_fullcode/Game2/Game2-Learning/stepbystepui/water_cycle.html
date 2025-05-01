@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Water Cycle Tutorial</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #e0f7fa;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        h1 {
+            color: #00796b;
+            margin-top: 20px;
+        }
+        .flowchart {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 40px;
+            width: 100%;
+            max-width: 1200px;
+        }
+        .step-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            margin: 0 20px;
+        }
+        .step {
+            text-align: center;
+            cursor: pointer;
+            transition: transform 0.3s;
+            border: 3px solid transparent;
+            border-radius: 10px;
+            padding: 10px;
+        }
+        .step.active {
+            border: 3px solid #00796b;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        .step:hover {
+            transform: scale(1.05);
+        }
+        .step img {
+            width: 150px;
+            height: auto;
+            border-radius: 10px;
+        }
+        .number {
+            background-color: #00796b;
+            color: white;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+        .line {
+            width: 100px;
+            height: 0;
+            border-top: 2px dotted #00796b;
+            position: absolute;
+            top: 50%;
+            left: 100%;
+            z-index: -1;
+            margin-left:50px
+        }
+        /* Adding arrowhead using ::after pseudo-element */
+        .line::after {
+            content: '';
+            position: absolute;
+            right: -10px;
+            top: -5px;
+            border-top: 8px solid transparent;
+            border-bottom: 8px solid transparent;
+            border-left: 12px solid #00796b;
+        }
+        .step-container:last-child .line {
+            display: none;
+        }
+        #description {
+            margin-top: 20px;
+            padding: 20px;
+            width: 80%;
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            font-size: 1.2em;
+            color: #004d40;
+            text-align: center;
+        }
+        #message {
+            margin-top: 20px;
+            font-size: 1.2em;
+            color: #00796b;
+            text-align: center;
+        }
+
+        button {
+            margin-top: 50px;
+            margin-left: -1000px;
+            padding: 10px 20px;
+            font-size: large;
+            background-color: #00796b;
+            color: #e0f7fa;
+            border-radius: 5px;
+            border: none;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <button onclick="goTo()">Back</button>
+    <h1>Water Cycle Tutorial</h1>
+
+    <div class="flowchart">
+        <!-- Step 1: Evaporation -->
+        <div class="step-container">
+            <div class="number">1</div>
+            <div class="step" id="evaporation" onclick="displayStep(0)">
+                <img src="gifs/water_evaporation.gif" alt="Evaporation">
+                <p>Evaporation</p>
+            </div>
+            <div class="line"></div>
+        </div>
+
+        <!-- Step 2: Condensation -->
+        <div class="step-container">
+            <div class="number">2</div>
+            <div class="step" id="condensation" onclick="displayStep(1)">
+                <img src="gifs/water_condensation.gif" alt="Condensation">
+                <p>Condensation</p>
+            </div>
+            <div class="line"></div>
+        </div>
+
+        <!-- Step 3: Precipitation -->
+        <div class="step-container">
+            <div class="number">3</div>
+            <div class="step" id="precipitation" onclick="displayStep(2)">
+                <img src="gifs/water_precipitation.gif" alt="Precipitation">
+                <p>Precipitation</p>
+            </div>
+            <div class="line"></div>
+        </div>
+
+        <!-- Step 4: Collection -->
+        <div class="step-container">
+            <div class="number">4</div>
+            <div class="step" id="collection" onclick="displayStep(3)">
+                <img src="gifs/water_collection.gif" alt="Collection">
+                <p>Collection</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Description Section -->
+    <div id="description">
+        Click on a step to learn about the water cycle.
+    </div>
+
+    <!-- Message Section -->
+    <div id="message"></div>
+
+    <script>
+        let level = 4;
+        const steps = [
+            {
+                text: "Evaporation: The sun heats up water from rivers, lakes, and oceans, turning it into water vapor.",
+                tts: "Evaporation. The sun heats up water from rivers, lakes, and oceans, turning it into water vapor."
+            },
+            {
+                text: "Condensation: Water vapor cools down and forms tiny droplets, creating clouds.",
+                tts: "Condensation. Water vapor cools down and forms tiny droplets, creating clouds."
+            },
+            {
+                text: "Precipitation: When clouds get heavy, water falls back to the ground as rain, snow, or hail.",
+                tts: "Precipitation. When clouds get heavy, water falls back to the ground as rain, snow, or hail."
+            },
+            {
+                text: "Collection: The water from precipitation collects in oceans, rivers, and lakes, restarting the cycle.",
+                tts: "Collection. The water from precipitation collects in oceans, rivers, and lakes, restarting the cycle."
+            }
+        ];
+
+        let currentSpeech = null;
+        let currentStep = 0;
+
+        // Initialize the first step to be highlighted
+        highlightStep(currentStep);
+
+        function displayStep(stepIndex) {
+            // Ensure the user follows the correct sequence
+            if (stepIndex !== currentStep) return;
+
+            // Stop the previous speech if it's playing
+            if (currentSpeech) {
+                window.speechSynthesis.cancel();
+            }
+
+            // Update description text
+            const description = document.getElementById("description");
+            description.innerText = steps[stepIndex].text;
+
+            // Initiate TTS for the current step
+            currentSpeech = new SpeechSynthesisUtterance(steps[stepIndex].tts);
+            currentSpeech.lang = 'en-US';
+            currentSpeech.rate = 100;
+            // When TTS ends, move to the next step
+            currentSpeech.onend = () => {
+                // Show alert or message after speech completion
+                if (currentStep < steps.length - 1) {
+                    document.getElementById("message").innerText = "You are yet to complete the module.";
+                } else {
+                    console.log("the module is completed");
+                    checkCompletion(level);
+                    document.getElementById("message").innerText = " You have completed the entire water cycle!";
+                }
+                // Move to the next step
+                currentStep++;
+                if (currentStep < steps.length) {
+                    highlightStep(currentStep);
+                }
+            };
+
+            window.speechSynthesis.speak(currentSpeech);
+        }
+
+        function highlightStep(stepIndex) {
+            // Remove the 'active' class from all steps
+            document.querySelectorAll('.step').forEach(step => {
+                step.classList.remove('active');
+            });
+
+            // Highlight the current step
+            document.querySelectorAll('.step')[stepIndex].classList.add('active');
+        }
+        function checkCompletion(level){
+            let completedTopics = JSON.parse(localStorage.getItem('completedSbsTopics')) || [];
+            if(!completedTopics.includes(level)){
+                completedTopics.push(level);
+                localStorage.setItem('completedSbsTopics',JSON.stringify(completedTopics));
+
+            }
+            console.log("completion recorded",completedTopics);
+        }
+        function goTo() {
+            window.location.href = 'stepbystep.html';
+        }
+    </script>
+
+</body>
+</html>

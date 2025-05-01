@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Life Cycle of a Flowering Plant</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f3e5f5;
+            margin: 0; 
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        h1 {
+            color: #6a1b9a;
+            margin-top: 20px;
+        }
+        .flowchart {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 40px;
+            width: 100%;
+            max-width: 1200px;
+        }
+        .step-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            margin: 0 20px;
+        }
+        .step {
+            text-align: center;
+            cursor: pointer;
+            transition: transform 0.3s;
+            border: 3px solid transparent;
+            border-radius: 10px;
+            padding: 10px;
+        }
+        .step.active {
+            border: 3px solid #6a1b9a;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        .step:hover {
+            transform: scale(1.05);
+        }
+        .step img {
+            width: 150px;
+            height: auto;
+            border-radius: 10px;
+        }
+        .number {
+            background-color: #6a1b9a;
+            color: white;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+        .line {
+            width: 100px;
+            height: 0;
+            border-top: 2px dotted #6a1b9a;
+            position: absolute;
+            top: 50%;
+            left: 100%;
+            z-index: -1;
+            margin-left: 50px;
+        }
+        .line::after {
+            content: '';
+            position: absolute;
+            right: -10px;
+            top: -5px;
+            border-top: 8px solid transparent;
+            border-bottom: 8px solid transparent;
+            border-left: 12px solid #6a1b9a;
+        }
+        .step-container:last-child .line {
+            display: none;
+        }
+        #description {
+            margin-top: 20px;
+            padding: 20px;
+            width: 80%;
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            font-size: 1.2em;
+            color: #4a148c;
+            text-align: center;
+        }
+        #message {
+            margin-top: 20px;
+            font-size: 1.2em;
+            color: #6a1b9a;
+            text-align: center;
+        }
+
+        button {
+            margin-top: 50px;
+            margin-left: -1000px;
+            padding: 10px 20px;
+            font-size: large;
+            background-color: #00796b;
+            color: #e0f7fa;
+            border-radius: 5px;
+            border: none;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <button onclick="goTo()">Back</button>
+    <h1>Life Cycle of a Flowering Plant</h1>
+
+    <div class="flowchart">
+        <!-- Step 1: Seed -->
+        <div class="step-container">
+            <div class="number">1</div>
+            <div class="step" id="seed" onclick="displayStep(0)">
+                <img src="gifs/flowering_germination.gif" alt="Seed">
+                <p>Seed</p>
+            </div>
+            <div class="line"></div>
+        </div>
+
+        <!-- Step 2: Germination -->
+        <div class="step-container">
+            <div class="number">2</div>
+            <div class="step" id="germination" onclick="displayStep(1)">
+                <img src="gifs/flowering_germination.gif" alt="Germination">
+                <p>Germination</p>
+            </div>
+            <div class="line"></div>
+        </div>
+
+        <!-- Step 3: Growth -->
+        <div class="step-container">
+            <div class="number">3</div>
+            <div class="step" id="growth" onclick="displayStep(2)">
+                <img src="gifs/flowering_stem.gif" alt="Growth">
+                <p>Growth</p>
+            </div>
+            <div class="line"></div>
+        </div>
+
+        <!-- Step 4: Flowering -->
+        <div class="step-container">
+            <div class="number">4</div>
+            <div class="step" id="flowering" onclick="displayStep(3)">
+                <img src="gifs/flowering_flowers.gif" alt="Flowering">
+                <p>Flowering</p>
+            </div>
+            <div class="line"></div>
+        </div>
+
+        <!-- Step 5: Pollination -->
+        <div class="step-container">
+            <div class="number">5</div>
+            <div class="step" id="pollination" onclick="displayStep(4)">
+                <img src="gifs/flowering_pollination.gif" alt="Pollination">
+                <p>Pollination</p>
+            </div>
+            <div class="line"></div>
+        </div>
+
+        <!-- Step 6: Seed Dispersal -->
+        <div class="step-container">
+            <div class="number">6</div>
+            <div class="step" id="seed-dispersal" onclick="displayStep(5)">
+                <img src="gifs/flowering_dispersal.gif" alt="Seed Dispersal">
+                <p>Seed Dispersal</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Description Section -->
+    <div id="description">
+        Click on a step to learn about the life cycle of a flowering plant.
+    </div>
+
+    <!-- Message Section -->
+    <div id="message"></div>
+
+    <script>
+        const steps = [
+            {
+                text: "Seed: The life cycle of a flowering plant starts with a seed that contains the embryo of the plant.",
+                tts: "Seed. The life cycle of a flowering plant starts with a seed that contains the embryo of the plant."
+            },
+            {
+                text: "Germination: The seed absorbs water and nutrients, and the embryo begins to grow.",
+                tts: "Germination. The seed absorbs water and nutrients, and the embryo begins to grow."
+            },
+            {
+                text: "Growth: The plant grows roots, stems, and leaves, which help it gather water and sunlight.",
+                tts: "Growth. The plant grows roots, stems, and leaves, which help it gather water and sunlight."
+            },
+            {
+                text: "Flowering: The plant produces flowers, which contain the reproductive organs.",
+                tts: "Flowering. The plant produces flowers, which contain the reproductive organs."
+            },
+            {
+                text: "Pollination: Pollination occurs when pollen from the male part of the flower reaches the female part.",
+                tts: "Pollination. Pollination occurs when pollen from the male part of the flower reaches the female part."
+            },
+            {
+                text: "Seed Dispersal: After fertilization, seeds are formed and dispersed to start the cycle again.",
+                tts: "Seed Dispersal. After fertilization, seeds are formed and dispersed to start the cycle again."
+            }
+        ];
+
+        let currentSpeech = null;
+        let currentStep = 0;
+        let level = 3;
+        // Initialize the first step to be highlighted
+        highlightStep(currentStep);
+
+        function displayStep(stepIndex) {
+            // Ensure the user follows the correct sequence
+            if (stepIndex !== currentStep) return;
+
+            // Stop the previous speech if it's playing
+            if (currentSpeech) {
+                window.speechSynthesis.cancel();
+            }
+
+            // Update description text
+            const description = document.getElementById("description");
+            description.innerText = steps[stepIndex].text;
+
+            // Initiate TTS for the current step
+            currentSpeech = new SpeechSynthesisUtterance(steps[stepIndex].tts);
+            currentSpeech.lang = 'en-US';
+            currentSpeech.rate = 100;
+            // When TTS ends, move to the next step
+            currentSpeech.onend = () => {
+                // Show alert or message after speech completion
+                if (currentStep < steps.length - 1) {
+                    document.getElementById("message").innerText = "You completed this step. Move to the next part.";
+                } else {
+                    checkCompletion(level);
+                    document.getElementById("message").innerText = "You have completed the entire life cycle of a flowering plant!";
+                }
+                // Move to the next step
+                currentStep++;
+                if (currentStep < steps.length) {
+                    highlightStep(currentStep);
+                }
+            };
+
+            window.speechSynthesis.speak(currentSpeech);
+        }
+
+        function highlightStep(stepIndex) {
+            // Remove the 'active' class from all steps
+            document.querySelectorAll('.step').forEach(step => {
+                step.classList.remove('active');
+            });
+
+            // Highlight the current step
+            document.querySelectorAll('.step')[stepIndex].classList.add('active');
+        }
+        function checkCompletion(level) {
+            let completedTopics = JSON.parse(localStorage.getItem('completedSbsTopics')) || [];
+
+            // Mark topic as completed if not already marked
+            if (!completedTopics.includes(level)) {
+                completedTopics.push(level);
+                localStorage.setItem('completedSbsTopics', JSON.stringify(completedTopics));
+            }
+
+            console.log("Completion recorded:", completedTopics);
+        }
+        function goTo() {
+            window.location.href = 'stepbystep.html';
+        }
+    </script>
+
+</body>
+</html>

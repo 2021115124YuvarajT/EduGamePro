@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Start Quiz</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f0f2f5;
+      margin: 0;
+      padding: 0;
+    }
+  
+    .container {
+      width: 40%;
+      margin: 80px auto;
+      background: #fff;
+      padding: 40px 30px;
+      border-radius: 12px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    }
+  
+    h1 {
+      text-align: center;
+      color: #333;
+      margin-bottom: 30px;
+    }
+  
+    label {
+      font-weight: 600;
+      display: block;
+      margin-top: 20px;
+    }
+  
+    input[type="text"], select {
+      width: 100%;
+      padding: 12px;
+      margin-top: 8px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 15px;
+      box-sizing: border-box;
+    }
+  
+    .radio-group {
+      margin-top: 10px;
+    }
+  
+    .radio-group input[type="radio"] {
+      margin-right: 8px;
+    }
+  
+    .radio-group label {
+      margin-right: 20px;
+      font-weight: normal;
+    }
+  
+    button {
+      width: 100%;
+      padding: 14px;
+      background-color: #28a745;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 17px;
+      cursor: pointer;
+      margin-top: 30px;
+    }
+  
+    button:hover {
+      background-color: #218838;
+    }
+  </style>  
+</head>
+<body>
+  <div class="container">
+    <h1>Start Your Quiz</h1>
+    <form method="POST" action="/">
+      <label for="name">Student Name:</label>
+      <input type="text" name="name" required>
+    
+      <label for="class">Class:</label>
+      <select name="class" required>
+        <option value="">Select class</option>
+        <option value="4">4</option>
+        <option value="5">5</option>
+      </select>
+    
+      <label>Choose Game:</label>
+      <div class="radio-group">
+        <label><input type="radio" name="game" value="ordering" required> Ordering Game</label>
+        <label><input type="radio" name="game" value="save_character"> Save the Character</label>
+      </div>
+    
+      <button type="submit">Start</button>
+    </form>    
+  </div>
+</body>
+</html>

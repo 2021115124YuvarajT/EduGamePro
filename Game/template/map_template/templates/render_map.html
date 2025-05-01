@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Map with Highlighted Places</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <style>
+        /* Global page styling */
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+
+        h2 {
+            text-align: center;
+            margin-top: 20px;
+            color: #555;
+            font-size: 28px;
+        }
+
+        /* Map container styling */
+        #map {
+            height: 650px;
+            width: 100%;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            margin: 20px auto;
+        }
+
+        /* Custom popup styling */
+        .custom-popup {
+            font-family: Arial, sans-serif;
+            font-size: 14px;
+            line-height: 1.5;
+            color: #333;
+        }
+
+        .custom-popup ul {
+            padding-left: 15px;
+            margin: 5px 0;
+        }
+
+        .custom-popup li {
+            list-style: none;
+            padding: 3px 0;
+        }
+
+        .custom-popup li::before {
+            content: "→ ";
+            font-weight: bold;
+            color: #007bff; /* Blue arrow */
+        }
+
+        /* Button to interact with map (if needed) */
+        button {
+            display: block;
+            margin: 20px auto;
+            background-color: #ffcc00;
+            color: #333;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #ffdd44;
+        }
+
+        /* Styling for loading indicator or error message */
+        .loading, .error {
+            text-align: center;
+            font-size: 18px;
+            color: #555;
+        }
+        
+        /* Ensure the page remains responsive */
+        @media (max-width: 768px) {
+            h2 {
+                font-size: 24px;
+            }
+
+            #map {
+                height: 400px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h2>Map with Highlighted Places</h2>
+    <div id="map"></div>
+    <button onclick="back()">Back</button>
+    <script>
+        // Initialize the map (centered on India)
+        var map = L.map('map').setView([20.5937, 78.9629], 5);
+
+        // Load OSM tiles
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; OpenStreetMap contributors'
+        }).addTo(map);
+
+        // Text-to-Speech function
+        function speakText(text) {
+            var speech = new SpeechSynthesisUtterance(text);
+            speech.lang = "en-US"; // Adjust language if needed
+            speech.volume = 1; // Volume (0 to 1)
+            speech.rate = 1; // Speed (0.1 to 10)
+            speech.pitch = 1; // Pitch (0 to 2)
+            window.speechSynthesis.speak(speech);
+        }
+
+        // Fetch places from backend
+        fetch('/api/get_places')
+            .then(response => response.json())
+            .then(places => {
+                places.forEach(place => {
+                    if (place.coordinates) {
+                        // Convert description into a styled list
+                        let descriptionList = "<ul>";
+                        place.description.split('.').forEach(sentence => {
+                            if (sentence.trim()) {
+                                descriptionList += `<li>${sentence.trim()}.</li>`;
+                            }
+                        });
+                        descriptionList += "</ul>";
+
+                        var marker = L.marker([place.coordinates[1], place.coordinates[0]]) // [latitude, longitude]
+                            .addTo(map)
+                            .bindPopup(`<div class="custom-popup"><b>${place.name}</b><br>${descriptionList}</div>`, {
+                                className: 'custom-popup'
+                            });
+
+                        // Speak description on hover
+                        marker.on('mouseover', function () {
+                            this.openPopup();
+                            speakText(place.description);
+                        });
+
+                        // Close popup on mouseout
+                        marker.on('mouseout', function () {
+                            this.closePopup();
+                        });
+                    }
+                });
+            })
+            .catch(error => console.error('Error fetching places:', error));
+        
+        function back() {
+            window.location.href = "/";
+        }
+    </script>
+</body>
+</html>

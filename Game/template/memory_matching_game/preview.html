@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Memory Matching Game</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #74b9ff, #81ecec);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        h1 {
+            color: #ffffff;
+            font-size: 2rem;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.4);
+        }
+
+        .game-container {
+            width: 80vw;
+            max-width: 700px;
+            display: grid;
+            gap: 10px;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .card {
+            width: 100%;
+            aspect-ratio: 1 / 1;
+            position: relative;
+            perspective: 1000px;
+            cursor: pointer;
+        }
+
+        .card-inner {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            transform-style: preserve-3d;
+            transition: transform 0.6s ease;
+        }
+
+        .card.flipped .card-inner {
+            transform: rotateY(180deg);
+        }
+
+        .card-front,
+        .card-back {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            backface-visibility: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .card-front {
+            background-color: #0984e3;
+            color: white;
+        }
+
+        .card-back {
+            background-color: #00b894;
+            color: white;
+            transform: rotateY(180deg);
+        }
+
+        /* Confetti Animation */
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background-color: red;
+            opacity: 0.8;
+            top: 0;
+            animation: fall linear infinite;
+        }
+
+        @keyframes fall {
+            0% {
+                transform: translateY(0) rotate(0);
+            }
+
+            100% {
+                transform: translateY(100vh) rotate(360deg);
+            }
+        }
+
+        /* Celebration Modal */
+        .celebration-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        .celebration-message {
+            font-size: 2rem;
+            color: white;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .ok-button {
+            font-size: 1.2rem;
+            padding: 10px 20px;
+            border: none;
+            background-color: #ff7675;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .ok-button:hover {
+            background-color: #d63031;
+        }
+    </style>
+</head>
+
+<body>
+    <h1 id="topic_title">Memory Matching Game</h1>
+    <div class="game-container" id="game-container"></div>
+
+    <!-- Celebration Modal -->
+    <div class="celebration-container" id="celebration">
+        <div class="celebration-message">🎉 Congratulations! You won! 🎉</div>
+        <button class="ok-button" onclick="redirectToPreviousPage()">OK</button>
+    </div>
+    
+    <script>
+        let topic_title = "";
+        
+        let firstCard = null;
+        let secondCard = null;
+        let lockBoard = false;
+        let matchesFound = 0;
+        let descriptions = {};
+        fetch('http://127.0.0.1:5000/getData')
+            .then(response => response.json())
+            .then(data => {
+                descriptions = data.cardDescriptions;
+                console.log(descriptions);
+                console.log(data);
+                setupGame(data);
+
+
+            })
+            .catch(error => console.error('Error fetching game data:', error));
+
+
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+        let cards_length =0;
+        function setupGame(data) {
+            document.getElementById("topic_title").innerHTML = data.topic_title;
+            const gameContainer = document.getElementById('game-container');
+            let cardValues = data.cardValues;
+            
+            let noOfCards = data.noOfCards;
+            cards_length = noOfCards;
+            
+
+            if (!cardValues.length || isNaN(noOfCards)) {
+                alert("Game data is missing. Redirecting to input page...");
+                window.location.href = "index.html";
+                return;
+            }
+
+            cardValues = shuffleArray(cardValues);
+            let gridSize = Math.ceil(Math.sqrt(noOfCards));
+            gameContainer.style.gridTemplateColumns = `repeat(${gridSize}, 1fr)`;
+
+            cardValues.forEach(value => {   
+                const card = document.createElement('div');
+                card.classList.add('card');
+                card.dataset.value = value;
+             
+
+                card.innerHTML = `
+          <div class="card-inner">
+            <div class="card-front">?</div>
+            <div class="card-back">${value}</div>
+          </div>
+        `;
+
+                card.addEventListener('click', handleCardClick);
+                gameContainer.appendChild(card);
+            });
+        }
+
+        function handleCardClick() {
+            if (lockBoard || this.classList.contains('flipped')) return;
+
+            this.classList.add('flipped');
+
+            if (!firstCard) {
+                firstCard = this;
+                return;
+            }
+
+            secondCard = this;
+            lockBoard = true;
+
+            checkForMatch();
+        }
+        /*
+        if (matchesFound === (parseInt(localStorage.getItem('noOfCards')) / 2)) {
+                  triggerCelebration();
+                }
+        */
+
+        function checkForMatch(data) {
+            if (firstCard.dataset.value === secondCard.dataset.value) {
+                firstCard.removeEventListener('click', handleCardClick);
+                secondCard.removeEventListener('click', handleCardClick);
+
+                let description = descriptions[firstCard.dataset.value];
+                console.log(description);
+
+                showPopup(description); // Show the description popup
+
+                resetBoard();
+                matchesFound++;
+
+                if (matchesFound === (parseInt(cards_length) / 2)) {
+
+                    triggerCelebration();
+                }
+            } else {
+                setTimeout(() => {
+                    firstCard.classList.remove('flipped');
+                    secondCard.classList.remove('flipped');
+                    resetBoard();
+                }, 1000);
+            }
+        }
+
+        function showPopup(description) {
+            let popup = document.getElementById("descriptionPopup");
+
+            if (!popup) {
+                // Create popup only if it doesn't exist
+                popup = document.createElement("div");
+                popup.id = "descriptionPopup";
+                popup.style.position = "fixed";
+                popup.style.top = "50%";
+                popup.style.left = "50%";
+                popup.style.transform = "translate(-50%, -50%)";
+                popup.style.backgroundColor = "rgba(0, 0, 0, 0.8)";
+                popup.style.color = "white";
+                popup.style.padding = "30px"; // Increased padding
+                popup.style.width = "60%"; // Increased width
+                popup.style.maxWidth = "500px"; // Ensures it doesn’t get too large
+                popup.style.borderRadius = "15px";
+                popup.style.textAlign = "center";
+                popup.style.zIndex = "1000";
+                popup.style.maxWidth = "500px";
+                popup.style.fontSize = "20px";
+                let text = document.createElement("p");
+                text.id = "popupText";
+                text.style.marginBottom = "20px";
+                text.style.fontSize = "50px";// Adds space below text
+                popup.appendChild(text);
+                let button = document.createElement("button");
+                button.textContent = "OK";
+                button.style.marginTop = "10px";
+                button.style.padding = "5px 10px";
+                button.style.border = "none";
+                button.style.borderRadius = "5px";
+                button.style.backgroundColor = "#4CAF50";
+                button.style.color = "white";
+                button.style.cursor = "pointer";
+
+                button.onclick = function () {
+                    popup.style.display = "none"; // Hide popup on OK click
+                };
+
+                popup.appendChild(button);
+                document.body.appendChild(popup);
+            }
+
+            // Update text and show popup
+            document.getElementById("popupText").textContent = description;
+            popup.style.display = "block";
+        }
+
+        function resetBoard() {
+            firstCard = null;
+            secondCard = null;
+            lockBoard = false;
+        }
+
+        function triggerCelebration() {
+            for (let i = 0; i < 100; i++) {
+                let confetti = document.createElement("div");
+                confetti.classList.add("confetti");
+                confetti.style.left = Math.random() * 100 + "vw";
+                confetti.style.backgroundColor = `hsl(${Math.random() * 360}, 100%, 60%)`;
+                confetti.style.animationDuration = Math.random() * 2 + 2 + "s";
+                document.body.appendChild(confetti);
+
+                setTimeout(() => confetti.remove(), 4000);
+            }
+
+            setTimeout(() => {
+                document.getElementById("celebration").style.display = "flex";
+            }, 3000);
+        }
+
+        function redirectToPreviousPage() {
+            window.location.href = "index.html";
+        }
+
+        window.onload = setupGame;
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Learning Page</title>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-image: url('bg.jpg');
+            background-repeat:no-repeat;
+            background-size: 100% 100%;
+            color: black;
+            border:1px solid black;
+        }
+
+        .big-title {
+            font-size: 36px;
+            /* Makes it big */
+            font-weight: bold;
+            text-align: center; 
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            color: black;
+            text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.3);
+            /* Adds a shadow effect */
+            background: rgba(255, 255, 255, 0.2);
+            /* Semi-transparent background */
+            padding: 15px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 800px;
+            backdrop-filter: blur(10px);
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif
+        }
+
+        .container {
+            text-align: center;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            width: 90%;
+            max-width: 600px;
+            height: 580px;
+            color: black;
+            border: 1px solid black;
+            margin-top: 50px;
+            
+        }
+
+        h1 {
+            font-size: 28px;
+            margin-top: 15px;
+            color: #fff;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        h2 {
+            font-size: 20px;
+            margin-top: 10px;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 10px;
+            width: 80%;
+            margin-left: auto;
+            margin-right: auto;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
+        }
+
+        .button-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        .button-container button {
+            background-color: #ff8c00;
+            color: white;
+            font-size: 16px;
+            padding: 12px 20px;
+            border: 1px black solid;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease-in-out;
+            font-weight: bold;
+            box-shadow: 0 0 10px rgba(255, 140, 0, 0.6);
+        }
+
+        .button-container button:hover {
+            background-color: #e07b00;
+            transform: scale(1.05);
+            box-shadow: 0 0 20px rgba(255, 140, 0, 1);
+        }
+
+        .button-container button:active {
+            transform: scale(0.97);
+        }
+
+        #backbtn {
+            background-color: rgb(230, 38, 38);
+            width: 100%;
+            margin-top: 20px;
+            height: 50px;
+            border-radius: 25px;
+            backdrop-filter: blur(10px);
+            font-size: large;
+            font-weight:bold;
+            color: white;
+        }
+
+        #backbtn:hover {
+            background-color: darkred;
+        }
+
+        @media (max-width: 600px) {
+            .button-container {
+                grid-template-columns: repeat(1, 1fr);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <h1 class="big-title">learn with fun</h1>
+    <div class="container">
+        <h1>Games Section</h1>
+
+        <h2>🎮 Simple Games</h2>
+        <div class="button-container">
+            <button onclick="goto1()">Memory Match</button>
+            <button onclick="goto2()">Crossword Puzzle</button>
+            <button onclick="goto3()">Who Am I?</button>
+            <button onclick="goto4()">Ordering Game</button>
+            <button onclick="goto5()">Drag & Drop</button>
+        </div>
+        <br>
+        <br>
+        <h2>🚀 Advanced Games</h2>
+        <div class="button-container">
+            <button onclick="goto6()">Maze Game</button>
+            <button onclick="goto7()">Save the Character</button>
+            <button onclick="goto8()">Frog Game</button>
+            <button onclick="goto9()">Rocketry Adventure</button>
+        </div>
+
+        <button id="backbtn" onclick="back()">⬅ Back</button>
+    </div>
+
+    <script>
+        function goto1() { window.location.href = "memory_matching_game/index.html"; }
+        function goto2() { window.location.href = "Crossword-game/create.html"; }
+        function goto3() { window.location.href = "../whoamI_game/setup.html"; }
+        function goto4() { window.location.href = "../Ordering_game/Ordering_game/inputs.html"; }
+        function goto5() { window.location.href = "../drag_and_drop/index.html"; }
+        function goto6() { window.location.href = "../maze_Game1/upload.html"; }
+        function goto7() { window.location.href = "../Save_the_char/play.html"; }
+        function goto8() { window.location.href = "../frog_game/index.html"; }
+        function goto9() { window.location.href = "../rocket_game/upload.html"; }
+        function back() { window.location.href = "index.html"; }
+    </script>
+</body>
+
+</html>

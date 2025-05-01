@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Learning</title>
+    <style> 
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-image: url('library.jpg'); /* Teal gradient background */
+            text-align: center;
+            background-size: cover;
+            /* Scales the image to cover the entire screen */
+            background-repeat: no-repeat;
+            /* Prevents the image from repeating */
+            background-position: center;
+            /* Centers the image on the screen */
+            background-attachment: fixed;
+        }
+
+        .container {
+            border: 2px solid floralwhite;
+            border-radius: 8px; /* Rounded corners */
+            padding: 20px; /* Space inside the container */
+            margin: 20px auto; /* Center the container */
+            max-width: 600px; /* Set a maximum width */
+            background-color: transparent; /* Background color */
+            box-shadow: 0 4px 10px floralwhite;
+            color: floralwhite;
+            margin-top: -100px;
+        }
+
+        button {
+            padding: 10px 20px;
+            margin: 10px;
+            font-size: 16px;
+            border-width: 1px;
+            border-color: white;
+            border-radius: 10px;
+            background-color: transparent;
+            cursor: pointer;
+            color: floralwhite;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+        .backButton {
+            margin-top: -650px;
+            margin-left: -350px;
+            margin-bottom: -100px;
+            margin-right: 250px;
+        }
+        #log-out {
+            box-shadow: 0 4px 10px floralwhite;
+        }
+
+        #log-out:hover {
+            background-color: #d32f2f;
+        }
+
+        #leaderboardBtn:hover {
+            background-color: #4379ed;
+        }
+
+        #evaluationBtn:hover {
+            background-color: rgb(99, 26, 172);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Welcome to the Learning</h1>
+        
+        <button id="learningBtn">Classification</button>
+        <button id="evaluationBtn">Step By Step</button> 
+        <button id="leaderboardBtn">Learning Parts</button>
+    </div>
+    <div class="backButton">
+        <button id="log-out" onclick="goTo()">Back</button>
+    </div>
+    
+    <script>
+        const rollNumber = localStorage.getItem('username');
+        console.log(rollNumber);
+        document.getElementById('learningBtn').addEventListener('click', function() {
+            window.location.href = '../Game2-Learning/main.html'; // Update with the actual path
+        });
+
+        document.getElementById('evaluationBtn').addEventListener('click', function() {
+            window.location.href = '../Game2-Learning/stepbystepui/stepbystep.html'; // Update with the actual path
+        });
+
+        document.getElementById('leaderboardBtn').addEventListener('click',function() {
+            window.location.href = '../Game2-Learning/learning_parts/org_sys.html';
+        });
+
+        function goTo() {
+            window.location.href = 'dashboard.html';
+        }
+
+    </script>
+</body>
+</html>

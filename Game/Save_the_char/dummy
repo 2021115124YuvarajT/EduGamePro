@@ -1,0 +1,204 @@
+let lives = 3;
+let usedQuestions = new Set();
+let totalQuestions = localStorage.getItem("qns");;
+let questionCount = 0;
+let startTime, endTime;
+let correctAnswers = 0;
+let memoryCheckAnswers = 0;
+let memoryCheckQuestions = [];
+
+const questionText = document.getElementById("question-text");
+const optionsContainer = document.getElementById("options");
+const livesDisplay = document.getElementById("lives");
+const kingImage = document.getElementById("king-img");
+const soldierText = document.getElementById("soldier-text");
+const gameOverScreen = document.getElementById("game-over");
+const replayButton = document.getElementById("replay");
+const livesCount = document.getElementById("lives-count");
+const livesBar = document.getElementById("lives-bar");
+const livesContainer = document.getElementById("lives-container");
+const livesBarContainer = document.getElementById("lives-bar-container");
+const timeSpentDisplay = document.createElement("p");
+const taskCompletionDisplay = document.createElement("p");
+const ltmDisplay = document.createElement("p");
+
+gameOverScreen.appendChild(timeSpentDisplay);
+gameOverScreen.appendChild(taskCompletionDisplay);
+gameOverScreen.appendChild(ltmDisplay);
+
+let firstLoad = true;
+let currentQuestion = null;
+
+async function fetchQuestion() {
+    try {
+        // Allow questions to be fetched until questionCount > totalQuestions
+        if (questionCount > totalQuestions) {
+            startMemoryCheck();
+            return;
+        }
+
+        if (questionCount === 0) {
+            startTime = Date.now();
+        }
+
+        const response = await fetch("http://127.0.0.1:5103/get_question");
+        const data = await response.json();
+
+        if (data.error) {
+            console.error("Error fetching question:", data.error);
+            return;
+        }
+
+        if (usedQuestions.has(data.question)) {
+            fetchQuestion();
+            return;
+        }
+
+        usedQuestions.add(data.question);
+        currentQuestion = data;
+        questionCount++;
+        memoryCheckQuestions.push(data);
+        loadQuestion();
+    } catch (error) {
+        console.error("Failed to fetch question:", error);
+    }
+}
+
+function loadQuestion() {
+    // If lives are 0, immediately start memory check.
+    if (lives <= 0) {
+        startMemoryCheck();
+        return;
+    }
+
+    if (!currentQuestion) {
+        fetchQuestion();
+        return;
+    }
+
+    if (firstLoad) {
+        soldierText.innerText = "Answer correctly to get water and put out the fire!";
+        firstLoad = false;
+    }
+
+    soldierText.style.opacity = 0;
+    soldierText.style.transform = "translateY(20px)";
+    setTimeout(() => {
+        soldierText.style.opacity = 1;
+        soldierText.style.transform = "translateY(0)";
+    }, 500);
+
+    questionText.innerText = currentQuestion.question;
+    optionsContainer.innerHTML = "";
+
+    currentQuestion.options.forEach(option => {
+        let button = document.createElement("button");
+        button.innerText = option;
+        button.onclick = () => checkAnswer(option.split(")")[0] + ")");
+        optionsContainer.appendChild(button);
+    });
+}
+
+function updateLives() {
+    livesCount.innerText = lives;
+    let percentage = (lives / 3) * 100;
+    livesBar.style.width = `${percentage}%`;
+    livesBar.style.backgroundColor = lives === 1 ? "red" : "green";
+}
+
+function checkAnswer(selected) {
+    let correctAnswer = currentQuestion.correctAnswer; // e.g., "c)"
+    let fullCorrectAnswer = currentQuestion.options.find(opt => opt.startsWith(correctAnswer));
+
+    if (selected === correctAnswer) {
+        correctAnswers++;
+        soldierText.innerText = "Well done! Some fire was put out!";
+        kingImage.src = "./assets/happy_king.jpeg";
+    } else {
+        soldierText.innerText = `Oh no! Fire is getting closer.. The correct answer was: ${fullCorrectAnswer}`;
+        kingImage.src = "./assets/sad_king.jpeg";
+        lives--;
+        updateLives();
+    }
+
+    // Disable all answer buttons immediately to prevent additional inputs.
+    const buttons = optionsContainer.getElementsByTagName("button");
+    for (let btn of buttons) {
+        btn.disabled = true;
+    }
+
+    // Wait 2 seconds for feedback, then proceed.
+    setTimeout(() => {
+        // If this was the last question OR no lives remain, transition to memory check.
+        if (questionCount >= totalQuestions || lives === 0) {
+            // Hide question container to prevent further inputs.
+            document.getElementById("question-container").classList.add("hidden");
+            startMemoryCheck();
+        } else {
+            fetchQuestion();
+        }
+    }, 2000);
+}
+
+function startMemoryCheck() {
+    // If no memory check questions remain, end the game.
+    if (memoryCheckQuestions.length === 0) {
+        gameOver();
+        return;
+    }
+    
+    let randomIndex = Math.floor(Math.random() * memoryCheckQuestions.length);
+    currentQuestion = memoryCheckQuestions[randomIndex];
+    memoryCheckQuestions.splice(randomIndex, 1);
+    
+    questionText.innerText = "Memory Check: " + currentQuestion.question;
+    optionsContainer.innerHTML = "";
+    
+    currentQuestion.options.forEach(option => {
+        let button = document.createElement("button");
+        button.innerText = option;
+        button.onclick = () => checkMemoryAnswer(option.split(")")[0] + ")");
+        optionsContainer.appendChild(button);
+    });
+}
+
+function checkMemoryAnswer(selected) {
+    if (selected === currentQuestion.correctAnswer) {
+        memoryCheckAnswers++;
+    }
+    
+    if (memoryCheckQuestions.length === 0) {
+        gameOver();
+    } else {
+        startMemoryCheck();
+    }
+}
+
+function gameOver() {
+    endTime = Date.now();
+    let timeSpent = ((endTime - startTime) / 1000).toFixed(2);
+    let taskCompletion = correctAnswers === totalQuestions ? 1 : 0;
+    let LTM = correctAnswers > 0 ? (memoryCheckAnswers / correctAnswers).toFixed(2) : 0;
+
+    timeSpentDisplay.innerText = `Time Spent: ${timeSpent} seconds`;
+    taskCompletionDisplay.innerText = `Task Completed: ${taskCompletion === 1 ? "Yes" : "No"}`;
+    ltmDisplay.innerText = `LTM Score: ${LTM * 100}%`;
+
+    gameOverScreen.classList.remove("hidden");
+    document.getElementById("question-container").classList.add("hidden");
+}
+
+fetchQuestion();
+
+// Add CSS animation for shake effect
+document.head.insertAdjacentHTML("beforeend", `
+<style>
+@keyframes shake {
+  0% { transform: translateX(0); }
+  25% { transform: translateX(-10px); }
+  50% { transform: translateX(10px); }
+  75% { transform: translateX(-10px); }
+  100% { transform: translateX(0); }
+}
+</style>
+`);

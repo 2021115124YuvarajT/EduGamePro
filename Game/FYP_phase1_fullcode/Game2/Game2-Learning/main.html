@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sorting Game</title>
+  <link rel="stylesheet" href="waste.css">
+</head>
+
+<body class="level-body">
+  <div id="level-buttons" class="level-buttons">
+    <button id="backButton">Back</button>
+  </div>
+  <h1>Select Your Game</h1>
+  <div class="level-container">
+    <div id="level-buttons" class="level-buttons">
+      <button onclick="goTo(1)">Waste</button>
+      <button onclick="goTo(2)">Energy</button>
+    </div>
+    <br><br>
+    <div id="level-buttons" class="level-buttons">
+      <button onclick="goTo(3)">Reverse & Irreverse</button>
+      <button onclick="goTo(4)">Fibres</button>
+    </div>
+    <br><br>
+    <div id="level-buttons" class="level-buttons">
+      <button onclick="goTo(5)">Float & Sink</button>
+      <button onclick="goTo(6)">Grains</button>
+    </div>
+  </div>
+  <div id="completedTopicsDisplay">
+    <h2>Completed Topics:</h2>
+    <ul id="completedTopicsList"></ul>
+  </div>
+  <script>
+    const badges = JSON.parse(localStorage.getItem('badges')) || [];
+    const topicNames = {
+      1: "Waste",
+      2: "Energy",
+      3: "Reverse & Irreverse",
+      4: "Fibres",
+      5: "Float & Sink",
+      6: "Grains"
+    };
+    const rollNumber = localStorage.getItem('username');
+    console.log("Roll Number : ", rollNumber);
+
+    console.log("the value is working");
+    let shown = localStorage.getItem('shownClassification') | 0;
+    console.log("the value of shown is ", shown);
+    let completedTopics = [];
+    //et completedTopics = JSON.parse(localStorage.getItem('completedTopics')) || []; // Load completed topics
+    //console.log(completedTopics);
+    //localStorage.setItem('completedTopics',[]);
+    try {
+      // Check if there is valid data in localStorage
+      const storedTopics = localStorage.getItem('completedTopics');
+      console.log(storedTopics);
+      // Parse only if the value exists and is not null
+      if (storedTopics) {
+        completedTopics = JSON.parse(storedTopics);
+      }
+    } catch (error) {
+      console.error('Error parsing completedTopics:', error);
+      completedTopics = []; // Reset to an empty array in case of error
+    }
+    console.log(completedTopics); //
+    let experience = 0; // Initialize experience
+
+    // Function to navigate to the resource page for each topic
+    function goTo(level) {
+      window.location.href = `resources${level}.html`;
+    }
+
+    // Mark topic completion and store it in localStorage
+    async function markCompleted(level) {
+      if (!completedTopics.includes(level)) {
+        completedTopics.push(level);
+        experience += 10;
+        localStorage.setItem('completedTopics', JSON.stringify(completedTopics)); // Save progress
+        await updateExperience(rollNumber); // Update experience on server
+
+        if (completedTopics.length === 6 && shown == 0) {
+          //localStorage.setItem('badges',)
+          showBadgeAnimation();
+        }
+      }
+    }
+
+    // Redirect to badge animation if all topics are completed
+    function checkAllCompleted() {
+      if (completedTopics.length === 6 && shown == 0) {
+        console.log(localStorage.getItem('shown'));
+        if(!badges.includes('Classification_Trophy')){
+          badges.push('Classification_Trophy');
+        }
+        localStorage.setItem("badges", JSON.stringify(badges));
+
+        localStorage.setItem('shownClassification', 1);
+        showBadgeAnimation();
+      }
+    }
+    function displayCompletedTopics() {
+      const completedTopicsList = document.getElementById('completedTopicsList');
+      completedTopicsList.innerHTML = ''; // Clear previous content
+      completedTopics.forEach(topicId => {
+        const li = document.createElement('li');
+        li.textContent = topicNames[topicId] || `Topic ${topicId}`;
+        completedTopicsList.appendChild(li);
+      });
+    }
+    document.getElementById('backButton').addEventListener('click', function () {
+      window.location.href = '../frontend/learning.html'; // Adjust path as needed
+    });
+
+    // Call to check completion status at page load
+    checkAllCompleted();
+    displayCompletedTopics();
+    // Function to update experience on the server
+    async function updateExperience(rollNumber) {
+      try {
+        const response = await fetch('http://localhost:5000/api/students/update-experience', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ rollNumber: rollNumber, experience: experience }),
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          console.log(data.message);
+        } else {
+          const error = await response.text();
+          console.error('Error updating experience:', error);
+        }
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    }
+
+    // Redirect to badge animation page
+    function showBadgeAnimation() {
+      window.location.href = 'badge_animator.html';
+    }
+  </script>
+
+</body>
+
+</html>

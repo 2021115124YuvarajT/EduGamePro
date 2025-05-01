@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digestive System</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f0f8ff; /* Very light background color */
+        }
+        .description-box {
+            background-color: #e0f7fa; /* Light blue color */
+            padding: 7px;
+            border-radius: 10px;
+            display: inline-block;
+            text-align: left;
+            position: relative;
+            width: 80%;
+            margin-bottom: 10px;
+        }
+        .part {
+            cursor: pointer;
+            color: blue;
+            text-decoration: underline;
+        }
+        canvas {
+            border: 1px solid #000;
+            display: block;
+            margin: auto;
+            width: 300px;
+            height: 400px;
+        }
+        .part-name {
+            position: absolute;
+            font-size: 20px;
+            color: black;
+            transition: color 0.5s;
+        }
+        .highlight {
+            color: orange; /* Highlight color */
+            font-weight: 200;
+        }
+        .button-container {
+            margin-top: 10px;
+            text-align: left; /* Align buttons to the left */
+            margin-left: 30%; /* Adjust the left margin to position the button */
+        }
+        .button-container button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 7px 20px;
+            font-size: 12px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        .button-container button:hover {
+            background-color: #0056b3;
+        }
+        #backButton {
+            position: fixed;
+            left: 20px;
+            bottom: 20px;
+            background-color: #007bff;
+        }
+        #nextButton {
+            position: fixed;
+            right: 20px;
+            bottom: 20px;
+            background-color: #007bff;
+        }
+        #image-container {
+            float: right;
+            margin-right: 10%;
+        }
+        #digestiveImage {
+            width: 300px;
+            height: 300px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Digestive System</h1>
+    <div class="description-box">
+        <p id="description">The digestive system is responsible for breaking down complex food molecules into 
+            simpler molecules like nutrients. <br>It can be divided 
+            into two:  <span style="color:blueviolet">1.</span>digestive tract    &nbsp;&nbsp; 
+            <span style="color:blueviolet">2.</span>digestive glands.<br>Digestive tract follows the path 
+            below. Three important digestive glands are: 1. Salivary glands  2. Pancreas  3. Liver
+            <button id="descriptionButton" onclick="toggleDescription()">🔊 Listen</button>
+        </p>
+    </div>
+    
+    <div id="image-container">
+        <img id="digestiveImage" src="./gif/dig_gif.webp" alt="Digestive System Image">
+    </div>
+
+    <canvas id="digestiveCanvas" width="300" height="400"></canvas>
+    <div id="partNames"></div>
+
+    <div class="button-container">
+        <button onclick="toggleExplanation()">Play/Stop Explanation</button>
+    </div>
+
+    <button id="backButton" onclick="window.location.href='org_sys.html'">Back</button>
+    <button id="nextButton" onclick="window.location.href='resp.html'">Next System >></button>
+
+    <script>
+        let descriptionSpeech;
+        let explanationSpeech;
+        let isDescriptionSpeaking = false;
+        let isExplanationSpeaking = false;
+        let currentPartIndex = 0;
+
+        function speak(text, rate = 1) {
+            const speech = new SpeechSynthesisUtterance(text);
+            speech.rate = rate;
+            window.speechSynthesis.speak(speech);
+            return speech;
+        }
+
+        function toggleDescription() {
+            if (isDescriptionSpeaking) {
+                window.speechSynthesis.cancel();
+                isDescriptionSpeaking = false;
+            } else {
+                const descriptionText = document.getElementById('description').innerText;
+                descriptionSpeech = speak(descriptionText, 1);
+                isDescriptionSpeaking = true;
+                descriptionSpeech.onend = () => {
+                    isDescriptionSpeaking = false;
+                };
+            }
+        }
+
+        function toggleExplanation() {
+            if (isExplanationSpeaking) {
+                window.speechSynthesis.cancel();
+                isExplanationSpeaking = false;
+            } else {
+                highlightNextPart();
+                isExplanationSpeaking = true;
+            }
+        }
+
+        const canvas = document.getElementById('digestiveCanvas');
+        const ctx = canvas.getContext('2d');
+
+        const img = new Image();
+        img.src = './images/digestive_system.png'; 
+
+        const parts = [
+            { name: 'Mouth', x: 720, y: 275, arrow: '→', speech: 'This is the mouth, where digestion begins. Food is broken down into smaller pieces by chewing and mixed with saliva.' },
+            { name: 'Pharynx', x: 300, y: 275, arrow: '→', speech: 'This is the pharynx, a part of the throat that connects the mouth to the esophagus.' },
+            { name: 'Esophagus', x: 720, y: 332, arrow: '→', speech: 'The esophagus is a muscular tube that transports food from the pharynx to the stomach through peristaltic movements.' },
+            { name: 'Stomach', x: 290, y: 430, arrow: '→', speech: 'The stomach breaks down food using acids and enzymes, turning it into a semi-liquid mixture called chyme.' },
+            { name: 'Small Intestines', x: 720, y: 495, arrow: '→', speech: 'In the small intestines, nutrients from the chyme are absorbed into the bloodstream. This is where most digestion and nutrient absorption occur.' },
+            { name: 'Large Intestines', x: 230, y: 495, arrow: '→', speech: 'The large intestine absorbs water and salts from the remaining indigestible food matter, turning it into solid waste.' },
+            { name: 'Anus', x: 720, y: 565, arrow: '→', speech: 'The anus is the final part of the digestive tract. Solid waste is expelled from the body through the anus.' }
+        ];
+
+        function drawDigestiveSystem() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear canvas
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height); // Draw image
+
+            parts.forEach(part => {
+                ctx.fillText(part.arrow, part.x + 50, part.y + 15);
+                const partNameDiv = document.createElement('div');
+                partNameDiv.className = 'part-name';
+                partNameDiv.innerText = part.name;
+                partNameDiv.style.left = part.x + 'px';
+                partNameDiv.style.top = part.y + 'px';
+                document.getElementById('partNames').appendChild(partNameDiv);
+            });
+        }
+
+        function speakPart(part) {
+            explanationSpeech = new SpeechSynthesisUtterance(part.speech);
+            explanationSpeech.onend = () => {
+                currentPartIndex++;
+                if (currentPartIndex < parts.length) {
+                    highlightNextPart();
+                } else {
+                    isExplanationSpeaking = false;
+                    document.getElementById('nextButton').classList.add('highlight');
+                }
+            };
+            window.speechSynthesis.speak(explanationSpeech);
+        }
+
+        function highlightNextPart() {
+            if (currentPartIndex < parts.length) {
+                const partNames = document.querySelectorAll('.part-name');
+                partNames[currentPartIndex].classList.add('highlight');
+                speakPart(parts[currentPartIndex]);
+            }
+        }
+
+        img.onload = () => {
+            drawDigestiveSystem(); // Initial draw
+        };
+    </script>
+</body>
+</html>

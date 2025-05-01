@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Memory Game Setup</title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      margin: 0;
+      padding: 0; 
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      background-size: 100% 100%;
+      background-position: center;
+      animation: backgroundTransition 20s infinite linear;
+    }
+
+    @keyframes backgroundTransition {
+      0% { background-image: url('assets/img1.jpg'); }
+      20% { background-image: url('assets/img2.jpeg'); }
+      40% { background-image: url('assets/img3.jpeg'); }
+      60% { background-image: url('assets/img4.jpeg'); }
+      80% { background-image: url('assets/img5.jpeg'); }
+      100% { background-image: url('assets/img1.jpg'); }
+    }
+
+    h1 {
+      color: #ffffff;
+      font-size: 2rem;
+      margin-bottom: 20px;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.4);
+    }
+
+    /* Change h1 color based on background */
+h1,.input-container label {
+    animation: textColorTransition 20s infinite linear;
+}
+
+@keyframes textColorTransition {
+    0% { color: white; }       /* For img1 */
+    20% { color: black; }      /* For img2 */
+    40% { color: white; }   /* For img3 */
+    60% { color: white; }        /* For img4 */
+    80% { color: black; }      /* For img5 */
+    100% { color: white; }     /* Back to img1 */
+}
+    .input-container {
+      margin-bottom: 20px;
+      text-align: left;
+      border: 2px solid white;
+      border-radius: 5px;
+      padding: 20px;
+      font-size: 1.5rem;
+
+    }
+
+    .input-container input,
+    .input-container button {
+      font-size: 1.5rem;
+      padding: 10px 15px;
+      margin: 5px;
+      justify-content: left;
+      border: none;
+      border-radius: 5px;
+      outline: none;
+    }
+
+    .input-container input {
+      background-color: #ffffff;
+      color: #2d3436;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    }
+
+    .input-container button {
+      background-color: #0984e3;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .input-container button:hover {
+      background-color: #74b9ff;
+    }
+
+    .next_button {
+      text-align: center;
+    }
+
+    #back_button:hover {
+      background-color: rgb(197, 48, 48);
+    }
+  </style>
+  
+</head>
+
+<body>
+  <h1>Memory Matching Game Setup</h1>
+
+  <div class="input-container">
+    <label for="topic_title" style="color:white;font-weight: bold;">Enter the topic title: </label>
+    <input id="topic_title" type="text" placeholder="enter the title here"><br>
+    <label for="numCards" style="color: white; font-weight: bold;">Enter the number of cards (even number):</label>
+    <input id="numCards" type="number" min="2" step="2" placeholder="E.g., 4"><br>
+    <button id="next_button" onclick="displayTextFields()">Next</button>
+    <button id="exit_button" onclick="saveToMongoDB()">Save</button>
+    <button id="back_button" onclick="back()">Back</button>
+  </div>
+
+  <div id="text-fields-container" class="input-container"></div>
+
+  <div class="input-container">
+    <button id="startGame" style="display: none;" onclick="startGame()">Start Game</button>
+  </div>
+
+  <script>
+    function displayTextFields() {
+      const topic_title = document.getElementById('topic_title').value.trim();
+
+      if (!topic_title) {
+        alert("Please enter a topic title.");
+        return;
+      }
+
+      localStorage.setItem("topic_title", topic_title);
+
+      const numCardsInput = document.getElementById('numCards');
+      const numCards = parseInt(numCardsInput.value);
+
+      if (!numCards || numCards % 2 !== 0) {
+        alert("Please enter a valid even number.");
+        return;
+      }
+
+      localStorage.setItem('noOfCards', numCards);
+      const textFieldsContainer = document.getElementById('text-fields-container');
+      textFieldsContainer.innerHTML = ""; // Clear any previous fields
+
+      for (let i = 0; i < numCards / 2; i++) {
+        textFieldsContainer.innerHTML += `
+        <label style="color: white; font-weight: bold;">Enter value for pair ${i + 1}:</label>
+        <input type="text" id="val${i}" placeholder="E.g., A"><br>
+        <label style="color: white; font-weight: bold;">Enter description for ${i + 1}:</label>
+        <input type="text" id="desc${i}" placeholder="Enter description"><br>
+      `;
+      }
+
+      document.getElementById('startGame').style.display = "inline-block";
+    }
+
+
+
+    function startGame() {
+      let noOfCards = parseInt(localStorage.getItem('noOfCards'));
+      let cardValues = [];
+      let descriptions = {};
+
+      for (let i = 0; i < noOfCards / 2; i++) {
+        const value = document.getElementById(`val${i}`).value.trim();
+        const description = document.getElementById(`desc${i}`).value.trim();
+
+        if (!value || !description) {
+          alert(`Please enter both a value and a description for pair ${i + 1}.`);
+          return;
+        }
+
+        cardValues.push(value, value); // Add the pair
+        descriptions[value] = description; // Store description for the value
+      }
+
+      localStorage.setItem('cardValues', JSON.stringify(cardValues));
+      localStorage.setItem('cardDescriptions', JSON.stringify(descriptions));
+
+      // Redirect to the game page
+      window.location.href = "mem.html";
+    }
+    function saveToMongoDB() {
+      const localStorageData = {
+        cardDescriptions: JSON.parse(localStorage.getItem("cardDescriptions")),
+        cardValues: JSON.parse(localStorage.getItem("cardValues")),
+        noOfCards: JSON.parse(localStorage.getItem("noOfCards")),
+        previewData: JSON.parse(localStorage.getItem("previewData")),
+        startLearning: JSON.parse(localStorage.getItem("startLearning")),
+        topic_title: localStorage.getItem("topic_title"),
+      };
+
+      fetch("http://127.0.0.1:7000/saveData", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(localStorageData),
+      })
+        .then((response) => response.json())
+        .then((data) => console.log("Response:", data))
+        .catch((error) => console.error("Error:", error));
+    }
+
+    function back() {
+      window.location.href = "../games.html";
+    }
+  </script>
+</body>
+
+</html>

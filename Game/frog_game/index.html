@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Frog Jump Game - Input</title>
+    <script src="script.js" defer></script>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        #go::after {
+            content: '🖢'; /* Left arrow */
+            position: absolute;
+            left: 180px;
+            top: 42%;
+            transform: translateY(-50%);
+            font-size: 50px;
+            color: #f2f7f3;
+            animation: moveLeft 1s infinite alternate;
+        }
+
+        @keyframes moveLeft {
+            from {
+                right: -30px;
+                opacity: 0.5;
+            }
+            to {
+                right: -40px;
+                opacity: 1;
+            }
+        }
+
+        #game-contain {
+            border: 2px solid white;
+            width: 500px;
+            align-items: center;
+            margin-left: 500px;
+            margin-top: 20px;
+            border-radius: 25px;
+        }
+    </style>
+</head>
+<body>
+    <div id="game-container">
+        <div id="game-contain">
+        <h1>Frog Jump Game</h1> 
+        <label>Quiz Topic: <input type="text" id="topic"></label>
+        <label>Level: 
+            <select id="level">
+                <option value="0"></option> 
+                <option value="1">Level 1</option>
+                <option value="2">Level 2</option>
+                <option value="3">Level 3</option>
+                <option value="4">Level 4</option>
+                <option value="5">Level 5</option>
+            </select>
+        </label>
+        <button onclick="backto()">Back</button>
+        <button onclick="generateQuestions()">Generate</button>
+        <button id="go" onclick="goToPlay()">Go to Play</button>
+        <img id="loading" src="assets/loading.gif" style="display: none; width: 150px; height: 150px; margin-left: 200px;" alt="Loading...">
+        <p id="resultMessage"></p>
+    </div>
+    </div>
+    
+    <script>
+        const selectedtopic = document.getElementById("topic").value.trim();
+        localStorage.setItem("topic",selectedtopic);
+        document.getElementById("level").addEventListener("change", function() {
+            localStorage.setItem("level", this.value); // Store selected level
+        });
+
+        // ✅ Function to Generate Questions with Loading GIF
+        async function generateQuestions() {
+            const topicInput = document.getElementById("topic").value.trim();
+
+            if (!topicInput) {
+                alert("⚠ Please enter a topic!");
+                return;
+            }
+
+            try {
+                // Show loading GIF
+                loadingElement.style.display = "block";
+                resultMessage.innerHTML = ""; // Clear previous result messages
+
+                const response = await fetch("http://127.0.0.1:5102/generate", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ topic: topicInput })
+                });
+
+                const result = await response.json();
+                console.log("✅ Server Response:", result);
+
+                if (response.ok) {
+                    resultMessage.innerHTML = `<br><br><span style="color: white; font-size: 20px;">✅ ${result.message}</span>`;
+                    localStorage.setItem("topic", topicInput);
+                } else {
+                    resultMessage.innerHTML = `<span style="color: red;">❌ Error: ${result.error}</span>`;
+                }
+
+            } catch (error) {
+                console.error("❌ Fetch Error:", error);
+                resultMessage.innerHTML = `<span style="color: red;">❌ Fetch Error: ${error.message}</span>`;
+            } finally {
+                // Hide loading GIF after processing
+                loadingElement.style.display = "none";
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Step-by-Step Subtraction with Borrowing</title>
+  <style>
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      height: 100vh;
+      background-color: #f4f4f9;
+      font-family: Arial, sans-serif;
+    }
+
+    .subtraction-container {
+      font-size: 2.5rem;
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .heading {
+      font-size: 2.5rem;
+      text-align: center;
+      margin-bottom: 40px;
+      color: red;
+    }
+
+    .number-row {
+      margin: 10px;
+      color: blueviolet;
+      display: flex;
+      justify-content: center;
+    }
+
+    .result-row {
+      margin: 10px;
+      color: green;
+    }
+
+    .operation {
+      color: blue;
+      text-align: right;
+      margin: 0;
+      padding: 0;
+    }
+
+    .borrow-row {
+      margin: 10px;
+      font-size: 1.6rem;
+      color: green;
+      height: 30px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .line {
+      border-top: 2px solid black;
+      width: 180px;
+      margin: 10px auto;
+    }
+
+    .highlight-container {
+      margin-top: 20px;
+      font-size: 2rem;
+      text-align: center;
+    }
+
+    .highlighted-digits {
+      font-size: 2.5rem;
+      color: red;
+    }
+
+    .borrow {
+      font-size: 1.5rem;
+      position: relative;
+      top: -20px;
+      color: green;
+    }
+
+    .new-borrow {
+      font-size: 1.5rem;
+      position: relative;
+      top: -20px;
+      color: green;
+    }
+
+    /* Styling for the refresh button */
+    .refresh-btn {
+      padding: 15px 30px;
+      background-color: rgb(87, 203, 232);
+      color: aliceblue;
+      font-weight: bold;
+      font-size: large;
+      border-radius: 10%;
+      border-color: white;
+    }
+
+  </style>
+</head>
+<body>
+  <div class="heading">Subtraction of Two Numbers</div>
+  <div class="subtraction-container">
+    <div class="borrow-row" id="borrowRow"></div> <!-- Borrow will be shown here -->
+    <div class="number-row" id="num1"></div>
+    <div class="number-row" id="num2"></div>
+    <div class="operation" id="op">-</div>
+    <div class="line"></div>
+    <div class="result-row" id="result">? ?</div>
+    <div class="line"></div>
+  </div>
+
+  <!-- Separate section to display the digit-by-digit subtraction process -->
+  <div class="highlight-container">
+    <div class="highlighted-digits" id="highlightedDigits"></div>
+  </div>
+
+  <button class="refresh-btn" onclick="refreshPage()">Refresh Page</button>
+
+  <script>
+    // Function to generate a random integer between min (inclusive) and max (inclusive)
+    function getRandomInt(min, max) {
+        return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+
+    let num1 = getRandomInt(999, 10000); // Random number between 999 and 10000
+    let num2 = getRandomInt(99, 10000);  // Random number between 99 and 10000
+
+    // Ensure operand1 is greater than operand2
+    if (num2 > num1) {
+        [num1, num2] = [num2, num1];
+    }
+
+    // Format operand2 with leading zeros if needed
+    let formattedNum2 = num2.toString().padStart(num1.toString().length, '0');
+
+    console.log(`Subtraction: ${num1} - ${formattedNum2}`);
+    // Call animateSubtraction() here as in the original code
+
+
+    let result = '';
+    let borrowArray = [];
+
+    // Adjusted delay settings for smoother animation
+    let initialBorrowDelay = 1000; // Delay for showing borrow process
+    let initialSubtractionDelay = 2000; // Delay for showing each subtraction step
+    let perStepDelay = 2000; // Delay per step (both borrow and subtraction)
+
+    // Main function to animate the subtraction
+    function animateSubtraction() {
+      const digits1 = num1.toString().split('').reverse();
+      const digits2 = formattedNum2.split('').reverse(); // Use the formatted num2
+
+      let borrowRowContent = new Array(digits1.length).fill('&nbsp;'); // Array to store borrow row content
+
+      // Display num1 and num2 immediately
+      document.getElementById('num1').innerHTML = formatNumber(num1);
+      document.getElementById('num2').innerHTML = formatNumber(formattedNum2);
+      document.getElementById('result').innerHTML = '? ? ? ?';
+
+      // Determine if there are borrows and update borrowRowContent
+      let borrowNeeded = false;
+      digits1.forEach((digit1, index) => {
+        let digit2 = digits2[index] || 0;
+        if (parseInt(digit1) < parseInt(digit2)) {
+          borrowNeeded = true;
+          // Simulate the borrowing process
+          let borrowedDigit1 = parseInt(digit1) + 10;
+          borrowRowContent[index] = borrowedDigit1.toString();
+          if (index + 1 < digits1.length) {
+            digits1[index + 1] = (parseInt(digits1[index + 1]) - 1).toString();
+            borrowRowContent[index + 1] = digits1[index + 1];
+          }
+        }
+      });
+
+      if (borrowNeeded) {
+        // Display the borrow row digits one by one if there are borrows
+        setTimeout(() => {
+          updateBorrowRow(borrowRowContent, 0, () => {
+            // Proceed with subtraction steps after borrowing is complete
+            performSubtractionSteps();
+          });
+        }, initialBorrowDelay); // Delay for 1 second after displaying num1 and num2
+      } else {
+        // Skip showing the borrow row if no borrows are needed
+        setTimeout(() => {
+          performSubtractionSteps();
+        }, initialBorrowDelay); // Same delay for uniformity
+      }
+    }
+
+    // Adjusted the subtraction steps function for proper delays
+    // Function to perform the subtraction steps
+    function performSubtractionSteps() {
+      const digits1 = num1.toString().split('').reverse();
+      const digits2 = formattedNum2.split('').reverse(); // Use the formatted num2
+
+      let stepDelay = initialSubtractionDelay; // Start delay for the first subtraction step
+      let totalSteps = digits1.length;
+
+      // Recursive function to handle each step
+      function processStep(index) {
+        if (index >= totalSteps) {
+          // Once all steps are done, display the final result
+          document.getElementById('result').innerHTML = formatResult(result);
+          return;
+        }
+
+        let digit1 = digits1[index];
+        let digit2 = digits2[index] || 0;
+        let currentDigit;
+
+        if (parseInt(digit1) < parseInt(digit2)) {
+          let borrowedDigit1 = parseInt(digit1) + 10;
+          currentDigit = borrowedDigit1 - parseInt(digit2);
+
+          // Handle the borrowing for the next digit
+          if (index + 1 < digits1.length) {
+            digits1[index + 1] = (parseInt(digits1[index + 1]) - 1).toString();
+          }
+
+          displaySubtractionStep(borrowedDigit1, digit2, currentDigit, index, () => {
+            result = currentDigit + result;
+            document.getElementById('result').innerHTML = formatResult(result);
+            processStep(index + 1); // Proceed to the next step after the current one
+          });
+        } else {
+          currentDigit = parseInt(digit1) - parseInt(digit2);
+
+          displaySubtractionStep(digit1, digit2, currentDigit, index, () => {
+            result = currentDigit + result;
+            document.getElementById('result').innerHTML = formatResult(result);
+            processStep(index + 1); // Proceed to the next step after the current one
+          });
+        }
+      }
+
+      processStep(0); // Start the recursion with the first step
+    }
+
+    // Updated function to display each subtraction step and ensure proper highlighting
+    function displaySubtractionStep(digit1, digit2, currentDigit, index, callback) {
+      const highlightedDigitsElement = document.getElementById('highlightedDigits');
+      
+      // Highlight the current step
+      highlightedDigitsElement.innerHTML = `${digit1} - ${digit2} = ${currentDigit}`;
+
+      // After 2 seconds, clear the highlight and call the callback to move to the next step
+      setTimeout(() => {
+        highlightedDigitsElement.innerHTML = '';
+        if (callback) callback();
+      }, 3000); // Highlight remains for 2 seconds
+    }
+
+    // Function to update the borrow row
+    function updateBorrowRow(borrowRowContent, index, callback) {
+      if (index >= borrowRowContent.length) {
+        if (callback) callback();
+        return;
+      }
+
+      setTimeout(() => {
+        const borrowRowElement = document.getElementById('borrowRow');
+        // Reverse the borrowRowContent for correct display order and join with spaces
+        borrowRowElement.innerHTML = borrowRowContent.slice(0, index + 1).reverse().join(' &nbsp;&nbsp;');
+        updateBorrowRow(borrowRowContent, index + 1, callback); // Continue updating the next borrow
+      }, 1000); // Borrow row update delay
+    }
+
+    // Helper function to format the result with spaces between digits
+    function formatResult(result) {
+      return result.split('').join(' &nbsp;');
+    }
+
+    // Helper function to format numbers with spaces between digits
+    function formatNumber(num) {
+      return num.toString().split('').join(' &nbsp;');
+    }
+
+    // Function to refresh page(itself)
+    function refreshPage() {
+      location.reload();
+    }
+
+    // Call the subtraction animation
+    document.getElementById('num1').innerHTML = '';
+    document.getElementById('num2').innerHTML = '';
+    document.getElementById('borrowRow').innerHTML = '';
+    document.getElementById('highlightedDigits').innerHTML = '';
+    document.getElementById('result').innerHTML = '';
+    animateSubtraction(); // Start the animation
+  </script>
+</body>
+</html>

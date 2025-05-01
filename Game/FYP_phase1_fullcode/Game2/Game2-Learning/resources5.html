@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Float and Sink</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 20px;
+        }
+
+        #progress-container {
+            background-color: #ccc;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+
+        #progress-bar {
+            height: 20px;
+            width: 0%;
+            background-color: #28a745;
+            position: relative;
+        }
+
+        #progress-text {
+            position: absolute;
+            width: 100%;
+            text-align: center;
+            font-weight: bold;
+            color: white;
+        }
+
+        .waste-type {
+            background-color: #fff;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .waste-type img {
+            width: 100%;
+            max-width: 300px;
+            height: auto;
+            border-radius: 5px;
+            margin-bottom: 15px;
+        }
+
+        button {
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .completed {
+            background-color: #28a745;
+        }
+
+        /* Congratulatory popup styles */
+        #congratulations-popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #fff;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            text-align: center;
+            animation: popup 0.5s ease-out;
+        }
+
+        #congratulations-popup h2 {
+            color: #28a745;
+        }
+
+        #congratulations-popup button {
+            margin-top: 15px;
+            background-color: #ff9800;
+        }
+
+        @keyframes popup {
+            0% {
+                transform: translate(-50%, -50%) scale(0.5);
+                opacity: 0;
+            }
+
+            100% {
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 1;
+            }
+        }
+
+        .backButton:hover {
+            background-color: #d32f2f;
+        }
+
+        .backButton {
+            width: 120px;
+        }
+    </style>
+</head>
+
+<body>
+    <button class="backButton" onclick="goTo()">Back</button>
+    <h1>Float and Sink</h1>
+    <div id="progress-container">
+        <div id="progress-bar"><span id="progress-text"></span></div>
+    </div>
+
+    <!-- Float Section -->
+    <div class="waste-type" id="float">
+        <h2>Float</h2>
+        <img src="/Game2-Learning/pics/classificationImages/float.jpg" alt="Float Image">
+        <p>Materials that have a density lower than the liquid will rise to the surface. For example, in recycling, lighter plastics may float, allowing them to be separated from heavier materials.<br>Most types of wood, like pine or oak, are less dense than water and float.<br> Ice is less dense than liquid water, so ice cubes float.</p>
+        <button onclick="speakText('float')">Read Aloud</button>
+    </div>
+
+    <!-- Sink Section -->
+    <div class="waste-type" id="sink">
+        <h2>Sink</h2>
+        <img src="/Game2-Learning/pics/classificationImages/sink.jpg" alt="Sink Image">
+        <p>Materials with a higher density than the liquid will sink to the bottom. This is useful for separating denser materials like glass or metals from lighter ones. <br>Metals like iron, steel, and copper sink in water because they are much denser.<br>Most rocks, like granite or marble, have a higher density than water and sink.</p>
+        <button onclick="speakText('sink')">Read Aloud</button>
+    </div>
+
+    <div id="congratulations-popup">
+        <h2>Congratulations!</h2>
+        <p>Great job! You have learned about all the types of waste. Would you like to play a fun matching game now?</p>
+        <button onclick="selectLevel(5)">Let's play</button>
+    </div>
+
+    <script>
+        localStorage.setItem('selectedLevel',5); 
+        const level = 5;
+        let progress = 0;
+        let scrollProgress = 0;
+        const username = localStorage.getItem("username");
+        console.log("Roll Number : ", username);
+
+        function speakText(sectionId) {
+            if (window.speechSynthesis.speaking) {
+                window.speechSynthesis.cancel();
+            }
+            const section = document.getElementById(sectionId);
+            const text = section.querySelector('p').innerText;
+
+            const speech = new SpeechSynthesisUtterance();
+            speech.text = text;
+            speech.lang = 'en-US';
+            speech.volume = 1;
+            speech.rate = 100;
+            speech.pitch = 1;
+
+            speech.onend = function () {
+                markCompleted(sectionId);
+                updateProgressTTS();
+            };
+
+            window.speechSynthesis.speak(speech);
+        }
+
+        function markCompleted(sectionId) {
+            const section = document.getElementById(sectionId);
+            if (!section.classList.contains('completed')) {
+                section.classList.add('completed');
+                updateProgressBar();
+            }
+        }
+        function checkCompletion() {
+            if (progress === 100) {
+                let completedTopics = JSON.parse(localStorage.getItem('completedTopics')) || [];
+
+                // Mark topic as completed if not already marked
+                if (!completedTopics.includes(level)) {
+                    completedTopics.push(level);
+                    localStorage.setItem('completedTopics', JSON.stringify(completedTopics));
+                }
+                showCongratulations();
+            }
+        }
+        function updateUserScoreInDatabase() {
+            const experience = 10;  // Increment score by 10
+
+            const data = { rollNumber: username, experience: experience };
+
+            console.log("Sending data to update score:", data);
+
+            fetch('http://localhost:5000/api/students/update-score', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Failed to update score');
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('Score updated:', data);
+            })
+            .catch(error => {
+                console.error('Error updating score:', error);
+            });
+        }
+
+        function updateScoreOnCompletion() {
+            if (progress === 100) {
+                updateUserScoreInDatabase();
+            }
+        }
+
+        function updateProgressBar() {
+            const totalSections = document.querySelectorAll('.waste-type').length;
+            const progressBar = document.getElementById('progress-bar');
+            const progressText = document.getElementById('progress-text');
+            const completedSections = document.querySelectorAll('.completed').length;
+
+            const sectionProgress = (completedSections / totalSections) * 50;  // 50% from sections
+            progress = sectionProgress + scrollProgress;
+
+            progressBar.style.width = progress + '%';
+            progressText.innerText = Math.round(progress) + '%';
+
+            if (progress >= 100) {
+                checkCompletion();
+                showCongratulations();
+                updateScoreOnCompletion();
+            }
+        }
+
+        function updateProgressTTS() {
+            const completedSections = document.querySelectorAll('.completed').length;
+            scrollProgress = (completedSections / 2) * 50;  // 50% from TTS completion
+            updateProgressBar();
+        }
+
+        function showCongratulations() {
+            const popup = document.getElementById('congratulations-popup');
+            popup.style.display = 'block';
+        }
+
+        function selectLevel(level) {
+            localStorage.setItem('selectedLevel', level);
+            window.location.href = 'level.html';
+        }
+
+        function goTo() {
+            window.location.href = 'main.html';
+        }
+
+        // Track scroll progress
+        window.addEventListener('scroll', () => {
+            const scrollableHeight = document.documentElement.scrollHeight - window.innerHeight;
+            const scrolled = window.scrollY;
+            const newScrollProgress = (scrolled / scrollableHeight) * 50;  // 50% from scroll
+
+            if (newScrollProgress > scrollProgress) {
+                scrollProgress = newScrollProgress;
+                updateProgressBar();
+            }
+        });
+    </script>
+</body>
+
+</html>

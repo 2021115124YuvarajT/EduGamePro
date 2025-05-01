@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head> 
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Snake Game</title>
+    <style>
+        canvas {
+            border: 1px solid black;
+            display: block;
+            margin: 0 auto;
+        }
+        #controls {
+            text-align: center; 
+            margin-top: 20px;
+        }
+        #controls button {
+            margin: 10px;
+            padding: 10px 40px; /* Increase the padding to make the button more oval */
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            border-radius: 25px; /* Make the corners rounded to create an oval shape */
+            background-color: #4CAF50; /* Optional: Change the background color */
+            color: white; /* Optional: Change the text color */
+            border: none; /* Optional: Remove the border */
+            color: brown;
+        }
+        #title1 {
+            text-align: center;
+            color: brown;
+        }
+    </style>
+</head>
+<body>
+    <br>
+    <div id="controls">
+        <button id="back" onclick="navigateToGame()">Back</button>
+    </div>
+    <br><br>
+    <h1 id="title1">Snake Game</h1>
+    <canvas id="gameCanvas" width="600" height="400"></canvas>
+    <div id="controls">
+        <button id="restart-button" onclick="restartGame()">Restart Game</button>
+        <button id="quit-button" onclick="quitGame()">Quit Game</button>
+    </div>
+    <script type="module" src="../Client/modules/new_snake.js"></script>
+    <script>
+        function navigateToGame() {
+            window.location.href = 'index.html';
+        }
+        const rollNumber = localStorage.getItem('username'); // Assuming the roll number is stored in local storage
+        console.log(rollNumber);
+    </script>
+</body>
+</html>

@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Upload Step-by-Step Guide</title>
+  <link rel="stylesheet" href="styles/styles.css">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-image: linear-gradient(to right top, #d72f82, #c32671, #ae1d61, #991551, #850c42);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .container {
+      background-color: #ffffff1a;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      width: 600px;
+      color: #fff;
+      text-align: center;
+    }
+
+    .feedback {
+      display: none;
+    }
+
+    #backbtn:hover {
+        background-color: red;
+    }
+
+    /* Bubble Animation */
+    .bubble {
+      position: absolute;
+      bottom: -100px;
+      width: 40px;
+      height: 40px;
+      background-color: rgba(255, 255, 255, 0.2);
+      border-radius: 50%;
+      animation: floatUp 6s infinite ease-in-out;
+    }
+
+    @keyframes floatUp {
+      0% { transform: translateY(0); opacity: 1; }
+      100% { transform: translateY(-100vh); opacity: 0; }
+    }
+
+    .bubble:nth-child(1) { left: 10%; animation-duration: 5s; }
+    .bubble:nth-child(2) { left: 25%; animation-duration: 7s; width: 60px; height: 60px; }
+    .bubble:nth-child(3) { left: 50%; animation-duration: 8s; width: 50px; height: 50px; }
+    .bubble:nth-child(4) { left: 75%; animation-duration: 6s; width: 30px; height: 30px; }
+    .bubble:nth-child(5) { left: 90%; animation-duration: 9s; width: 70px; height: 70px; }
+
+  </style>
+</head>
+<body>
+
+  <!-- Bubble Animation -->
+  <div class="bubble"></div>
+  <div class="bubble"></div>
+  <div class="bubble"></div>
+  <div class="bubble"></div>
+  <div class="bubble"></div>
+
+  <div class="container">
+    <h1>Step-by-Step Guide</h1><br><br>
+    <form id="upload-step-form" enctype="multipart/form-data">
+      <div class="form-group">
+        <label for="image">Upload Image:</label><br><br>
+        <input type="file" id="image" name="image" accept="image/*" required />
+      </div><br>
+      <div class="form-group">
+        <label for="description">Step Description:</label><br><br>
+        <textarea id="description" name="description" rows="4" required placeholder="Enter description for this step..."></textarea>
+      </div>
+      <button type="submit">Upload Step</button><br>
+      <button onclick="goto()">Preview</button><br>
+      <button id="backbtn" onclick="back()">Back</button>
+    </form>
+    <p id="upload-feedback" class="feedback" style="display: none;"></p>
+  </div>
+
+  <script>
+    document.getElementById('upload-step-form').addEventListener('submit', async (event) => {
+      event.preventDefault();
+
+      const imageInput = document.getElementById('image');
+      const descriptionInput = document.getElementById('description');
+      const feedbackElement = document.getElementById('upload-feedback');
+      
+      if (!imageInput.files[0] || !descriptionInput.value.trim()) {
+        alert("Please fill in both fields.");
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append('image', imageInput.files[0]);
+      formData.append('description', descriptionInput.value.trim());
+
+      try {
+        const response = await fetch('http://localhost:5002/upload-step', {
+          method: 'POST',
+          body: formData,
+        });
+
+        const data = await response.json(); 
+
+        feedbackElement.textContent = "Step uploaded successfully!";
+        feedbackElement.style.color = "white";
+        feedbackElement.style.display = "block";
+        setTimeout(() => { feedbackElement.style.display = "none"; }, 3000);
+      } catch (error) {
+        feedbackElement.textContent = "Error uploading step.";
+        feedbackElement.style.color = "red";
+        feedbackElement.style.display = "block";
+      }
+    });
+
+    function goto() {
+        window.location.href = "steps.html";
+    }
+
+    function back() {
+        window.location.href = "../../learning.html";
+    }
+  </script>
+
+</body>
+</html>

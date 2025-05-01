@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game</title>
+    <style> 
+        #container {
+            width: 100%;
+            max-width: 400px; /* Adjust the max-width as needed */
+            margin: 0 auto;
+            text-align: center;
+            border: 2px solid #4CAF50; /* Border color for the box */
+            border-radius: 10px; /* Rounded corners for the box */
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Optional: Add a shadow effect */
+        }
+        #controls {
+            text-align: center; 
+        }
+        #controls button {
+            margin: 10px;
+            padding: 10px 40px; /* Increase the padding to make the button more oval */
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            border-radius: 25px; /* Make the corners rounded to create an oval shape */
+            background-color: #4CAF50; /* Optional: Change the background color */
+            color: white; /* Optional: Change the text color */
+            border: none; /* Optional: Remove the border */
+            color: brown;
+        }
+        #title {
+            text-align: center;
+            color: brown;
+        }
+    </style>
+</head>
+<body>
+    <br><br><br><br><br> 
+    <br><br><br><br><br>
+    <h1 id="title">Arithmetics</h1>
+    <div id="controls">
+        <button id="backButton" onclick="back()">Back</button>
+    </div>
+    <div id="container">
+        <div id="controls">
+            <button id="snake_game" onclick="navigateToGame1()">Learning</button>
+            <button id="snake_game" onclick="navigateToGame()">Game</button>
+        </div>
+    </div>
+    <script>
+        const rollNumber = localStorage.getItem('username');
+        console.log(rollNumber);
+        function navigateToGame() {
+            window.location.href = 'snake_game.html';
+        }
+
+        function navigateToGame1() {
+            window.location.href = '../roadmap/index.html';
+        }
+
+        function back() {
+            window.location.href = '../../frontend/game.html';
+        }
+    </script>
+</body>
+</html>

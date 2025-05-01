@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Excretory System</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f8ff;
+            margin: 0;
+            padding: 20px;
+            text-align: left; /* Align text to the left */
+        }
+        h1 {
+            color: #007bff;
+            text-align: center; /* Center the heading */
+        }
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start; /* Align items to the start (left) */
+            padding-left: 10px; /* Add space to the left */
+        }
+        #description {
+            width: 700px;
+        }
+        .description-box {
+            background-color: #e0f7fa;
+            padding: 15px;
+            border-radius: 10px;
+            display: inline-block;
+            text-align: left;
+            width: 60%;
+            margin: 20px auto;
+            position: relative;
+        }
+        .description-box p {
+            font-size: 16px;
+        }
+        .image-container {
+            position: absolute;
+            right: -200px;
+            top: 0;
+            bottom: 0;
+            display: flex;
+            align-items: center;
+        }
+        .image-container img {
+            width: 250px; /* Increase the image width */
+            height: auto;
+        }
+        .question-section {
+            margin: 20px 0;
+            text-align: left;
+            width: 75%;
+        }
+        .question-block {
+            margin-bottom: 20px;
+        }
+        .button-container button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 5px;
+            margin-left: 50px;
+        }
+        .button-container button:hover {
+            background-color: #0056b3;
+        }
+        #backButton {
+            position: fixed;
+            left: 20px;
+            bottom: 20px;
+            background-color: #007bff;
+        }
+        #next {
+            position: fixed;
+            right: 20px;
+            bottom: 20px;
+            background-color: #007bff;
+        }
+    </style>
+</head>
+<body>
+    <h1>Excretory System</h1>
+    <div class="container">
+        <div class="description-box" id="desc_box">
+            <p id="description">The excretory system removes waste products from the body. It also regulates water and electrolyte balance. The main organs involved are the kidneys, ureters, and urinary bladder.</p>
+            <button onclick="speakText('desc_box')">🔊 Listen</button>
+            <div class="image-container">
+                <img src="./images/excretory_system.png" alt="Kidney">
+            </div>
+        </div>
+
+        <div id="question-section" class="question-section">
+            <h2>LEARN BY GUESSING!!</h2>
+            <div class="question-block">
+                <p id="question"><span style="color:#d95615; font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif; font-weight: 600;">Any Guess?</span> What is the primary function of the kidneys?</p>
+                <div id="options">
+                    <button onclick="checkAnswer(this, 'A')">A. Filter blood</button>
+                    <button onclick="checkAnswer(this, 'B')">B. Store urine</button>
+                    <button onclick="checkAnswer(this, 'C')">C. Produce hormones</button>
+                </div>
+                <p id="feedback"></p>
+                <p id="explanation"></p>
+            </div>
+        </div>
+
+        <div class="button-container">
+            <button id="nextButton" onclick="nextQuestion()">Next Question</button>
+        </div>
+    </div>
+
+    <button id="backButton" onclick="window.location.href='circ.html'">Back</button>
+    <button id="next" onclick="window.location.href='ner.html'">Next System >></button>
+
+    <script>
+        // Function to strip HTML tags from a string
+        function stripHTML(html) {
+            let temporalDivElement = document.createElement("div");
+            temporalDivElement.innerHTML = html;
+            return temporalDivElement.textContent || temporalDivElement.innerText || "";
+        }
+
+        // Your speak function
+        function speak(text, rate = 1) {
+            const speech = new SpeechSynthesisUtterance(text);
+            speech.rate = rate;
+            window.speechSynthesis.speak(speech);
+            return speech;
+        }
+
+        const questions = [
+            {
+                question: "What is the primary function of the kidneys?",
+                options: {
+                    A: "Filter blood",
+                    B: "Store urine",
+                    C: "Produce hormones"
+                },
+                correct: "A",
+                explanation: "The primary function of the kidneys is to <b>filter</b> the blood and remove waste products. The kidneys filter blood to remove waste and excess fluid, which are then excreted as urine. They also help in maintaining a balance of salts and other substances in the blood. Each kidney contains around one million filtering units called <b>nephrons</b>, which consist of a filter (glomerulus) and a tubule. The kidneys also play a crucial role in regulating <b>blood pressure</b>, <b>red blood cell</b> production, and maintaining overall fluid and electrolyte balance in the body."
+            },
+            {
+                question: "What connects the kidneys to the urinary bladder?",
+                options: {
+                    A: "Urethra",
+                    B: "Ureters",
+                    C: "Nephrons"
+                },
+                correct: "B",
+                explanation: "The <b>ureters</b> are tubes that connect the kidneys to the urinary bladder and transport urine. Each kidney has a ureter that carries urine from the renal pelvis of the kidney down to the bladder. The ureters are muscular tubes that actively propel urine towards the bladder using peristaltic movements. The point where the ureters enter the bladder is known as the <b>ureterovesical junction</b>, and it is designed to prevent the backflow of urine, thus ensuring one-way flow from the kidneys to the bladder."
+            },
+            {
+                question: "Where are the kidneys located in the human body?",
+                options: {
+                    A: "Behind the abdomen",
+                    B: "In front of the lungs",
+                    C: "Above the heart"
+                },
+                correct: "A",
+                explanation: "The kidneys are located <b>behind</b> the abdomen on either side of the vertebral column. They are positioned in the <b>retroperitoneal space</b>, which means they are located behind the peritoneum, the lining of the abdominal cavity. The right kidney is slightly lower than the left kidney due to the presence of the liver on the right side of the body. Each kidney is about 12 cm in length, 6 cm in width, and 3 cm in thickness. They are protected by the ribcage and surrounded by a layer of fat that cushions them from impact and helps hold them in place."
+            },
+            {
+                question: "What is the shape of the kidneys?",
+                options: {
+                    A: "Heart-shaped",
+                    B: "Bean-shaped",
+                    C: "Round"
+                },
+                correct: "B",
+                explanation: "The kidneys are <b>bean-shaped</b> organs. Each kidney is a pair of dark red, bean-shaped organs placed behind the abdomen on either side of the vertebral column. The average adult’s kidney measures about 12 cm in length, 6 cm in width, and 3 cm in thickness. The right kidney is slightly lower than the left kidney because of the liver. Each kidney is covered by a fibrous membrane called the <b>renal capsule</b>. This shape helps in providing a large surface area for filtering blood and excreting waste products effectively."
+            },
+            {
+                question: "What are nephrons?",
+                options: {
+                    A: "Blood cells",
+                    B: "Excretory units",
+                    C: "Nerve cells"
+                },
+                correct: "B",
+                explanation: "<b>Nephrons</b> are the structural and functional units of the kidneys. Each kidney contains approximately one million nephrons. Each nephron consists of a glomerulus, which filters blood, and a tubule that returns needed substances to your blood and removes wastes. The nephrons perform the essential functions of the kidneys, including filtering the blood to remove waste products and excess substances, reabsorbing necessary nutrients and water, and secreting additional wastes into the tubular fluid for excretion as urine."
+            },
+            {
+                question: "What is the function of the urinary bladder?",
+                options: {
+                    A: "Filter blood",
+                    B: "Store urine",
+                    C: "Produce hormones"
+                },
+                correct: "B",
+                explanation: "The urinary bladder is a sac-like organ that acts as a temporary storage organ for urine. Urine entering the urinary bladder from the ureters slowly fills the hollow space inside the bladder. The bladder can store between 300 to 500 milliliters of urine before needing to be emptied. The walls of the bladder are made of smooth muscle that can stretch to accommodate the increasing volume of urine. When the bladder is full, signals are sent to the brain indicating the need to urinate, leading to the relaxation of the internal sphincter and the contraction of the bladder muscles to expel urine through the urethra."
+            },
+            {
+                question: "How much blood do the kidneys filter daily?",
+                options: {
+                    A: "500 liters",
+                    B: "1000 liters",
+                    C: "1250 liters"
+                },
+                correct: "C",
+                explanation: "Every minute, the kidneys receive approximately <b>1.250 liters</b> of blood. This means that over the course of a day, the kidneys filter around 180 liters of blood. This process involves filtering the blood to remove waste products and excess substances, which are then excreted as urine. The kidneys are essential for maintaining <b>homeostasis</b> in the body, regulating fluid and electrolyte balance, and removing toxins from the bloodstream."
+            },
+            {
+                question: "What membrane covers each kidney?",
+                options: {
+                    A: "Peritoneum",
+                    B: "Renal capsule",
+                    C: "Pleura"
+                },
+                correct: "B",
+                explanation: "Each kidney is covered by a fibrous membrane called the <b>renal capsule</b>. The renal capsule is a tough, protective layer that encases the kidney and helps protect it from injury and infection. Beneath the renal capsule, the kidney is divided into an outer cortex and an inner medulla, which contain the filtering units known as nephrons. The renal capsule also helps maintain the shape of the kidney and provides a barrier against potential damage from surrounding tissues."
+            },
+            {
+                question: "What is the role of the urethra?",
+                options: {
+                    A: "Connect kidneys to bladder",
+                    B: "Transport urine out of the body",
+                    C: "Filter blood"
+                },
+                correct: "B",
+                explanation: "The <b>urethra</b> is the tube that transports urine out of the body. It connects the urinary bladder to the external urethral orifice, allowing urine to be expelled from the body during urination. In males, the urethra also serves as a passageway for semen during ejaculation. The urethra has internal and external sphincters that control the release of urine, ensuring that it is only expelled from the body when appropriate."
+            },
+            {
+                question: "How do the kidneys contribute to blood pressure regulation?",
+                options: {
+                    A: "By filtering blood",
+                    B: "By producing urine",
+                    C: "By regulating fluid balance"
+                },
+                correct: "C",
+                explanation: "The kidneys help regulate <b>blood pressure</b> by maintaining fluid and electrolyte balance. They achieve this through the <b>renin-angiotensin-aldosterone system (RAAS)</b>, which adjusts the volume of blood and the amount of sodium in the bloodstream. When blood pressure drops, the kidneys release the enzyme <b>renin</b>, which triggers a cascade of reactions leading to the constriction of blood vessels and retention of sodium and water, ultimately increasing blood pressure. By regulating the balance of fluids and electrolytes in the body, the kidneys play a critical role in maintaining stable blood pressure levels."
+            },
+            {
+                question: "What is the renal pelvis?",
+                options: {
+                    A: "Part of the urethra",
+                    B: "A funnel-shaped structure",
+                    C: "A muscle in the bladder"
+                },
+                correct: "B",
+                explanation: "The <b>renal pelvis</b> is a funnel-shaped structure in the kidney that collects urine and channels it into the ureter. It is located in the central part of the kidney, where the calyces converge. The renal pelvis acts as a reservoir that receives urine from the collecting ducts and directs it into the ureter for transportation to the urinary bladder. This structure is crucial for the efficient movement of urine from the kidneys to the bladder."
+            },
+            {
+                question: "What are the main excretory organs in the human body?",
+                options: {
+                    A: "Kidneys, liver, and lungs",
+                    B: "Heart, brain, and lungs",
+                    C: "Kidneys, bladder, and stomach"
+                },
+                correct: "A",
+                explanation: "The main excretory organs in the human body are the <b>kidneys</b>, <b>liver</b>, and <b>lungs</b>. The kidneys filter blood to remove waste products and excess substances, excreting them as urine. The liver processes toxins and metabolic waste products, converting them into substances that can be excreted in bile or urine. The lungs expel carbon dioxide, a waste product of cellular respiration, during exhalation. Together, these organs help maintain <b>homeostasis</b> by removing waste products and regulating the balance of fluids and electrolytes in the body."
+            },
+            {
+                question: "What hormone is produced by the kidneys?",
+                options: {
+                    A: "Insulin",
+                    B: "Adrenaline",
+                    C: "Erythropoietin"
+                },
+                correct: "C",
+                explanation: "The kidneys produce the hormone <b>erythropoietin</b> (EPO), which stimulates the production of red blood cells in the bone marrow. Erythropoietin is released in response to low oxygen levels in the blood, a condition known as hypoxia. By increasing the production of red blood cells, erythropoietin helps improve the oxygen-carrying capacity of the blood, ensuring that tissues receive adequate oxygen to meet their metabolic needs. This hormone plays a vital role in maintaining the body's red blood cell count and overall oxygen balance."
+            },
+            {
+                question: "What is the glomerulus?",
+                options: {
+                    A: "A part of the nephron",
+                    B: "A structure in the liver",
+                    C: "A muscle in the bladder"
+                },
+                correct: "A",
+                explanation: "The <b>glomerulus</b> is a network of capillaries located at the beginning of a nephron in the kidney. It is responsible for filtering blood to form a filtrate that will become urine. The glomerulus is enclosed by the <b>Bowman's capsule</b>, and together they form the renal corpuscle. Blood pressure forces water and small solutes from the blood through the walls of the glomerular capillaries and into the Bowman's capsule. This process is the first step in the formation of urine, and it allows the kidneys to remove waste products and excess substances from the blood."
+            },
+            {
+                question: "What is the Bowman's capsule?",
+                options: {
+                    A: "Part of the urethra",
+                    B: "A structure in the liver",
+                    C: "A cup-like sac around the glomerulus"
+                },
+                correct: "C",
+                explanation: "The <b>Bowman's capsule</b> is a cup-like sac that surrounds the glomerulus in a nephron. It is the initial filtering component of the nephron. Blood pressure forces water and small solutes from the glomerular capillaries through the walls of the Bowman's capsule, forming a filtrate that will be processed into urine. The Bowman's capsule captures this filtrate and channels it into the proximal tubule of the nephron, where further reabsorption and secretion processes occur. This structure is essential for the kidney's ability to filter blood and form urine."
+            }
+        ];
+
+        // Function to read the explanation
+        function readExplanation(explanation) {
+            const cleanExplanation = stripHTML(explanation);
+            speak(cleanExplanation); // Use the speak function to read the cleaned explanation
+        }
+
+        // Test the function
+        //questions.forEach(question => {
+          //  readExplanation(question.explanation);
+        //});
+
+        let currentQuestionIndex = 0;
+        let isSpeakingDescription = false;
+        let isSpeakingExplanation = false;
+        let descriptionSpeechInstance;
+        let explanationSpeechInstance;
+
+        function speakText(sectionId) {
+            if (isSpeakingDescription) {
+                window.speechSynthesis.cancel();
+                isSpeakingDescription = false;
+            } else {
+                const section = document.getElementById(sectionId);
+                const text = section.querySelector('p').innerText;
+
+                descriptionSpeechInstance = new SpeechSynthesisUtterance();
+                descriptionSpeechInstance.text = text;
+                descriptionSpeechInstance.lang = 'en-US';
+                descriptionSpeechInstance.volume = 1;
+                descriptionSpeechInstance.rate = 1;
+                descriptionSpeechInstance.pitch = 1;
+
+                window.speechSynthesis.speak(descriptionSpeechInstance);
+                isSpeakingDescription = true;
+                descriptionSpeechInstance.onend = () => {
+                    isSpeakingDescription = false;
+                };
+            }
+        }
+
+        function toggleExplanation(explanationText) {
+            if (isSpeakingExplanation) {
+                window.speechSynthesis.cancel();
+                isSpeakingExplanation = false;
+            } else {
+                explanationSpeechInstance = new SpeechSynthesisUtterance();
+                explanationSpeechInstance.text = stripHTML(explanationText);
+                explanationSpeechInstance.lang = 'en-US';
+                explanationSpeechInstance.volume = 1;
+                explanationSpeechInstance.rate = 1;
+                explanationSpeechInstance.pitch = 1;
+
+                window.speechSynthesis.speak(explanationSpeechInstance);
+                isSpeakingExplanation = true;
+                explanationSpeechInstance.onend = () => {
+                    isSpeakingExplanation = false;
+                };
+            }
+        }
+
+        function checkAnswer(button, answer) {
+            const feedback = button.parentNode.nextElementSibling;
+            const explanation = feedback.nextElementSibling;
+            const currentQuestion = questions[currentQuestionIndex];
+
+            if (answer === currentQuestion.correct) {
+                feedback.textContent = "Correct!";
+                feedback.style.color = "green";
+                button.style.backgroundColor = "green"; // Correct option turns green
+            } else {
+                feedback.textContent = "Wrong!";
+                feedback.style.color = "red";
+                button.style.backgroundColor = "red"; // Incorrect option turns red
+                // Highlight the correct answer
+                button.parentNode.querySelector(`[onclick="checkAnswer(this, '${currentQuestion.correct}')"]`).style.backgroundColor = "green";
+            }
+
+            explanation.innerHTML = currentQuestion.explanation;
+
+            // Add listen button for explanation
+            const listenButton = document.getElementById('btn');
+            listenButton.textContent = '🔊';
+            listenButton.onclick = () => toggleExplanation(currentQuestion.explanation);
+            explanation.parentNode.appendChild(listenButton);
+
+            // Disable buttons after answering
+            button.parentNode.querySelectorAll('button').forEach(btn => {
+                btn.disabled = true;
+            });
+        }
+
+
+        function nextQuestion() {
+            currentQuestionIndex++;
+            if (currentQuestionIndex >= questions.length) {
+                currentQuestionIndex = 0; // Reset to the first question if out of questions
+            }
+
+            const currentQuestion = questions[currentQuestionIndex];
+
+            const questionSection = document.getElementById('question-section');
+            const newQuestionBlock = document.createElement('div');
+            newQuestionBlock.classList.add('question-block');
+
+            newQuestionBlock.innerHTML = `
+                <p><span style="color:#d95615; font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif; font-weight: 600;">Any Guess?</span> ${currentQuestion.question}</p>
+                <div id="options">
+                    <button onclick="checkAnswer(this, 'A')">A. ${currentQuestion.options.A}</button>
+                    <button onclick="checkAnswer(this, 'B')">B. ${currentQuestion.options.B}</button>
+                    <button onclick="checkAnswer(this, 'C')">C. ${currentQuestion.options.C}</button>
+                </div>
+                <p id="feedback"></p>
+                <p id="explanation"></p>
+            `;
+
+            questionSection.appendChild(newQuestionBlock);
+        }
+    </script>
+</body>
+</html>

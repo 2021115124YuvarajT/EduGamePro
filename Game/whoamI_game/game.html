@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Who Am I? Game</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <style>
+        /* Playful Background */
+        body {
+            font-family: "Comic Sans MS", Arial, sans-serif;
+            text-align: center;
+            overflow: hidden;
+            background: linear-gradient(135deg, #ff9a9e, #fad0c4);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Cloud Background */
+        body::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url("https://www.transparenttextures.com/patterns/clouds.png");
+            opacity: 0.3;
+            z-index: -1;
+        }
+
+        .game-container {
+            position: relative;
+            width: 90vw;
+            max-width: 500px;
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.2);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            /* Center everything inside */
+        }
+
+        h1 {
+            font-size: 28px;
+            color: #ff4757;
+            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Card Styling */
+        .card-container {
+            perspective: 3000px;
+            margin: 20px auto;
+            display: flex;
+            justify-content: center;
+            /* Center the card */
+        }
+
+        .card {
+            width: 250px;
+            height: 450px;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.6s;
+            border-radius: 15px;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .card.flip {
+            transform: rotateY(180deg);
+        }
+
+        .card-front,
+        .card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            font-weight: bold;
+            text-align: center;
+            padding: 15px;
+            transition: background 0.4s ease-in-out;
+        }
+
+        .card-back {
+            background: #ffcc5c;
+            color: #2c3e50;
+            border: 4px solid #f39c12;
+        }
+
+        .card-front {
+            background: #ffffff;
+            transform: rotateY(180deg);
+            flex-direction: column;
+            border: 4px solid #3498db;
+        }
+
+        .card-front img {
+            width: 100%;
+            height: auto;
+            max-height: 250px;
+            /* Ensure image doesn't take too much space */
+            object-fit: contain;
+            /* Ensures image scales properly */
+            border-radius: 10px;
+            border: 4px solid #ff6b81;
+        }
+
+        /* Options (Buttons) */
+        .options {
+            margin-top: 20px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            /* Ensure buttons are centered */
+            gap: 10px;
+        }
+
+        .option {
+            padding: 12px 20px;
+            margin: 8px;
+            cursor: pointer;
+            border: none;
+            border-radius: 25px;
+            font-size: 18px;
+            font-weight: bold;
+            background: #ff6b81;
+            color: white;
+            transition: 0.3s;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .option:hover {
+            background: #e55039;
+            transform: scale(1.1);
+        }
+
+        /* Result and Description */
+        #result {
+            font-size: 20px;
+            font-weight: bold;
+            color: #27ae60;
+            margin-top: 15px;
+        }
+
+        .description {
+            font-size: 30px;
+            color: #8e44ad;
+            display: none;
+            margin-top: 15px;
+            padding: 10px;
+            background: #f8e2f2;
+            border-radius: 10px;
+            text-align: center;
+            width: 80%;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="game-container">
+        <h1 id="gameTitle">Who Am I? Game</h1>
+        <div class="card-container" id="cardContainer">
+            <div class="card" id="gameCard">
+                <div class="card-back" id="questionText"></div>
+                <div class="card-front">
+                    <img src="" id="answerImage" alt="Answer">
+                    <p id="answerText"></p>
+                </div>
+            </div>
+        </div>
+        <div class="options" id="optionsContainer"></div>
+        <p id="result"></p>
+        <p class="description" id="description"></p>
+    </div>
+
+    <script>
+        let currentQuestion = 0;
+        let gameData = JSON.parse(localStorage.getItem("gameData")) || [];
+
+        function loadQuestion() {
+            if (currentQuestion >= gameData.length) {
+                document.body.innerHTML = "<h1>Game Over!</h1>";
+                setTimeout(() => {
+                    window.location.href = "setup.html";
+                }, 5000);
+                return;
+            }
+
+            const data = gameData[currentQuestion];
+            //document.getElementById("result").style.display=none;
+            // Set content
+            document.getElementById("questionText").innerText = data.question;
+            document.getElementById("answerImage").src = data.image;
+            document.getElementById("answerText").innerText = `It's a ${data.answer}!`;
+            document.getElementById("gameCard").classList.remove("flip");
+            document.getElementById("description").innerText = data.desc;
+            document.getElementById("description").style.display = "none";
+
+            let optionsHTML = "";
+            data.options.forEach(option => {
+                optionsHTML += `<button class="option" onclick="checkAnswer('${option}')">${option}</button>`;
+            });
+            document.getElementById("optionsContainer").innerHTML = optionsHTML;
+
+            // Animate the new question coming in from the right
+            gsap.fromTo(".game-container",
+                { x: "100vw", opacity: 0 },
+                { x: "0vw", opacity: 1, duration: 0.8, ease: "power3.out" }
+            );
+        }
+
+        function checkAnswer(selected) {
+            if (selected === gameData[currentQuestion].answer) {
+                document.getElementById("result").innerText = "You are correct!";
+                document.getElementById("result").style.color = "green";
+            } else {
+                document.getElementById("result").innerText = "You are incorrect!";
+                document.getElementById("result").style.color = "red";
+            }
+
+            document.getElementById("gameCard").classList.add("flip");
+            document.getElementById("description").style.display = "block";
+
+            setTimeout(() => {
+                document.getElementById("result").innerText = "";
+                document.getElementById("result").style.color = "black";
+                gsap.to(".game-container", {
+                    x: "-100vw", opacity: 0, duration: 0.8, ease: "power3.inOut", onComplete: () => {
+                        currentQuestion++;
+                        loadQuestion();
+                    }
+                });
+            }, 3000);
+        }
+
+        loadQuestion();
+    </script>
+
+</body>
+
+</html>

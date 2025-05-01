@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Save The Character</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <div class="scene">
+            <img id="king-img" src="./assets/king_danger.png" alt="King in Danger">
+        </div>
+        
+        <div class="game-area">
+            <p id="soldier-text"></p>
+            <div id="question-container">
+                <h2 id="question-text"></h2>
+                <div id="options"></div>
+            </div>
+            <div id="lives-container">
+                <p id="lives">❤️ Lives: <span id="lives-count">3</span></p>
+                <div id="lives-bar-container">
+                    <div id="lives-bar"></div>
+                </div>
+            </div>
+
+            <div id="game-over" class="hidden">
+                <h2>Game Over</h2>
+            </div>            
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>

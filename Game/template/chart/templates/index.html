@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Excel File</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background: linear-gradient(45deg, #f0d5b5, #ffb6c1, #aed8fc, #a8e4a0);
+            background-size: 300% 300%;
+            animation: gradientAnimation 10s ease infinite;
+        }
+
+        @keyframes gradientAnimation {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        .container {
+            padding: 20px;
+            border: 2px solid #ffffff;
+            border-radius: 10px;
+            color: white;
+            background-color: transparent;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        input[type="file"] {
+            margin-bottom: 10px;
+        }
+
+        button {
+            margin: 5px;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            background-color: #56b6df;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        a {
+            display: block;
+            margin-top: 10px;
+            color: #4CAF50;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        #backbtn {
+            margin-top: -100px;
+            margin-left: -300px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <button id="backbtn" onclick="back()">Back</button>
+    <div class="container">
+        <h1>Chart based Learning</h1>
+        <h2>Upload Excel File</h2>
+        <form id="uploadForm">
+            <input type="file" id="fileInput" name="file" accept=".xlsx, .xls" required>
+            <button type="submit">Upload</button>
+        </form>
+        <button onclick="goto3D()">3D</button>
+        <button onclick="goto2D()">2D</button>
+    </div>
+    <script>
+        const uploadForm = document.getElementById('uploadForm');
+    
+        // Handle file upload
+        uploadForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const fileInput = document.getElementById('fileInput');
+            const formData = new FormData();
+            formData.append('file', fileInput.files[0]);
+    
+            try {
+                const response = await fetch('/upload', {  // ✅ Use full backend URL
+                    method: 'POST',
+                    body: formData,
+                });
+    
+                if (!response.ok) {
+                    throw new Error(`Server error: ${response.status}`);
+                }
+    
+                const result = await response.json();
+                alert(result.message || 'File uploaded successfully');
+            } catch (error) {
+                alert('Error uploading file');
+                console.error(error);
+            }
+        });
+    
+        function goto3D() {
+            window.location.href = "/plot";  // ✅ Use full URL
+        }
+    
+        function goto2D() {
+            window.location.href = "/plot2d";  // ✅ Use full URL
+        }
+    
+        function back() {
+            window.location.href = "http://127.0.0.1:5500/template/learning.html";
+        }
+    </script>    
+</body>
+</html>

@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Step-by-Step Long Division</title>
+    <style>
+        body {
+            display: flex;
+            align-items: center;
+            flex-direction: column;
+            height: 100vh;
+            background-color: #f4f4f9;
+            font-family: Arial, sans-serif;
+            margin-top: 80px;
+        }
+
+        .heading {
+            color: red;
+            margin-bottom: 20px;
+            font-size: 2rem;
+            margin-bottom: 80px;
+        }
+
+        .division-container {
+            font-size: 1.2rem;
+            text-align: left;
+            margin-bottom: 20px;
+            display: flex;
+            flex-direction: row;
+        }
+
+        .division-block {
+            position: relative;
+            min-width: 250px;
+        }
+
+        .dividend {
+            font-size: 1.2rem;
+            color: blueviolet;
+            position: absolute;
+            left: 60px;
+        }
+
+        .product {
+            font-size: 1.2rem;
+            color: green;
+            position: absolute;
+            left: 60px; 
+        }
+
+        .remainder {
+            font-size: 1.2rem;
+            color: grey; /* Updated color */
+            position: absolute;
+            left: 60px;
+        }
+
+        .new-dividend {
+            font-size: 1.2rem;
+            color: blueviolet;
+            position: absolute;
+            left: 60px;
+            top: 0;
+        }
+
+        .dividend {
+            top: 30px;
+        }
+
+        .divisor {
+            font-size: 1.2rem;
+            color: darkorange;
+            position: absolute;
+            left: -40px;
+            top: 30px;
+        }
+
+        .division-symbol {
+            font-size: 2.5rem;
+            position: absolute;
+            left: 20px;
+            top: 10px;
+        }
+
+        .line {
+            border-top: 2px solid black;
+            width: 150px;
+            position: absolute;
+            left: 60px;
+        }
+
+        .quotient {
+            position: absolute;
+            top: -50px;
+            left: 60px;
+            font-size: 1.2rem;
+            color: green;
+        }
+
+        .steps-container {
+            margin-left: 100px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .steps {
+            font-size: 1rem;
+            color: blue;
+        }
+
+        .result-step {
+            position: relative;
+            width: 250px;
+        }
+
+        .final-line {
+            border-top: 2px solid black;
+            width: 100%;
+            margin-top: 20px; /* Space below the last remainder */
+        }
+
+        /* Styling for the refresh button */
+        .refresh-btn {
+            padding: 15px 30px;
+            background-color: rgb(87, 203, 232);
+            color: aliceblue;
+            font-weight: bold;
+            font-size: large;
+            border-radius: 10%;
+            border-color: white;
+            margin-left: -500px;
+            margin-top: -120px;
+        }
+    </style>
+</head>
+<body>
+    <div class="heading">Division</div>
+    <!-- Add Refresh Button here -->
+    <button class="refresh-btn" onclick="refreshPage()">Random</button>
+    <br><br><br><br><br>
+
+    <!-- Division Layout -->
+    <div class="division-container">
+        <div class="division-block">
+            <div class="quotient" id="quotient"></div>
+            <div class="line"></div>
+            <div class="division-symbol">|</div>
+            <div class="dividend" id="dividend"></div>
+            <span class="divisor" id="divisor"></span>
+            <div id="results"></div>
+        </div>
+        <div class="steps-container">
+            <div class="steps" id="steps"></div>
+        </div>
+    </div>
+
+    <script>
+        // Function to generate a random integer between min (inclusive) and max (inclusive)
+        function getRandomInt(min, max) {
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+
+        let divisor = getRandomInt(1, 9);  // Random divisor between 1 and 9
+        let quotient = getRandomInt(10, 30); // Random quotient so the dividend remains between 10 and 99
+        let dividend = divisor * quotient;  // Ensure divisor perfectly divides dividend
+
+        console.log(`Division: ${dividend} ÷ ${divisor}`);
+
+        // Display dividend and divisor
+        document.getElementById('dividend').innerText = dividend;
+        document.getElementById('divisor').innerText = divisor;
+
+        let quotientSteps = '';
+        let divisionSteps = [];
+        let decimalReached = false;
+        let decimalPlace = 0;
+
+        // Step-by-step division process
+        function divideStepByStep() {
+            let digits = dividend.toString().split(''); // Splitting the dividend into individual digits
+            let currentDividend = 0;
+            let result = '';
+            let leadingZeroSkipped = false;
+
+            for (let i = 0; i < digits.length; i++) {
+                currentDividend = currentDividend * 10 + parseInt(digits[i]); // Forming the dividend part by part
+
+                // If leading zeroes are to be skipped
+                if (!leadingZeroSkipped && currentDividend >= divisor) {
+                    leadingZeroSkipped = true;
+                }
+
+                // Perform the division for the current step
+                let currentQuotientDigit = Math.floor(currentDividend / divisor);
+                let currentProduct = currentQuotientDigit * divisor;
+                let currentRemainder = currentDividend - currentProduct;
+
+                // Store each step of the division
+                divisionSteps.push({
+                    digit: currentDividend,
+                    currentDividend,
+                    currentQuotientDigit,
+                    currentProduct,
+                    currentRemainder,
+                    leadingZeroSkipped
+                });
+
+                // Update currentDividend for the next step
+                currentDividend = currentRemainder;
+
+                if (leadingZeroSkipped) {
+                    result += currentQuotientDigit;
+                    quotientSteps += currentQuotientDigit + ' ';
+                } else {
+                    quotientSteps += ' ';
+                }
+            }
+
+            // If remainder is not zero, proceed with decimal calculation
+            if (currentDividend !== 0) {
+                quotientSteps += '. ';  // Add decimal point to the quotient
+                decimalReached = true;
+
+                while (currentDividend !== 0 && decimalPlace < 2) {
+                    currentDividend *= 10;  // Append decimal part by multiplying remainder by 10
+
+                    let currentQuotientDigit = Math.floor(currentDividend / divisor);
+                    let currentProduct = currentQuotientDigit * divisor;
+                    let currentRemainder = currentDividend - currentProduct;
+
+                    divisionSteps.push({
+                        currentDividend,
+                        currentQuotientDigit,
+                        currentProduct,
+                        currentRemainder
+                    });
+
+                    result += currentQuotientDigit;
+                    quotientSteps += currentQuotientDigit + ' ';
+                    currentDividend = currentRemainder;
+                    decimalPlace++;
+                }
+            }
+
+            return result;
+        }
+
+        // Perform the division process and get the quotient
+        divideStepByStep();
+
+        let stepDelay = 4000; // Delay for each step in milliseconds
+        let currentStep = 0;
+
+        // Function to animate each division step
+        function animateDivisionSteps() {
+            if (currentStep >= divisionSteps.length) {
+                // All steps are done, show final quotient
+                document.getElementById('quotient').innerText = quotientSteps.trim(); // Trim any trailing spaces
+                return;
+            }
+
+            // Get the current step details
+            let step = divisionSteps[currentStep];
+
+            // Calculate top offset based on the current step
+            let topOffset = 30 + currentStep * 60;
+
+            // Create and append new elements for each step
+            let resultStep = document.createElement('div');
+            resultStep.classList.add('result-step');
+            resultStep.style.top = topOffset + 'px';
+
+            let newDividendElement = document.createElement('div');
+            newDividendElement.classList.add('new-dividend');
+            newDividendElement.innerText = step.currentDividend;
+            newDividendElement.style.top = topOffset + 'px';
+            resultStep.appendChild(newDividendElement);
+
+            document.getElementById('results').appendChild(resultStep);
+
+            // Display the quotient after explaining the current step
+            setTimeout(() => {
+                let stepExplanation = `
+                    <br/>
+                    <div style="color: red;">Step ${currentStep + 1}:</div>
+                    <div>Dividend part: ${step.currentDividend}</div>
+                    <div>Quotient Digit: ${step.currentQuotientDigit}</div>
+                    <div>Multiplying <span style="color: green;">${step.currentQuotientDigit}</span> x <span style="color: darkorange;">${divisor}</span> = <span style="color: green;">${step.currentProduct}</span></div>
+                    <div style="color: grey;">Subtracting gives remainder(R): ${step.currentRemainder}</div>
+                    <br/>
+                `;
+                document.getElementById('steps').innerHTML += stepExplanation;
+
+                // Immediately update the quotient after the explanation is shown
+                let quotientSoFar = quotientSteps.split(' ').slice(0, currentStep + 1).join(' ');
+                document.getElementById('quotient').innerText = quotientSoFar.trim();
+
+                // Delay - Display multiplied value (product)
+                setTimeout(() => {
+                    // Add the multiplied value (product)
+                    let productElement = document.createElement('div');
+                    productElement.classList.add('product');
+                    productElement.innerText = step.currentProduct;
+                    productElement.style.top = (topOffset + 30) + 'px';
+                    resultStep.appendChild(productElement);
+
+                    // Delay - Display the remainder
+                    setTimeout(() => {
+                        let lineElement = document.createElement('div');
+                        lineElement.classList.add('line');
+                        lineElement.style.top = (topOffset + 60) + 'px';
+                        resultStep.appendChild(lineElement);
+
+                        let remainderElement = document.createElement('div');
+                        remainderElement.classList.add('remainder');
+                        remainderElement.innerText = step.currentRemainder;
+                        remainderElement.style.top = (topOffset + 90) + 'px';
+                        resultStep.appendChild(remainderElement);
+
+                        // Proceed to the next step
+                        currentStep++;
+                        setTimeout(animateDivisionSteps, stepDelay);
+
+                    }, 2000); // Delay before showing remainder
+
+                }, 2000); // Delay before showing multiplied value
+
+            }, 2000); // Delay before showing step explanation
+        }
+
+        // Function to refresh page(itself)
+        function refreshPage() {
+            location.reload();
+        }
+
+        // Start the animation process
+        animateDivisionSteps();
+    </script>
+</body>
+</html>

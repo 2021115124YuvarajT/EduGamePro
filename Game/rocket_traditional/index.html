@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Quiz Start</title>
+  <style>
+    /* Reset some browser defaults */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    /* Full-screen background */
+    body {
+      height: 100vh;
+      background: linear-gradient(to right, #f8f9fa, #dce3ed);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    /* Centered form container */
+    .container {
+      background-color: white;
+      padding: 40px 50px;
+      border-radius: 15px;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+      text-align: center;
+      width: 90%;
+      max-width: 400px;
+    }
+
+    /* Heading */
+    .container h1 {
+      margin-bottom: 30px;
+      color: #333;
+      font-size: 28px;
+    }
+
+    /* Labels and inputs */
+    form label {
+      display: block;
+      margin: 10px 0 5px;
+      text-align: left;
+      color: #444;
+      font-weight: 600;
+    }
+
+    form input,
+    form select {
+      width: 100%;
+      padding: 10px 12px;
+      margin-bottom: 15px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 16px;
+    }
+
+    /* Button */
+    form button {
+      width: 100%;
+      padding: 12px;
+      background-color: #3a86ff;
+      color: white;
+      font-size: 16px;
+      font-weight: bold;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    form button:hover {
+      background-color: #265ed7;
+    }
+  </style>
+</head>
+<body>
+  <form id="startForm">
+    <h1>Welcome to the Quiz</h1><br>
+    <label>Name:</label><br>
+    <input type="text" id="name" required><br>
+    <label>Class:</label><br>
+    <input type="text" id="class" required><br>
+    <label>Topic:</label><br>
+    <select id="topic" required>
+      <option value="">--Select Topic--</option>
+      <option>Arithmetics</option>
+      <option>Agriculture</option>
+      <option>Seasons</option>
+      <option>Continents and oceans</option>
+      <option>Mountains in India</option>
+      <option>Palaces and forts in india</option>
+      <option>Types of wastes</option>
+      <option>sources of water and Water management</option>
+      <option>life cycle of plants</option>
+      <option>atmosphere</option>
+    </select><br><br>
+    <button type="submit">Start Quiz</button>
+  </form>
+
+  <script>
+    document.getElementById("startForm").onsubmit = function(e) {
+      e.preventDefault();
+      const name = document.getElementById("name").value;
+      const studentClass = document.getElementById("class").value;
+      const topic = document.getElementById("topic").value;
+
+      // Save to localStorage
+      localStorage.setItem("name", name);
+      localStorage.setItem("class", studentClass);
+      localStorage.setItem("topic", topic);
+
+      // Redirect to quiz page
+      window.location.href = "quiz.html";
+    };
+  </script>
+</body>
+</html>

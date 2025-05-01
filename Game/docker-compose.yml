@@ -1,0 +1,213 @@
+services:
+
+  template_chart:
+    build:
+      context: ./template/chart
+      dockerfile: ../../Dockerfile-python
+    command: python app.py
+    ports:
+      - "59521:5000"
+    working_dir: /app
+    volumes:
+      - ./template/chart:/app
+    networks:
+      - gamenet
+    
+  template_map_template:
+    build:
+      context: ./template/map_template
+      dockerfile: ../../Dockerfile-python
+    command: python app.py
+    ports:
+      - "58718:5000"
+    working_dir: /app
+    volumes:
+      - ./template/map_template:/app
+    networks:
+      - gamenet
+    
+  maze_game1:
+    build:
+      context: ./maze_game1
+      dockerfile: ../../Dockerfile-python
+    command: python app.py
+    ports:
+      - "53444:5000"
+    working_dir: /app
+    volumes:
+      - ./maze_Game1:/app
+    networks:
+      - gamenet
+    
+  save_the_char:
+    build:
+      context: ./Save_the_char
+      dockerfile: ../../Dockerfile-python
+    command: python app.py
+    ports:
+      - "56247:5000"
+    working_dir: /app
+    volumes:
+      - ./Save_the_char:/app
+    networks:
+      - gamenet
+    
+  frog_game:
+    build:
+      context: ./frog_game
+      dockerfile: ../../Dockerfile-python
+    command: python app.py
+    ports:
+      - "5665:5000"
+    working_dir: /app
+    volumes:
+      - ./frog_game:/app
+    networks:
+      - gamenet
+    
+  rocket_game:
+    build:
+      context: ./rocket_game
+      dockerfile: ../../Dockerfile-python
+    command: python app.py
+    ports:
+      - "55705:5000"
+    working_dir: /app
+    volumes:
+      - ./rocket_game:/app
+    networks:
+      - gamenet
+    
+  fyp_phase1_fullcode_game2_game1_server:
+    build:
+      context: ./FYP_phase1_fullcode/Game2/Game1/Server
+      dockerfile: ../../Dockerfile-python
+    command: python new_app.py
+    ports:
+      - "53459:5000"
+    working_dir: /app
+    volumes:
+      - ./FYP_phase1_fullcode/Game2/Game1/Server:/app
+    networks:
+      - gamenet
+    
+  fyp_phase1_fullcode_game2_game2_evaluation_finetuninggpt2_backend:
+    build:
+      context: ./FYP_phase1_fullcode/Game2/Game2-Evaluation/finetuningGpt2/backend
+      dockerfile: ../../Dockerfile-python
+    command: python gemini_gpt2_flask.py
+    ports:
+      - "58067:5000"
+    working_dir: /app
+    volumes:
+      - ./FYP_phase1_fullcode/Game2/Game2-Evaluation/finetuningGpt2/backend:/app
+    networks:
+      - gamenet
+    
+  fyp_phase1_fullcode_game2_game2_evaluation_mcq_app_backend:
+    build:
+      context: ./FYP_phase1_fullcode/Game2/Game2-Evaluation/mcq_app/backend
+      dockerfile: ../../Dockerfile-python
+    command: python app.py
+    ports:
+      - "52757:5000"
+    working_dir: /app
+    volumes:
+      - ./FYP_phase1_fullcode/Game2/Game2-Evaluation/mcq_app/backend:/app
+    networks:
+      - gamenet
+    
+  template_stepbystep_backend:
+    build:
+      context: ./template/stepbystep/backend
+      dockerfile: ../../Dockerfile-node
+    command: node server.js
+    ports:
+      - "42539:4000"
+    working_dir: /app
+    volumes:
+      - ./template/stepbystep/backend:/app
+    networks:
+      - gamenet
+    
+  template_code_classification_template_backend:
+    build:
+      context: ./template/code_classification_template/backend
+      dockerfile: ../../Dockerfile-node
+    command: node server.js
+    ports:
+      - "44352:4000"
+    working_dir: /app
+    volumes:
+      - ./template/code_classification_template/backend:/app
+    networks:
+      - gamenet
+    
+  template_diagram_based_learning_server:
+    build:
+      context: ./template/Diagram-based-learning/Server
+      dockerfile: ../../Dockerfile-node
+    command: node server.js
+    ports:
+      - "47481:4000"
+    working_dir: /app
+    volumes:
+      - ./template/Diagram-based-learning/Server:/app
+    networks:
+      - gamenet
+    
+  memory_matching_game:
+    build:
+      context: ./template/memory_matching_game
+      dockerfile: ../../Dockerfile-node-backend
+    command: node backend.js
+    ports:
+      - "42472:4000"
+    working_dir: /app
+    volumes:
+      - ./memory_matching_game:/app
+    networks:
+      - gamenet
+    
+  ordering_game_order_steps_backend:
+    build:
+      context: ./Ordering_game/order-steps-backend
+      dockerfile: ../../Dockerfile-node
+    command: node server.js
+    ports:
+      - "43692:4000"
+    working_dir: /app
+    volumes:
+      - ./Ordering_game/order-steps-backend:/app
+    networks:
+      - gamenet
+    
+  drag_and_drop:
+    build:
+      context: ./drag_and_drop
+      dockerfile: ../../Dockerfile-node
+    command: node server.js
+    ports:
+      - "41702:4000"
+    working_dir: /app
+    volumes:
+      - ./drag_and_drop:/app
+    networks:
+      - gamenet
+    
+  fyp_phase1_fullcode_game2_backend:
+    build:
+      context: ./FYP_phase1_fullcode/Game2/backend
+      dockerfile: ../../Dockerfile-node
+    command: node server.js
+    ports:
+      - "49514:4000"
+    working_dir: /app
+    volumes:
+      - ./FYP_phase1_fullcode/Game2/backend:/app
+    networks:
+      - gamenet
+    
+networks:
+  gamenet:
+    driver: bridge

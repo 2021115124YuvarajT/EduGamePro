@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Order the Steps - Input</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            /*background: linear-gradient(to right, #4CAF50, #2196F3);*/
+            background: url('assets/bg.jpeg');
+            background-size: 100% 200%;
+            text-align: center;
+            padding: 20px;
+            /*transition: background 2s ease-in-out;*/
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        input, textarea, button {
+            width: 100%;
+            margin: 10px 0;
+            padding: 10px;
+            font-size: 1em;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        input, textarea {
+            max-width: 550px;
+        }
+        #back {
+            width: 5%;
+        }
+        #back:hover {
+            background-color: red;
+        }
+    </style>
+</head>
+<body>
+    <button onclick="back()" id="back">Back</button>
+    <div class="container">
+        <h1>Input Page</h1>
+        <label for="numConcepts">Number of Concepts:</label>
+        <input type="number" id="numConcepts" min="1" placeholder="Enter a number">
+        <button onclick="generateInputs()">Next</button>
+    </div><br><br>
+    
+    <div class="container" id="inputContainer" style="display:none;">
+        <h1>Enter Steps for Each Concept</h1>
+        <div id="conceptInputs"></div>
+        <button onclick="saveData()">Save and Start Game</button>
+    </div>
+    
+    <script>
+        function back() {
+            window.location.href = "../../template/games.html";
+        }
+        function generateInputs() {
+            const numConcepts = document.getElementById('numConcepts').value;
+            if (numConcepts < 1) {
+                alert('Please enter a valid number of concepts.');
+                return;
+            }
+            
+            const inputContainer = document.getElementById('inputContainer');
+            const conceptInputs = document.getElementById('conceptInputs');
+            conceptInputs.innerHTML = '';
+            
+            for (let i = 0; i < numConcepts; i++) {
+                const div = document.createElement('div');
+                div.innerHTML = `
+                    <label style="color: red"><b>Concept ${i + 1}:<b></label>
+                    <input type="text" class="concept-name" placeholder="e.g., Water Cycle">
+                    <label>Steps in order (comma separated):</label>
+                    <textarea class="concept-steps" placeholder="e.g., Evaporation, Condensation, Precipitation"></textarea>
+                `;
+                conceptInputs.appendChild(div);
+            }
+            
+            inputContainer.style.display = 'block';
+        }
+        
+        async function saveData() {
+    const conceptNames = document.querySelectorAll('.concept-name');
+    const conceptSteps = document.querySelectorAll('.concept-steps');
+    let concepts = [];
+
+    for (let i = 0; i < conceptNames.length; i++) {
+        const concept = conceptNames[i].value.trim();
+        const steps = conceptSteps[i].value.split(',').map(s => s.trim()).filter(Boolean);
+        if (!concept || steps.length === 0) {
+            alert('Please enter a concept and at least one valid step.');
+            return;
+        }
+        concepts.push({ name: concept, steps });
+    }
+
+    // Send data to backend
+    try {
+        let response = await fetch("http://localhost:5100/save-concepts", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ concepts })
+        });
+
+        if (response.ok) {
+            window.location.href = 'order_steps.html'; 
+        } else {
+            alert("Failed to save concepts.");
+        }
+    } catch (error) {
+        console.error("Error saving concepts:", error);
+    }
+}
+
+
+
+        /*// GSAP Gradient Animation
+        function animateBackground() {
+            gsap.to("body", {
+                background: "linear-gradient(to right, #2196F3, #4CAF50)", // Blue to Green
+                duration: 10,
+                repeat: -1,
+                yoyo: true,
+                ease: "linear"
+            });
+        }
+        
+        animateBackground();*/
+    </script>
+</body>
+</html>

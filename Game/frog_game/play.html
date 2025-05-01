@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Frog Jump Game - Play</title>
+    <script src="script.js" defer></script>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        #play::after {
+            content: '🖢'; /* Left arrow */
+            position: absolute;
+            left: -150px;
+            top: 22%;
+            transform: translateY(-50%);
+            font-size: 50px;
+            color: #28a745;
+            animation: moveLeft 1s infinite alternate;
+        }
+
+        @keyframes moveLeft {
+            from {
+                right: -30px;
+                opacity: 0.5;
+            }
+            to {
+                right: -40px;
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>Play Page</h1>
+    <button id="play" onclick="startGame()">Play</button>
+    <button onclick="back()">Back</button> 
+    <script>
+        console.log("topic : ",localStorage.getItem("topic"));
+        console.log("level : ",localStorage.getItem("level"));
+        function back() {
+            window.location.href = "index.html";
+        }
+    </script>
+</body>
+</html>

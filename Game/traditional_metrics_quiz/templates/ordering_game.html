@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Ordering Game</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #eaf2f8;
+      margin: 0;
+      padding: 0;
+    }
+    #starting-message {
+      align-items: center;
+    }
+    .container {
+      margin: 50px auto;
+      background: #fff;
+      padding: 25px;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+    }
+    #game-container {
+      margin: 100px 500px 100px 500px;
+    }
+    h2 {
+      text-align: center;
+      color: #2c3e50;
+    }
+    button {
+      display: block;
+      width: 100%;
+      padding: 12px;
+      margin: 12px 0;
+      background-color: #3498db;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #2980b9;
+    }
+    #result {
+      text-align: center;
+      font-size: 18px;
+      font-weight: bold;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div id="starting-message" style="font-size: 22px; font-weight: bold; display: none;">
+    <!-- This will be updated dynamically -->
+  </div>
+
+  <div class="container" id="game-container" style="display: none;">
+    <!-- <div class="container"> -->
+      <h2>{{ question.title }}</h2>
+      <p>Select the correct order:</p>
+    
+      {% for option in question.options %}
+      <button data-index="{{ loop.index0 }}" onclick="checkAnswer(this, '{{ question.correct_index }}')">
+      {{ option | join(' → ') }}
+      </button>
+      {% endfor %}
+
+    
+      <p id="result"></p>
+    <!-- </div>   -->
+  </div>
+
+  <script>
+    // Get elements
+    const startingMessageDiv = document.getElementById("starting-message");
+    const gameContainer = document.getElementById("game-container");
+
+    // Detect which game this is (optional, or set from Flask)
+    const gameName = "{{ game_name }}";  // Example: pass this as a context variable from Flask
+
+    // Show starting message for 2 seconds before first question
+    startingMessageDiv.innerText = `${gameName} is starting now...`;
+    startingMessageDiv.style.display = "block";
+
+    setTimeout(() => {
+      startingMessageDiv.style.display = "none";
+      gameContainer.style.display = "inline-block";
+      showQuestion();  // Call your existing question renderer
+    }, 4000);
+
+    let startTime = Date.now();
+    let attempts = 0;
+    const maxAttempts = 3;
+
+    function checkAnswer(button, correctIndex) {
+      attempts++;
+      const selectedIndex = parseInt(button.dataset.index);
+      correctIndex = parseInt(correctIndex);  // ✅ Fix here
+
+      const resultEl = document.getElementById("result");
+
+      console.log("Selected Index:", selectedIndex);
+      console.log("Correct Index:", correctIndex);
+
+      if (selectedIndex === correctIndex) {
+        resultEl.innerText = "✅ Correct!";
+        const timeSpent = Math.floor((Date.now() - startTime) / 1000);
+        sendMetrics(timeSpent, attempts - 1);
+      } else {
+        if (attempts < maxAttempts) {
+          resultEl.innerText = `❌ Incorrect. Try again (${maxAttempts - attempts} chances left)`;
+        } else {
+          resultEl.innerText = `❌ Incorrect. No chances left.`;
+          const timeSpent = Math.floor((Date.now() - startTime) / 1000);
+          sendMetrics(timeSpent, attempts);
+        }
+      }
+    }
+
+    function sendMetrics(timeSpent, wrongAttempts) {
+      fetch("/submit_ordering_game", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          time_spent: timeSpent,
+          task_completion: attempts <= maxAttempts,
+          incorrect_attempts: wrongAttempts
+        })
+      })
+      .then(res => res.json())
+      .then(data => {
+        window.location.href = data.next_url;
+      });
+    }
+  </script>
+</body>
+</html>

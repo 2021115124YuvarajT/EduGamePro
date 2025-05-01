@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            /*background-color: #f4f4f4;*/
+            background: url('assets/bg2.jpeg');
+            background-repeat: no-repeat;
+            background-size: cover;
+            color: #333;
+        }
+    
+        h1 {
+            text-align: center;
+            margin-top: 20px;
+            color: #f8f8f8;
+        }
+    
+        #wordInputs {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 20px auto;
+            max-width: 800px;
+        }
+    
+        .inputRow {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            margin-bottom: 10px;
+        }
+    
+        .inputRow div {
+            flex: 1;
+            padding: 0 10px;
+        }
+    
+        #wordInputs label {
+            font-weight: bold;
+            margin-bottom: 5px;
+            font-size: 25px;
+            color: aliceblue;
+        }
+    
+        #wordInputs input {
+            padding: 8px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            width: 100%; /* Fill up the container */
+            box-sizing: border-box;
+        }
+    
+        #generateButton {
+            display: block;
+            margin: 20px auto;
+            padding: 10px 20px;
+            font-size: 18px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            width: 50%; /* Make button not too wide */
+        }
+    
+        #generateButton:hover {
+            background-color: #45a049;
+        }
+    
+        h2 {
+            text-align: center;
+            color: #fdfefd;
+            margin-top: 40px;
+        }
+    
+        #crosswordPreview {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 20px;
+        }
+    
+        #crosswordPreview div {
+            display: flex;
+        }
+    
+        #crosswordPreview div div {
+            width: 30px;
+            height: 30px;
+            border: 1px solid #ccc;
+            text-align: center;
+            line-height: 30px;
+            font-size: 18px;
+        }
+    
+        #crosswordPreview div div.black {
+            background-color: black;
+        }
+        #backbtn {
+            border-radius: 5px;
+            border: 2px white;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            margin-left: 360px;
+            margin-bottom: -50px;
+            font-size: 18px;
+            margin-top: 20px;
+        }
+        #backbtn:hover {
+            background-color: red;
+        }
+    </style>          
+</head>
+<body>
+    <button id="backbtn" onclick="back()">Back</button>
+    <h1>Create Your Crossword</h1>
+                
+    <div id="wordInputs">
+        <div class="inputRow">
+            <div>
+                <label>Word 1:</label> <input type="text" id="word1">
+            </div>
+            <div>
+                <label>Clue 1:</label> <input type="text" id="clue1">
+            </div>
+        </div>
+        <div class="inputRow">
+            <div>
+                <label>Word 2:</label> <input type="text" id="word2">
+            </div>
+            <div>
+                <label>Clue 2:</label> <input type="text" id="clue2">
+            </div>
+        </div>
+        <div class="inputRow">
+            <div>
+                <label>Word 3:</label> <input type="text" id="word3">
+            </div>
+            <div>
+                <label>Clue 3:</label> <input type="text" id="clue3">
+            </div>
+        </div>
+        <div class="inputRow">
+            <div>
+                <label>Word 4:</label> <input type="text" id="word4">
+            </div>
+            <div>
+                <label>Clue 4:</label> <input type="text" id="clue4">
+            </div>
+        </div>
+        <div class="inputRow">
+            <div>
+                <label>Word 5:</label> <input type="text" id="word5">
+            </div>
+            <div>
+                <label>Clue 5:</label> <input type="text" id="clue5">
+            </div>
+        </div>
+        <div class="inputRow">
+            <div>
+                <label>Word 6:</label> <input type="text" id="word6">
+            </div>
+            <div>
+                <label>Clue 6:</label> <input type="text" id="clue6">
+            </div>
+        </div>
+        <div class="inputRow">
+            <div>
+                <label>Word 7:</label> <input type="text" id="word7">
+            </div>
+            <div>
+                <label>Clue 7:</label> <input type="text" id="clue7">
+            </div>
+        </div>
+        <div class="inputRow">
+            <div>
+                <label>Word 8:</label> <input type="text" id="word8">
+            </div>
+            <div>
+                <label>Clue 8:</label> <input type="text" id="clue8">
+            </div>
+        </div>
+        <div class="inputRow">
+            <div>
+                <label>Word 9:</label> <input type="text" id="word9">
+            </div>
+            <div>
+                <label>Clue 9:</label> <input type="text" id="clue9">
+            </div>
+        </div>
+        <div class="inputRow">
+            <div>
+                <label>Word 10:</label> <input type="text" id="word10">
+            </div>
+            <div>
+                <label>Clue 10:</label> <input type="text" id="clue10">
+            </div>
+        </div>
+    </div>    
+
+    <button id="generateButton">Generate Crossword</button>
+    <button id="generateButton" onclick="goto()">View</button>
+
+    <h2>Crossword Preview</h2>
+    <div id="crosswordPreview"></div>
+    
+    <script>
+        const GRID_SIZE = 10;
+        const WORD_COUNT = 10;
+        let crosswordGrid = Array(GRID_SIZE).fill(null).map(() => Array(GRID_SIZE).fill(null));
+        let wordsWithClues = [];
+
+        // Function to check if a word can be placed at a given position
+        function canPlaceWord(word, row, col, isAcross) {
+            if (isAcross) {
+                if (col + word.length > GRID_SIZE) return false;
+                for (let i = 0; i < word.length; i++) {
+                    if (crosswordGrid[row][col + i] && crosswordGrid[row][col + i] !== word[i]) {
+                        return false;
+                    }
+                }
+            } else {
+                if (row + word.length > GRID_SIZE) return false;
+                for (let i = 0; i < word.length; i++) {
+                    if (crosswordGrid[row + i][col] && crosswordGrid[row + i][col] !== word[i]) {
+                        return false;
+                    }
+                }
+            }
+            return true;
+        }
+
+        // Function to place a word in the grid
+        function placeWord(word, clue, row, col, isAcross) {
+            for (let i = 0; i < word.length; i++) {
+                if (isAcross) {
+                    crosswordGrid[row][col + i] = word[i];
+                } else {
+                    crosswordGrid[row + i][col] = word[i];
+                }
+            }
+
+            // Return word details with the correct clue and orientation
+            return { word, clue, startPosition: [row, col], orientation: isAcross ? "across" : "down" };
+        }
+
+        // Function to generate the crossword puzzle
+        function generateCrossword(words) {
+            wordsWithClues = words.map(({ word, clue }) => {
+                let placed = false;
+                let startPosition = null;
+                let orientation = null;
+                
+                for (let attempt = 0; attempt < 50 && !placed; attempt++) {
+                    let row = Math.floor(Math.random() * GRID_SIZE);
+                    let col = Math.floor(Math.random() * GRID_SIZE);
+                    let isAcross = Math.random() > 0.5;
+
+                    if (canPlaceWord(word, row, col, isAcross)) {
+                        let wordData = placeWord(word, clue, row, col, isAcross);
+                        startPosition = wordData.startPosition;
+                        orientation = wordData.orientation;
+                        placed = true;
+                    }
+                }
+
+                // Only return words that were successfully placed
+                if (placed) {
+                    return { word, clue, startPosition, orientation };
+                } else {
+                    console.warn(`Word "${word}" could not be placed.`);
+                    return null;
+                }
+            }).filter(Boolean); // Remove failed words
+
+            localStorage.setItem("crosswordPuzzle", JSON.stringify({ grid: crosswordGrid, words: wordsWithClues }));
+            displayCrosswordPreview();
+            displayClues(wordsWithClues);  // <-- Add this line to display clues with orientation
+        }
+
+        // Function to display crossword preview
+        function displayCrosswordPreview() {
+            let gridContainer = document.getElementById("crosswordPreview");
+            gridContainer.innerHTML = "";
+            for (let i = 0; i < GRID_SIZE; i++) {
+                let rowDiv = document.createElement("div");
+                rowDiv.style.display = "flex";
+                for (let j = 0; j < GRID_SIZE; j++) {
+                    let cell = document.createElement("div");
+                    cell.style.width = "30px";
+                    cell.style.height = "30px";
+                    cell.style.border = "1px solid black";
+                    cell.style.textAlign = "center";
+                    cell.style.fontSize = "18px";
+                    cell.style.lineHeight = "30px";
+                    cell.style.backgroundColor = crosswordGrid[i][j] ? "white" : "black";
+                    cell.innerText = crosswordGrid[i][j] ? crosswordGrid[i][j] : "";
+                    rowDiv.appendChild(cell);
+                }
+                gridContainer.appendChild(rowDiv);
+            }
+        }
+
+        // Handling user input and generating the crossword
+        document.getElementById("generateButton").addEventListener("click", function() {
+            const words = [];
+            for (let i = 1; i <= WORD_COUNT; i++) {
+                let wordInput = document.getElementById(`word${i}`).value.toUpperCase();
+                let clueInput = document.getElementById(`clue${i}`).value;
+                if (wordInput && clueInput) {
+                    words.push({ word: wordInput, clue: clueInput });
+                }
+            }
+            if (words.length === WORD_COUNT) {
+                generateCrossword(words);
+            } else {
+                alert("Please enter all 10 words and their clues.");
+            }
+        });
+
+        function back() {
+            window.location.href = "../games.html";
+        }
+
+        function goto() {
+            window.location.href = "solve.html";
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spaceship Escape Game</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background: black;
+        }
+
+        .game-container {
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+            overflow: hidden;
+            background: url('./images/space.gif') repeat-y center top / cover;
+        }
+
+        .spaceship {
+            width: 150px;
+            height: 190px;
+            position: absolute;
+            bottom: 50px;
+            transition: left 0.2s, bottom 0.2s;
+            background: url('./images/rocket.gif') no-repeat center / contain;
+        }
+
+        .obstacle,
+        .gift,
+        .question-box {
+            width: 150px;
+            height: 190px;
+            position: absolute;
+            top: -100px;
+        }
+
+        .obstacle {
+            background: url('images/rock.gif') no-repeat center / contain;
+        }
+
+        .gift {
+            background: url('images/gift.gif') no-repeat center / contain;
+        }
+
+        .question-box {
+            background: url('images/question.gif') no-repeat center / contain;
+        }
+
+        .game-over {
+            display: none;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            font-size: 24px;
+            padding: 20px;
+            text-align: center;
+            z-index: 10;
+        }
+
+        .scoreboard {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            color: white;
+            font-size: 24px;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 10px;
+            border-radius: 5px;
+        }
+
+        .question-popup {
+            display: none;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(255, 255, 255, 0.95);
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            z-index: 20;
+            width: 300px;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        .question-popup p {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        .question-popup button {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            margin: 8px 0;
+            font-size: 18px;
+            font-weight: bold;
+            background: linear-gradient(135deg, #6a11cb, #2575fc);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: transform 0.2s, background 0.3s;
+        }
+
+        .question-popup button:hover {
+            transform: scale(1.05);
+            background: linear-gradient(135deg, #4c0dbd, #1b62d2);
+        }
+
+        /* Fade-in animation */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translate(-50%, -60%);
+            }
+
+            to {
+                opacity: 1;
+                transform: translate(-50%, -50%);
+            }
+        }
+
+        .scoreboard {
+            position: absolute;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: white;
+            font-size: 24px;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-weight: bold;
+            text-align: center;
+            transition: transform 0.2s ease-in-out;
+        }
+
+        /* Score animation effect */
+        .scoreboard.animated {
+            transform: translateX(-50%) scale(1.2);
+            transition: transform 0.2s ease-in-out;
+        }
+
+        #questionPopup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(255, 255, 255, 0.9);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            width: 300px;
+            max-width: 90%;
+            z-index: 1000;
+        }
+
+        #questionPopup p {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        #optionsContainer {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        #optionsContainer button {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        #optionsContainer button:hover {
+            background: #2980b9;
+        }
+
+        #optionsContainer button:active {
+            transform: scale(0.95);
+        }
+
+#closePopup {
+    margin-top: 15px;
+    background: red;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background 0.3s ease;
+}
+
+#closePopup:hover {
+    background: darkred;
+}
+    </style>
+</head>
+
+<body>
+    <div class="game-container">
+        <div class="spaceship"></div>
+        <div class="game-over">Game Over! Returning to the Game Page ...</div>
+        <div class="scoreboard">Score: <span id="score">0</span></div>
+        <div id="questionPopup" style="display: none;">
+            <p id="questionText"></p>
+            <div id="optionsContainer"></div>
+        </div>         
+        <div id="psiDisplay" style="color: white; font-size: 18px; margin-bottom: 5px;"></div>
+        <div id="atiDisplay" style="color: white; font-size: 18px;"></div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>

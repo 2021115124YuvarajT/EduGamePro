@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Step-by-Step Addition Animation with Carry</title>
+  <style>
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      height: 100%;
+      width: 100%;
+      background-color: #f0f0f0;
+    }
+
+    h1 {
+      color: rebeccapurple;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    table {
+      border-spacing: 10px; /* Space between table cells */
+      font-family: Arial, sans-serif;
+      font-size: 40px;
+    }
+
+    td {
+      text-align: center;
+      width: 40px; /* Ensure all digits and carry values have the same width */
+      vertical-align: bottom;
+    }
+
+    .highlight {
+      color: red;
+    }
+
+    .carry-row td {
+      font-size: 30px;
+      color: blue;
+    }
+
+    .result-row td {
+      font-size: 40px;
+      color: green;
+    }
+
+    .line {
+      border-top: 2px solid black;
+      margin: 10px 0;
+    }
+
+    .operation-sign {
+      font-size: 40px;
+      text-align: right;
+      padding-right: 10px;
+    }
+
+    /* Styling for the refresh button */
+    .refresh-btn {
+      padding: 15px 30px;
+      background-color: rgb(87, 203, 232);
+      color: aliceblue;
+      font-weight: bold;
+      font-size: large;
+      border-radius: 10%;
+      border-color: white;
+    }
+
+  </style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+</head>
+<body>
+  <h1>Addition of Two Numbers</h1>
+
+  <!-- Table for carry, numbers, and result -->
+  <table>
+    <!-- Carry row -->
+    <tr class="carry-row">
+      <td class="carry"></td>
+      <td class="carry"></td>
+      <td class="carry"></td>
+    </tr>
+    <!-- First number row -->
+    <tr class="first-number-row">
+      <!-- Digits will be dynamically inserted here -->
+    </tr>
+    <!-- Second number row -->
+    <tr class="second-number-row">
+      <!-- Digits will be dynamically inserted here -->
+    </tr>
+    <!-- Line separating operands from result -->
+    <tr>
+      <td colspan="5" class="line"></td>
+    </tr>
+    <!-- Result row -->
+    <tr class="result-row">
+      <!-- Results will be dynamically inserted here -->
+    </tr>
+  </table>
+  <br><br>
+
+  <!-- Add Refresh Button here -->
+  <button class="refresh-btn" onclick="refreshPage()">Random</button>
+
+  <script>
+    function generateRandomNumber(length) {
+      let number = '';
+      for (let i = 0; i < length; i++) {
+        number += Math.floor(Math.random() * 10);
+      }
+      return number;
+    }
+
+    function padNumber(number, length) {
+      return number.padStart(length, '0');
+    }
+
+    function setupNumbers() {
+      const minDigits = 2;
+      const maxDigits = 3;
+      const digitsFirstNumber = Math.floor(Math.random() * (maxDigits - minDigits + 1)) + minDigits;
+      const digitsSecondNumber = Math.floor(Math.random() * (maxDigits - minDigits + 1)) + minDigits;
+      
+      const firstNumber = generateRandomNumber(digitsFirstNumber);
+      const secondNumber = generateRandomNumber(digitsSecondNumber);
+      
+      const maxLength = Math.max(firstNumber.length, secondNumber.length);
+      
+      const paddedFirstNumber = padNumber(firstNumber, maxLength);
+      const paddedSecondNumber = padNumber(secondNumber, maxLength);
+      
+      document.querySelector('.first-number-row').innerHTML = paddedFirstNumber.split('').map(digit => `<td class="digit">${digit}</td>`).join('');
+      document.querySelector('.second-number-row').innerHTML = paddedSecondNumber.split('').map(digit => `<td class="digit">${digit}</td>`).join('');
+      document.querySelector('.result-row').innerHTML = new Array(maxLength).fill('<td class="result"></td>').join('');
+    }
+
+    function animateAddition() {
+      const firstNumberDigits = document.querySelectorAll('.first-number-row .digit');
+      const secondNumberDigits = document.querySelectorAll('.second-number-row .digit');
+      const resultDigits = document.querySelectorAll('.result-row .result');
+      const carryDigits = document.querySelectorAll('.carry-row .carry');
+      let carry = 0;
+
+      function animateDigit(index) {
+        if (index < 0) {
+          // If there's any carry left, unshift it to the carry row and result row
+          if (carry > 0) {
+            const carryCell = document.createElement('td');
+            carryCell.textContent = carry;
+            carryCell.className = 'carry';
+            document.querySelector('.carry-row').prepend(carryCell);
+
+            const resultCell = document.createElement('td');
+            resultCell.textContent = carry;
+            resultCell.className = 'result';
+            document.querySelector('.result-row').prepend(resultCell);
+          }
+          return;  // End the animation when all digits are done
+        }
+
+        // Highlight the digits being added (turn them red)
+        gsap.to([firstNumberDigits[index], secondNumberDigits[index]], { color: "red", duration: 1.5 });
+
+        // Get the numeric values of the current digits
+        const num1 = parseInt(firstNumberDigits[index].textContent);
+        const num2 = parseInt(secondNumberDigits[index].textContent);
+
+        // Perform addition for this digit, including carry
+        const sum = num1 + num2 + carry;
+        const digitResult = sum % 10;  // Get the current place digit (unit)
+        carry = Math.floor(sum / 10);  // Calculate the carry for the next column
+
+        // Update carry display
+        setTimeout(() => {
+          // Remove the red color and add the result below
+          gsap.to([firstNumberDigits[index], secondNumberDigits[index]], { color: "black", duration: 1.5 });
+
+          // Update carry for the next step (only if there's carry and not on the leftmost column)
+          if (carry > 0 && index > 0) {
+            carryDigits[index - 1].textContent = carry;  // Show carry in the next column
+          }
+
+          // Add the result for this digit
+          resultDigits[index].textContent = digitResult;
+
+          // Animate the next digit with a 2.5 second delay
+          animateDigit(index - 1);
+        }, 2500);  // Increase delay to 2.5 seconds for slower animation
+      }
+
+      // Start the animation from the last digit (units place)
+      animateDigit(firstNumberDigits.length - 1);
+    }
+
+    // Set up numbers and start animation after a short delay
+    setupNumbers();
+    setTimeout(animateAddition, 1000);
+    
+    // Function to refresh page(itself)
+    function refreshPage() {
+      location.reload();
+    }
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3D Plot</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f4f4f4; /* Light background to contrast with the border */
+        }
+        .plot-container {
+            border: 3px solid #4CAF50; /* Green border for the outline */
+            border-radius: 10px;      /* Rounded corners */
+            padding: 10px;           /* Spacing inside the border */
+            background-color: white; /* White background for the plot area */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
+        }
+        a {
+            margin-top: 20px;
+            text-decoration: none;
+            color: #4CAF50; /* Green link color */
+            font-weight: bold;
+            font-size: 16px;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="plot-container">
+        {{ plot_html|safe }}
+    </div>
+    <a href="/">Back to Upload Page</a>
+</body>
+</html>

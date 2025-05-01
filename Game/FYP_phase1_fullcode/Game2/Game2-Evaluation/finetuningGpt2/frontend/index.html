@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"> 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MCQ Quiz with Live Game</title>
+    <link rel="stylesheet" href="styles.css">
+</head> 
+<body id="container">
+    <h1 id="game-title">Welcome to Kirby World Of Eating !</h1>
+    <div class="game-quiz-container">
+        <div id="game-container">
+            <!-- The live game character will be rendered here -->
+            <img id="character" src="./kirbyGifs/kirbyWalking.gif" alt="Character">
+            <!-- Game status will be updated dynamically -->
+            <p id="game-status">Help Kirby to Eat more by answering correctly.</p>
+        </div>
+        <div class="quiz-wrapper">
+            <!-- Loading icon while fetching questions -->
+            <div id="loading-icon" style="display: none;">
+                <p>Loading questions...</p>
+                <img src="./Spinner-5.gif" alt="Loading">
+            </div>
+            <!-- Quiz questions will be rendered here -->
+            <div id="quiz-container"></div>
+            <!-- Results or final score will be displayed here -->
+            <div id="result-container"></div>
+            <!-- Next button will appear after each question -->
+            <button id="next-btn" style="display: none;">Next</button>
+            <div id="result-container"></div>
+
+            <!-- Next and End buttons -->
+            <button id="next-btn" style="display: none;">Next</button>
+            <button id="end-btn" style="display: block;">End Quiz</button> <!-- Set to block initially -->
+            <button id="end-btn" style="display: block;" onclick="exitTo()">Exit</button>
+            <div id="result-container"></div> 
+
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        const rollNumber = localStorage.getItem('username');
+        console.log(rollNumber);
+        function exitTo() {
+            window.location.href = '../../evaluation.html';
+        }
+    </script>
+</body>
+</html>

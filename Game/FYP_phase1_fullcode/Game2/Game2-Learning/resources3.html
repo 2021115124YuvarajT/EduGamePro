@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Types of Waste</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 20px;
+        }
+
+        #progress-container {
+            background-color: #ccc;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+
+        #progress-bar {
+            height: 20px;
+            width: 0%;
+            background-color: #28a745;
+            position: relative;
+        }
+
+        #progress-text {
+            position: absolute;
+            width: 100%;
+            text-align: center;
+            font-weight: bold;
+            color: white;
+        }
+
+        .waste-type {
+            background-color: #fff;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .waste-type img {
+            width: 100%;
+            max-width: 300px;
+            height: auto;
+            border-radius: 5px;
+            margin-bottom: 15px;
+        }
+
+        button {
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .completed {
+            background-color: #28a745;
+        }
+
+        /* Congratulatory popup styles */
+        #congratulations-popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #fff;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            text-align: center;
+            animation: popup 0.5s ease-out;
+        }
+
+        #congratulations-popup h2 {
+            color: #28a745;
+        }
+
+        #congratulations-popup button {
+            margin-top: 15px;
+            background-color: #ff9800;
+        }
+
+        .backButton:hover {
+            background-color: #d32f2f;
+        }
+
+        .backButton {
+            width: 120px;
+        }
+    </style>
+</head>
+
+<body>
+    <button class="backButton" onclick="goTo()">Back</button>
+    <h1>States Of Matter</h1>
+    <div id="progress-container">
+        <div id="progress-bar"><span id="progress-text"></span></div>
+    </div>
+
+    <div class="waste-type" id="organic">
+        <h2>Solids</h2>
+        <img src="/Game2-Learning/pics/classificationImages/solids.jpg" alt="Solid Image">
+        <p>Solids have a definite shape and volume. The molecules are closely packed together, and they don't move much. Examples of solids include ice, wood, and metals.</p>
+        <button onclick="speakText('organic')">Read Aloud</button>
+    </div>
+
+    <div class="waste-type" id="recyclable">
+        <h2>Liquids</h2>
+        <img src="/Game2-Learning/pics/classificationImages/liquid.jpg" alt="Liquid Image">
+        <p>Liquids have a definite volume but take the shape of their container. The molecules are loosely packed and can move freely. Water, oil, and milk are examples of liquids.</p>
+        <button onclick="speakText('recyclable')">Read Aloud</button>
+    </div>
+
+    <div class="waste-type" id="hazardous">
+        <h2>Gases</h2>
+        <img src="/Game2-Learning/pics/classificationImages/gases.jpg" alt="Gas Image">
+        <p>Gases have neither a definite shape nor a definite volume. The molecules are far apart and move freely. Examples include oxygen, carbon dioxide, and helium.</p>
+        <button onclick="speakText('hazardous')">Read Aloud</button>
+    </div>
+
+    <h1>Changes in Matter</h1>
+
+    <div class="waste-type" id="reversed">
+        <h2>Reversible Changes</h2>
+        <img src="/Game2-Learning/pics/classificationImages/reversiblechanges.png" alt="Reversible Change Image">
+        <p>Changes which can be reversed are called reversible changes. If you keep water in the freezer for some time, it is transformed into ice. If it is taken out, it becomes water again. This is a reversible change.</p>
+        <button onclick="speakText('reversed')">Read Aloud</button>
+    </div>
+
+    <div class="waste-type" id="irreversed">
+        <h2>Irreversible Changes</h2>
+        <img src="/Game2-Learning/pics/classificationImages/irreversiblechanges.png" alt="Irreversible Change Image">
+        <p>Changes which cannot be reversed are called irreversible changes. If you burn a piece of paper it burns and turns into ash. It cannot become paper again.</p>
+        <button onclick="speakText('irreversed')">Read Aloud</button>
+    </div>
+
+    <div id="congratulations-popup">
+        <h2>Congratulations!</h2>
+        <p>Great job! You have learned about all the types of waste. Would you like to play a fun matching game now?</p>
+        <button onclick="selectLevel(3)">Let's play</button>
+    </div>
+
+    <script>
+        console.log("no of topics completed" + localStorage.completedTopics.length);
+        localStorage.setItem('selectedLevel',3); 
+        const level = 3;
+        let completedSections = 0;
+        let progress = 0;
+        let experience = 0;
+        const username = localStorage.getItem("username");
+        let maxScrollProgress = 0;
+        const totalSections = 5;
+
+        console.log("Roll Number: ", username);
+
+        function speakText(sectionId) {
+            if (window.speechSynthesis.speaking) {
+                window.speechSynthesis.cancel();
+            }
+
+            const section = document.getElementById(sectionId);
+            const text = section.querySelector('p').innerText;
+            const speech = new SpeechSynthesisUtterance();
+
+            speech.text = text;
+            speech.lang = 'en-US';
+            speech.volume = 1;
+            speech.rate = 100;
+            speech.pitch = 1;
+
+            speech.onend = () => {
+                markCompleted(sectionId);
+            };
+
+            window.speechSynthesis.speak(speech);
+        }
+
+        function markCompleted(sectionId) {
+            const section = document.getElementById(sectionId);
+
+            if (!section.classList.contains('completed')) {
+                section.classList.add('completed');
+                completedSections++;
+                updateProgressBar();
+
+                if (completedSections === totalSections) {
+                    showCongratulations();
+                }
+            }
+        }
+        function checkCompletion() {
+            if (progress === 100) {
+                let completedTopics = JSON.parse(localStorage.getItem('completedTopics')) || [];
+
+                // Mark topic as completed if not already marked
+                if (!completedTopics.includes(level)) {
+                    completedTopics.push(level);
+                    localStorage.setItem('completedTopics', JSON.stringify(completedTopics));
+                }
+                showCongratulations();
+            }
+        }
+        function updateUserScoreInDatabase() {
+            const experience = 10;
+            const data = { rollNumber: username, experience: experience };
+
+            console.log("Sending data to update score:", data);
+
+            fetch('http://localhost:5000/api/students/update-score', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Failed to update score');
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('Score updated:', data);
+            })
+            .catch(error => {
+                console.error('Error updating score:', error);
+            });
+        }
+
+        function updateScoreOnCompletion() {
+            if (progress === 100) {
+                experience += 10;
+                console.log("Experience updated to: ", experience);
+                updateUserScoreInDatabase();
+            }
+        }
+
+        function updateProgressBar() {
+            const completedProgress = (completedSections / totalSections) * 50;
+            const totalProgress = completedProgress + maxScrollProgress;
+
+            const progressBar = document.getElementById('progress-bar');
+            const progressText = document.getElementById('progress-text');
+
+            progressBar.style.width = `${totalProgress}%`;
+            progressText.innerText = Math.round(totalProgress) + '%';
+            
+            if (Math.round(totalProgress) >= 100) {
+                progress  = Math.round(totalProgress);
+                updateUserScoreInDatabase();
+                checkCompletion();
+                showCongratulations();
+            }
+        }
+
+        function showCongratulations() {
+            const popup = document.getElementById('congratulations-popup');
+            popup.style.display = 'block';
+        }
+
+        function selectLevel(level) {
+            localStorage.setItem('selectedLevel', level);
+            window.location.href = 'level.html';
+        }
+
+        function goTo() {
+            window.location.href = 'main.html';
+        }
+
+        window.addEventListener('scroll', () => {
+            const scrollTop = window.scrollY || document.documentElement.scrollTop;
+            const windowHeight = window.innerHeight;
+            const documentHeight = document.documentElement.scrollHeight;
+            const scrollProgress = (scrollTop / (documentHeight - windowHeight)) * 50;
+
+            if (scrollProgress > maxScrollProgress) {
+                maxScrollProgress = scrollProgress;
+                updateProgressBar();
+            }
+        });
+    </script>
+</body>
+
+</html>

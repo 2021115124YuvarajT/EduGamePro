@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Quiz</title>
+  <style>
+    /* Reset and base styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+  background: linear-gradient(to right, #f7f9fc, #dde6f2);
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 30px;
+}
+
+/* Container for quiz content */
+.container {
+  background-color: white;
+  padding: 40px 50px;
+  border-radius: 15px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  max-width: 700px;
+  width: 100%;
+  text-align: center;
+}
+
+/* Question text */
+#question {
+  font-size: 24px;
+  font-weight: 600;
+  margin-bottom: 30px;
+  color: #333;
+}
+
+/* Options container */
+/* Options container */
+#options {
+  display: flex;
+  flex-direction: row;
+  justify-content: center; /* ✅ Centers buttons horizontally */
+  align-items: center;
+  gap: 15px;
+  flex-wrap: wrap; /* ✅ Makes buttons wrap on smaller screens */
+}
+
+/* Option buttons */
+#options button {
+  background-color: #3a86ff;
+  color: white;
+  border: none;
+  padding: 14px 20px;
+  font-size: 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+  text-align: center;
+  min-width: 60px;
+}
+
+#options button:hover {
+  background-color: #265ed7;
+}
+
+#options button.selected {
+  background-color: #144fc6;
+}
+
+/* Progress text */
+#progress {
+  margin-top: 25px;
+  font-size: 16px;
+  color: #555;
+}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2 id="question">Loading question...</h2>
+    <div id="options"></div>
+    <p id="progress"></p>
+  </div>
+  <script src="script.js"></script>
+</body>
+</html>

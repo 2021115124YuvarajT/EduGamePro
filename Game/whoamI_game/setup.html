@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Who Am I? - Setup</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+            /*background: linear-gradient(45deg, #ff9a9e, #fad0c4, #fad0c4, #ffdde1);*/
+            background: url('assets/bg.jpeg');
+            background-size: 400% 400%;
+            animation: gradientBG 10s infinite alternate;
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 100% 50%; }
+        }
+
+        .floating {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            animation: float 6s infinite alternate;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0px) rotate(0deg); }
+            100% { transform: translateY(-20px) rotate(360deg); }
+        }
+
+        .container {
+            margin-top: 50px;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            display: inline-block;
+            width: 50%;
+        }
+
+        .input-group {
+            background: #fff;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            margin-bottom: 15px;
+        }
+
+        label { font-size: 18px; display: block; margin-top: 10px; }
+        input, select { padding: 8px; font-size: 16px; width: 90%; border-radius: 5px; border: 1px solid #ccc; }
+        button {
+            padding: 12px 25px;
+            font-size: 18px;
+            cursor: pointer;
+            background: #ff758c;
+            border: none;
+            color: white;
+            border-radius: 8px;
+            transition: 0.3s;
+        }
+        button:hover {
+            background: #ff4b6d;
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body>
+    <!--
+    <div class="floating" style="top: 10%; left: 15%; animation-duration: 6s;"></div>
+    <div class="floating" style="top: 50%; left: 80%; animation-duration: 8s;"></div>
+    <div class="floating" style="top: 80%; left: 30%; animation-duration: 7s;"></div>
+    -->
+    
+    <h1 style="color: white;">Setup Who Am I? Game</h1>
+    
+    <div class="container">
+        <label for="numQuestions">Number of Questions:</label>
+        <input type="number" id="numQuestions" min="1" max="10" value="0">
+        <div id="questionsContainer"></div>
+        <button onclick="back()">Back</button>
+        <button onclick="saveGameData()">View Game</button>
+    </div>
+
+    <script>
+        function back() {
+            window.location.href = "../template/games.html";
+        }
+        function generateFields() {
+            const numQuestions = document.getElementById("numQuestions").value;
+            const container = document.getElementById("questionsContainer");
+            container.innerHTML = ""; 
+
+            for (let i = 0; i < numQuestions; i++) {
+                container.innerHTML += `
+                    <div class="input-group">
+                        <label>Question ${i+1}:</label>
+                        <input type="text" id="question${i}" placeholder="Enter the riddle">
+                        <label>Upload Image:</label>
+                        <input type="file" id="image${i}" accept="image/*">
+                        <label>Correct Answer:</label>
+                        <input type="text" id="answer${i}" placeholder="Enter correct answer">
+                        <label>Options (comma separated):</label>
+                        <input type="text" id="options${i}" placeholder="e.g., Elephant, Lion, Giraffe">
+                        <label>Description:</lable>
+                        <input type="text" id="description${i}" placeholder="e.g.,lion is king of forest">
+                    </div>
+                `;
+            }
+        }
+
+        document.getElementById("numQuestions").addEventListener("change", generateFields);
+        generateFields(); 
+
+        function saveGameData() {
+            const numQuestions = document.getElementById("numQuestions").value;
+            let gameData = [];
+
+            for (let i = 0; i < numQuestions; i++) {
+                const question = document.getElementById(`question${i}`).value;
+                const answer = document.getElementById(`answer${i}`).value;
+                const options = document.getElementById(`options${i}`).value.split(",");
+                const imageFile = document.getElementById(`image${i}`).files[0];
+                const description = document.getElementById( `description${i}`).value; 
+                console.log(description);
+                if (!question || !answer || options.length < 2 || !imageFile || !description ) {
+                    alert(`Please fill all fields for question ${i + 1}`);
+                    return;
+                }
+
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    gameData.push({ question, answer, options, image: e.target.result,desc:description });
+
+                    if (gameData.length === parseInt(numQuestions)) {
+                        localStorage.setItem("gameData", JSON.stringify(gameData));
+                        window.location.href = "game.html"; 
+                    }
+                };
+                reader.readAsDataURL(imageFile);
+            }
+        }
+    </script>
+</body>
+</html>

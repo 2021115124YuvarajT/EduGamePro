@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Step-by-Step Learning: Types of Waste</title>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+
+  <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #7e3e8e;
+
+      color: #4c6482;
+
+      font-family: 'Pacifico';
+
+    }
+
+    .hover-image:hover {
+      transform: scale(1.05);
+      /* Enlarges the image by 20% */
+      box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+      /* Adds a shadow for a lifting effect */
+    }
+
+    .container {
+      max-width: 600px;
+      margin: 20px auto;
+      padding: 20px;
+      background: white;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      border-radius: 0px;
+
+    }
+
+    h1 {
+      text-align: center;
+      color: #9ac3e7;
+
+
+    }
+
+    h2 {
+      color: #4c6482;
+
+    }
+
+
+    .step {
+      display: none;
+      margin-bottom: 20px;
+      border: 2px solid #b4a7b7;
+
+      border-radius: 8px;
+      padding: 20px;
+      position: relative;
+    }
+
+    .step.active {
+      display: block;
+      border-color: #c1cbdd;
+
+      box-shadow: 0 0 15px #c1cbdd;
+
+    }
+
+    .step img {
+      max-width: 100%;
+      border-radius: 8px;
+    }
+
+    .navigation {
+      text-align: center;
+    }
+
+    .navigation button {
+      margin: 10px;
+      padding: 10px 20px;
+      border: none;
+      background-color: #4c6482;
+
+      color: white;
+      font-size: 16px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .navigation button:disabled {
+      background-color: #b4a7b7;
+
+      cursor: not-allowed;
+    }
+
+    .navigation button:hover {
+      background-color: #c1cbdd;
+
+    }
+
+
+    .break-game {
+      display: none;
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    .feedback {
+      margin-top: 20px;
+      text-align: center;
+    }
+
+    .feedback button {
+      font-size: 24px;
+      margin: 0 10px;
+      cursor: pointer;
+    }
+
+
+    .exit-btn {
+      margin-top: 20px;
+      text-align: center;
+    }
+
+    .exit-btn button {
+      padding: 10px 20px;
+      font-size: 16px;
+      border: none;
+      border-radius: 5px;
+      background-color: #c1cbdd;
+
+      color: white;
+      cursor: pointer;
+    }
+
+    .exit-btn button:hover {
+      background-color: #ca00fe;
+
+    }
+  </style>
+
+</head>
+
+<body>
+  <div class="container">
+    <h1>Types of Waste</h1>
+
+    <!-- Steps -->
+    <div class="step active" id="step-1">
+      <h2> Organic Waste</h2>
+      <img src="https://www.shutterstock.com/image-photo/organic-waste-compost-260nw-1344050795.jpg"
+        alt="Organic Waste" class="hover-image">
+      <p>Organic waste includes food scraps, garden waste, and biodegradable materials.</p>
+      <button onclick="speak('Organic waste includes food scraps, garden waste, and biodegradable materials.')">🔊
+        Listen</button>
+    </div>
+
+    <div class="step" id="step-2">
+      <h2> Recyclable Waste</h2>
+      <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTFdF0FFZHKy2B8dY7kBg0-fEIe8cHG35EHMQ&s"
+        alt="Recyclable Waste" class="hover-image">
+      <p>Recyclable waste includes plastics, paper, metal, and glass that can be processed and reused.</p>
+      <button
+        onclick="speak('Recyclable waste includes plastics, paper, metal, and glass that can be processed and reused.')">🔊
+        Listen</button>
+    </div>
+
+    <div class="step" id="step-3">
+      <h2>Hazardous Waste</h2>
+      <img src="" alt="Hazardous Waste" class="hover-image">
+      <p>Hazardous waste includes chemicals, batteries, and medical waste that require special disposal.</p>
+      <button
+        onclick="speak('Hazardous waste includes chemicals, batteries, and medical waste that require special disposal.')">🔊
+        Listen</button>
+    </div>
+
+    <!-- Navigation -->
+    <div class="navigation">
+      <button id="prevBtn" onclick="prevStep()" disabled>Previous</button>
+      <button id="nextBtn" onclick="nextStep()">Next</button>
+    </div>
+
+    <!-- Break Game -->
+    <div class="break-game" id="break-game">
+      <h2>Take a Break! 🎮</h2>
+      <p>Play this mini-game to relax before continuing!</p>
+      <button onclick="playGame()">Start Game</button>
+    </div>
+
+    <!-- Feedback -->
+    <div class="feedback">
+      <h2>How did you feel about this step?</h2>
+      <button onclick="giveFeedback('😊')">😊</button>
+      <button onclick="giveFeedback('😐')">😐</button>
+      <button onclick="giveFeedback('😞')">😞</button>
+    </div>
+
+    <!-- Exit Button -->
+    <div class="exit-btn">
+      <button onclick="exitPage()">Exit</button>
+    </div>
+  </div>
+
+  <script>
+    const stepSound = new Audio('../assets/sounds/step-sound.wav'); // Sound for step animation
+    const breakSound = new Audio('../assets/sounds/break-sound.wav'); // Sound for break reminder
+    const startSound = new Audio('../assets/sounds/start-sound.wav');
+    function playStepSound() {
+      stepSound.play();
+    }
+    function playBreakSound() {
+      breakSound.play();
+    }
+    function playStartSound(){
+      startSound.play();
+    }
+
+    const steps = document.querySelectorAll('.step');
+    let currentStep = 0;
+    window.addEventListener('DOMContentLoaded', () => {
+      // Initially hide all steps
+      
+      gsap.set('.step.active', { opacity: 0, duration: 2 });
+
+      // Animate the container first
+      gsap.from('.container', {
+        y: '-100%',
+        duration: 1,
+        ease: 'bounce',
+        onComplete: () => {
+          gsap.set('.step.active', { opacity: 1 });
+          startSound.play();
+        }
+      });
+
+      gsap.from('.step.active', { x: '-100%', duration: 2, delay: 1, ease: 'power2.out', })
+
+      startSound.play();
+    });
+    function animator(index) {
+      playStepSound();
+      gsap.from('.step.active', { opacity: 1, x: '-150%', duration: 1.5, delay: 0.5, ease: 'power2.out' })
+    }
+    function updateSteps() {
+      steps.forEach((step, index) => {
+        step.classList.toggle('active', index === currentStep);
+      });
+      document.getElementById('prevBtn').disabled = currentStep === 0;
+      document.getElementById('nextBtn').disabled = currentStep === steps.length - 1;
+
+    }
+
+    function nextStep() {
+      currentStep++;
+
+      updateSteps();
+      //animator(currentStep);
+      gsap.from('.step.active', {
+          x: '150%',
+          opacity: 0,
+          duration: 1,
+          onStart: () => stepSound.play() // Play step sound during animation
+        });
+    }
+
+    function prevStep() {
+      currentStep--;
+      updateSteps();
+      gsap.from('.step.active', {
+          x: '-150%',
+          opacity: 0,
+          duration: 1,
+          onStart: () => stepSound.play() // Play step sound during animation
+        });
+    }
+
+    function speak(text) {
+      const speech = new SpeechSynthesisUtterance(text);
+      window.speechSynthesis.speak(speech);
+    }
+    // Function to show a break reminder popup
+    async function showBreakReminder() {
+
+
+      alert("Time for a break! Take 2-3 minutes to relax and refresh.");
+      playBreakSound();
+    }
+
+    // Set interval to trigger popup every 10 minutes (600,000 milliseconds)
+    setInterval(showBreakReminder, 600000); // 10 minutes
+
+    function exitPage() {
+      window.history.back(); // Navigate to previous page
+    }
+  </script>
+</body>
+
+</html>

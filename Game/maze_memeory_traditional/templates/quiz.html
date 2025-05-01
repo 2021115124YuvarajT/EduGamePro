@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Quiz</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f9f9f9;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .quiz-container {
+      background-color: #ffffff;
+      padding: 30px 40px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      max-width: 600px;
+      width: 100%;
+    }
+
+    h3 {
+      margin-bottom: 10px;
+      color: #333333;
+    }
+
+    p {
+      font-size: 16px;
+      color: #444444;
+    }
+
+    .options {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 20px;
+      margin-bottom: 20px;
+    }
+
+    .option-btn {
+      flex: 1 1 calc(50% - 10px);
+      padding: 12px;
+      font-size: 16px;
+      background-color: #e0f0ff;
+      border: 2px solid #007BFF;
+      border-radius: 8px;
+      color: #007BFF;
+      cursor: pointer;
+      transition: background-color 0.3s, color 0.3s;
+    }
+
+    .option-btn:hover {
+      background-color: #007BFF;
+      color: white;
+    }
+
+    .option-btn.selected {
+        background-color: #007BFF;
+        color: white;
+        border: 2px solid #0056b3;
+    }
+
+    .feedback-correct {
+      color: green;
+      font-weight: bold;
+    }
+
+    .feedback-incorrect {
+      color: red;
+      font-weight: bold;
+    }
+
+    .submit-btn {
+      padding: 10px 20px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      font-size: 16px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+
+    .submit-btn:hover {
+      background-color: #45a049;
+    }
+  </style>
+</head>
+<body>
+  <div class="quiz-container">
+    <h3>Question {{ qno }}</h3>
+    <form method="POST" id="quiz-form">
+      <p>{{ question }}</p>
+
+      {% if not show_feedback %}
+        <input type="hidden" name="answer" id="selected-answer" required>
+        <div class="options">
+          {% for opt in options %}
+            <button type="button" class="option-btn" onclick="selectOption('{{ opt }}')">{{ opt }}</button>
+          {% endfor %}
+        </div>
+        <button type="submit" class="submit-btn">Submit</button>
+      {% else %}
+        <p><strong>You answered:</strong> {{ feedback.selected }}</p>
+        <p><strong>Correct answer:</strong> {{ feedback.correct }}</p>
+        <p class="{{ 'feedback-correct' if feedback.is_correct else 'feedback-incorrect' }}">
+            {{ "Correct!" if feedback.is_correct else "Incorrect!" }}
+        </p>
+        <button type="submit" name="action" value="Next" class="submit-btn">Next</button>
+      {% endif %}
+    </form>
+  </div>
+
+  <script>
+    function selectOption(value) {
+        document.getElementById('selected-answer').value = value;
+
+        // Remove 'selected' class from all buttons
+        const buttons = document.querySelectorAll('.option-btn');
+        buttons.forEach(btn => btn.classList.remove('selected'));
+
+        // Add 'selected' class to the clicked button
+        const clicked = Array.from(buttons).find(btn => btn.textContent.trim() === value);
+        if (clicked) clicked.classList.add('selected');
+    }
+  </script>
+</body>
+</html>

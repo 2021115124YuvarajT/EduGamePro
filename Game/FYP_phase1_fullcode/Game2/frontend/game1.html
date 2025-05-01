@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Learning</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: url('../img.jpg');
+            background-repeat: no-repeat;
+            background-size: cover;
+            text-align: center;
+            transition: background 0.5s ease-in-out;
+        }
+
+        .container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0px 5px 20px rgba(0, 0, 0, 0.1);
+            width: 400px;
+            color: #333;
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .container:hover {
+            transform: translateY(-10px);
+        }
+
+        h1 {
+            color: #00796b;
+            margin-bottom: 25px;
+            font-size: 24px;
+            font-weight: 600;
+        }
+
+        button {
+            padding: 12px 20px;
+            margin: 15px 0;
+            font-size: 18px;
+            border: none;
+            border-radius: 6px;
+            background-color: #00796b;
+            cursor: pointer;
+            color: white;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            width: 100%;
+        }
+
+        button:hover {
+            background-color: #004d40;
+            transform: translateY(-2px);
+        }
+
+        #log-out {
+            background-color: #d32f2f;
+            margin-top: 20px;
+        }
+
+        #log-out:hover {
+            background-color: #b71c1c;
+            transform: translateY(-2px);
+        }
+
+        /* Additional hover colors for other buttons */
+        #evaluationBtn:hover {
+            background-color: rgb(99, 26, 172);
+        }
+
+        #leaderboardBtn:hover {
+            background-color: #4379ed;
+        }
+
+        /* Styling for .backButton */
+        .backButton {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Welcome to the Gamified Learning</h1>
+        <button id="learningBtn">Gamified Learning Framework</button>
+        <button id="evaluationBtn">Gamified Learning Template</button>
+    </div>
+    <div class="backButton">
+        <button id="log-out" onclick="goTo()">Logout</button>
+    </div>
+    <script>
+        const rollNumber = localStorage.getItem('username');
+        console.log(rollNumber);
+
+        document.getElementById('learningBtn').addEventListener('click', function () {
+            window.location.href = 'game.html'; // Update with the actual path
+        });
+
+        document.getElementById('evaluationBtn').addEventListener('click', function () {
+            window.location.href = '../../../template/index.html'; // Update with the actual path
+        });
+
+        function goTo() {
+            saveFlagVariablesOnLogout();
+            window.location.href = 'login.html';
+        }
+        async function saveFlagVariablesOnLogout() {
+            // Retrieve data from localStorage
+            const flagVars = {
+                rollNumber: sessionStorage.getItem('username'), // Ensure rollNumber is stored in localStorage
+                
+                //selectedLevel: parseInt(localStorage.getItem('selectedLevel')) || 0,
+                shownQ1: parseInt(localStorage.getItem('shownQ1')) || 0,
+                shownQ2: parseInt(localStorage.getItem('shownQ2')) || 0,
+                completedTopics: JSON.parse(localStorage.getItem('completedTopics')) || [],
+                completedSbsTopics: JSON.parse(localStorage.getItem('completedSbsTopics')) || [],
+                q1Flag: parseInt(localStorage.getItem('q1Flag')) || 0,
+                q2Flag: parseInt(localStorage.getItem('q2Flag')) || 0,
+                shownSbs: parseInt(localStorage.getItem('shownSbs')) || 0,
+                badges: JSON.parse(localStorage.getItem('badges')) || []
+            };
+
+            try {
+                const response = await fetch('http://localhost:5000/api/students/writeFlagVar', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ data: flagVars })
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.message || 'Failed to save flag variables.');
+                }
+
+                console.log('Flag variables saved successfully.');
+            } catch (error) {
+                console.error('Error saving flag variables:', error.message);
+            }
+        }
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,126 @@
+body {
+    text-align: center;
+    font-family: Arial, sans-serif;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    min-height: 100vh;
+    margin: 0;
+    padding: 0;
+    color: aliceblue;
+    animation: backgroundShift 25s infinite;
+}
+
+@keyframes backgroundShift {
+    0% {
+        background-image: url('images/image1.jpeg');
+    }
+    20% {
+        background-image: url('images/image2.avif');
+    }
+    40% {
+        background-image: url('images/image3.jpg');
+    }
+    60% {
+        background-image: url('images/image4.avif');
+    }
+    80% {
+        background-image: url('images/image5.jpg');
+    }
+    100% {
+        background-image: url('images/image1.jpeg');
+    }
+}
+
+.level-container, .game-header {
+    margin-top: 50px;
+    color: aliceblue;
+}
+
+button {
+    font-size: 16px;
+    padding: 10px 20px;
+    margin: 10px;
+    cursor: pointer;
+    border: none;
+    border-radius: 8px;
+    background-color: #007bff;
+    color: white;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+#mazeCanvas {
+    display: block;
+    margin: 20px auto;
+    border: 3px solid #333;
+    border-radius: 10px;
+}
+
+#questionBox {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 300px;
+    padding: 20px;
+    background: white;
+    border: 2px solid #333;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    z-index: 1000;
+    border-radius: 10px;
+}
+
+#optionsContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.optionBtn {
+    padding: 10px;
+    border: none;
+    background: rgb(78, 157, 203);
+    cursor: pointer;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+.optionBtn:hover {
+    background: rgb(0, 81, 255);
+}
+
+.optionBtn:active {
+    transform: scale(0.95);
+}
+
+#attemptsLeft {
+    margin-top: 10px;
+    font-weight: bold;
+    color: red;
+}
+
+input[type="text"] {
+    width: 300px;
+    padding: 10px;
+    font-size: 16px;
+    border: 2px solid #007bff;
+    border-radius: 5px;
+    outline: none;
+    transition: border-color 0.3s ease-in-out;
+}
+
+input[type="text"]:focus {
+    border-color: #0056b3;
+    box-shadow: 0 0 5px rgba(0, 91, 187, 0.5);
+}
+
+input[type="text"]::placeholder {
+    text-align: center;
+    color: #aaa;
+}

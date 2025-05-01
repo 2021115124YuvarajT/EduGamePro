@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Add Elements</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #4a90e2, #6a11cb);
+      color: #fff;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      text-align: center;
+      margin-bottom: 20px;
+      opacity: 0;
+    }
+
+    .container {
+      width: 900px;
+      padding: 25px;
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      backdrop-filter: blur(10px);
+      text-align: left;
+      opacity: 0;
+    }
+
+    label {
+      font-weight: 600;
+      display: block;
+      margin: 10px 0 5px;
+    }
+
+    input[type="text"], textarea, input[type="file"] {
+      width: 100%;
+      padding: 12px;
+      border: none;
+      border-radius: 8px;
+      outline: none;
+      font-size: 16px;
+      margin-bottom: 15px;
+      background: rgba(255, 255, 255, 0.2);
+      color: #fff;
+    }
+
+    input::placeholder, textarea::placeholder {
+      color: #ddd;
+    }
+
+    .button-container {
+      text-align: center;
+      margin-top: 20px;
+      opacity: 0;
+    }
+
+    button {
+      background: #ff6b6b;
+      color: #fff;
+      padding: 12px 20px;
+      border-radius: 50px;
+      font-size: 30px;
+      font-weight: 600;
+      transition: all 0.3s ease-in-out;
+      border: none;
+      cursor: pointer;
+      box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+      margin: 10px;
+      width: 250px;
+      height: 150px;
+      
+    }
+
+    button:hover {
+      transform: scale(1.1);
+      background: #ff4757;
+    }
+
+    button:active {
+      transform: scale(0.9);
+    }
+
+    #view {
+      background: #1dd1a1;
+    }
+
+    #view:hover {
+      background: #10ac84;
+    }
+
+    #backButton {
+      background: #ff4757;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Add Elements</h1>
+  <div class="container">
+    <form id="addElementsForm">
+      <label for="title">Title</label>
+      <input type="text" id="title" placeholder="Enter title" required>
+      
+      <label for="description">Description</label>
+      <textarea id="description" placeholder="Enter description" rows="3" required></textarea>
+      
+      <label for="diagram">Upload Diagram</label>
+      <input type="file" id="diagram" accept="image/*" required>
+      
+      <label for="gif">Upload GIF</label>
+      <input type="file" id="gif" accept="image/gif">
+      
+      <label for="audio">Upload Audio</label>
+      <input type="file" id="audio" accept="audio/*">
+      
+      <div class="button-container">
+        <button type="button" id="backButton" onclick="back()">Back</button>
+        <button type="button" id="previewButton">Upload</button>
+        <button type="button" id="view" onclick="nextpage()">View</button>
+      </div>
+    </form>
+  </div>
+
+  <script>
+    // GSAP Animations
+    gsap.to("h1", { opacity: 1, y: -10, duration: 1, ease: "power3.out" });
+    gsap.to(".container", { opacity: 1, y: 10, duration: 1, delay: 0.5, ease: "power3.out" });
+    gsap.to(".button-container", { opacity: 1, duration: 1, delay: 1, ease: "power3.out" });
+
+    // Animate each form element
+    gsap.from("input, textarea, input[type='file']", { opacity: 1, y: 20, duration: 0.8, stagger: 0.2, ease: "back.out(1.7)", delay: 0.6 });
+    gsap.from(".button-container button", { opacity: 1, scale: 0.5, duration: 0.6, stagger: 0.2, ease: "elastic.out(1, 0.5)", delay: 1 });
+  </script>
+
+  <script src="add_elements.js"></script>
+</body>
+</html>

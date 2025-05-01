@@ -1,0 +1,277 @@
+06/01/2025
+Did a static page of step by step based learning (some more works left)
+
+07/01/2025
+Did the basic template for teachers to upload the pictures and contents 
+And these will be stored in MongoDB and retrieve the contents and shown in slides in another page
+
+08/01/2025
+Did the template to upload excel sheet 
+Working in merging the above two
+
+09/01/2025
+Completed the Step by Step part of coding 
+
+18/01/2025
+Searching the Research Papers
+
+19/01/2025
+Done the integration of MongoDB in classification learning
+
+20/01/2025
+Completed the PPT for the Review 0
+
+21/01/2025
+Doing the project works
+
+22/01/2025
+Done the two page writeup for the Review 0
+
+23/01/2025
+Done the Review 0
+
+24/01/2025
+Discussing about the Next Review plans and do the project works
+
+25/01/2025
+Done the half work of the chart based learning template
+
+26/01/2025
+Starting the work of map based learning and gave the chart based learning to Priya
+Helped Yuthikshaa's part of work
+
+27/01/2025
+Doing the work of Map based learning. 
+Map renders but the places won't correctly mark in the map.
+
+28/01/2025
+Doing the map rendering and places for marking.
+
+29/01/2025
+Doing the same and rectify the errors.
+
+30/01/2025
+Done the places marking in the map based learning.
+Start the work for Regions marking.
+
+31/01/2025
+Doing the region marking in the map based learning.
+
+04/02/2025
+Integrated the 5 learning parts.
+Working in seperating quizzes and step by step learning.
+
+05/02/2025
+Done the merging of learning parts.
+Discussing the PPT and writeupfor Review 1.
+
+09/02/2025
+Doing the Gemini API part for uploading the docx or pdf to extract the contents.
+
+11/02/2025
+Done the text extracting and refining part for multiple files.
+Try to advance the function using html code.
+
+13/02/2025
+Working in the image extraction.
+
+14/02/2025
+Working in the text and image extraction.
+
+15/02/2025
+Working in the image extraction used only in units.
+
+16/02/2025
+Working in the image extraction and merging using default python libraries and models.
+
+17/02/2025
+Working in Advanced games (Frog Game) using html, css and js.
+
+18/02/2025
+Made the game level to 3.
+Working to improve the game in automation.
+
+19/02/2025
+Working in the dynamic frog game.
+
+20/02/2025
+Working in the dynamic frog game.
+
+21/02/2025
+Done the working of dynamic part in frog game.
+UI for that game only remains.
+
+22/02/2025
+Working in the maze game.
+
+23/02/2025
+Working in the maze game try to add question box.
+
+24/02/2025
+Added the question box with the condition of reaching obstacle.
+
+25/02/2025
+Questions were not generated.
+The obstacle won't appear whatever i tried.
+
+26/02/2025
+Started working in the maze game freshly.
+
+27/02/2025
+Created a maze game perfectly.
+Working in the adding of questions generation.
+
+28/02/2025
+Done the maze game.
+
+01/03/2025
+Working in the frog game question generation.
+
+02/03/2025
+Working in the frog game question generation and UI.
+
+03/03/2025
+Working in the rocket game question generation.
+
+04/03/2025
+Working in the rocket game question generation.
+
+05/03/2025
+Done the rocket game
+
+06/03/2025
+Integrating the games.
+
+07/03/2025
+Integrating the games.
+
+08/03/2025
+Working in the PPT.
+
+09/03/2025
+Done the work of PPT.
+
+10/03/2025
+Working in the architecture.
+
+11/03/2025
+Working in the Research paper.
+
+12/03/2025
+Integrated all the games.
+Done the Latex Document.
+Sent the PPT and Latex document to Bama mam.
+
+13/03/2025
+Creating documentation for text extraction and image extraction.
+
+14/03/2025
+Review 2.
+Discussing the suggestion given by mam and started working.
+
+15/03/2025
+Working in the UI enhancements of the games.
+
+16/03/2025
+Working in the UI enhancements of the games and debugging the bugs.
+
+17/03/2025
+Working in the UI enhancements and adding the files given from teammates.
+
+18/03/2025
+Working in the UI enhancements and adding the files given from teammates.
+
+19/03/2025
+Working in the UI enhancements and adding the files given from teammates.
+
+20/03/2025
+Working in the UI enhancements and add loading icons.
+
+21/03/2025
+Working in the UI enhancements and add loading icons.
+
+22/03/2025
+Done UI enhancements of the games.
+Added all the files given by teammates.
+
+23/03/2025
+Working in the bugs of Save the King.
+
+24/03/2025
+Working in the bugs of Save the King. But that doesn't rectified.
+
+25/03/2025
+Working in the bugs of Crossword puzzle.
+
+26/03/2025
+Working in the Report.
+
+27/03/2025
+Working in the Report.
+
+28/03/2025
+Working in the Report.
+
+29/03/2025
+Working in the Report.
+
+30/03/2025
+Working in the Report.
+
+31/03/2025
+Working in the Report.
+
+01/04/2025
+Working in the Report.
+
+02/04/2025
+Working in the Report.
+
+03/04/2025
+Done the working in the Report.
+
+04/04/2025
+Leave.
+
+05/04/2025
+Working in the metrics.
+
+06/04/2025
+Working in the metrics.
+
+07/04/2025
+Working in the quiz game for traditional metrics.
+
+08/04/2025
+Working in the quiz game for traditional metrics.
+
+09/04/2025
+Working in document chapter 4.
+
+10/04/2025
+Done the working in the document.
+
+11/04/2025
+Working in the metrics visualization.
+
+12/04/2025
+Working in the metrics visualization.
+
+13/04/2025
+Work done and finished the documentation.
+
+14/04/2025
+Working in the ppt and part of the review meet.
+
+15/04/2025
+Review 3.
+
+16/04/2025
+Working in the shell scripts to run the whole server at once.
+
+17/04/2025
+Done the .bat file for Phase 2 learning and games.
+
+18/04/2025
+Working in the errors occur when the .bat files run in Yuthikshaa's system.
+Getting new tasks for the final review.

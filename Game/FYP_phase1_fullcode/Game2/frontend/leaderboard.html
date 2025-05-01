@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leaderboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background-image: url('https://media.istockphoto.com/id/157278658/photo/citadelle-de-quebec-grey-brick-wall-background.jpg?s=612x612&w=0&k=20&c=sCcLkcQh4zHFy8jlxr-6JXHI9X28mAW7kG_dxupwwb8=');
+            background-size: cover;
+            /* Scales the image to cover the entire screen */
+            background-repeat: no-repeat;
+            /* Prevents the image from repeating */
+            background-position: center;
+            /* Centers the image on the screen */
+            background-attachment: fixed;
+        }
+
+        h1 {
+            color: floralwhite;
+            margin-bottom: 20px;
+            font-size: 2em;
+        }
+
+        .leaderboard-container {
+            background-color: rgba(0, 0, 0, 0.6);
+            border-radius: 12px;
+            padding: 20px;
+            width: 80%;
+            max-width: 500px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+            overflow-y: auto;
+            max-height: 70vh;
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        li {
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            margin: 8px 0;
+            padding: 15px;
+            font-size: 1em;
+            color: floralwhite;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+
+        li:hover {
+            background-color: rgba(255, 255, 255, 0.3);
+            transform: scale(1.02);
+        }
+
+        .roll-number {
+            color: #ffeb3b;
+            font-weight: bold;
+            font-size: larger;
+        }
+
+        .error-message {
+            color: red;
+            margin-top: 20px;
+            font-size: 1.1em;
+        }
+
+        .backButton {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            padding: 10px 20px;
+            font-size: 16px;
+            border-radius: 10px;
+            border: none;
+            background-color: #4CAF50;
+            color: floralwhite;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .backButton:hover {
+            background-color: #45a049;
+        }
+
+        .level-badge {
+            width: 50px;
+            height: 50px;
+            background-color: #ffd700;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #000;
+            font-weight: bold;
+            font-size: 2.5em;
+            margin-right: 10px;
+        }
+
+        .details {
+            display: flex;
+            align-items: center;
+        }
+
+        .score-level {
+            font-size: 1.5em;
+            color: #ffeb3b;
+        }
+    </style>
+</head>
+<body>
+    <button class="backButton" onclick="goTo()">Back</button>
+    <h1>Leaderboard</h1>
+    <div class="leaderboard-container">
+        <ul id="leaderboardList"></ul>
+        <div class="error-message" id="errorMessage"></div>
+    </div>
+
+    <script>
+        window.onload = function() {
+            fetch('http://localhost:5000/api/students/leaderboard')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    const leaderboardList = document.getElementById('leaderboardList');
+                    const errorMessage = document.getElementById('errorMessage');
+                    leaderboardList.innerHTML = ''; 
+                    errorMessage.textContent = ''; 
+
+                    data.sort((a, b) => {
+                        if (b.level === a.level) {
+                            return b.score - a.score;
+                        }
+                        return b.level - a.level;
+                    });
+
+                    data.forEach(student => {
+                        const li = document.createElement('li');
+                        
+                        // Assign badge based on level
+                        let badge = "🥉"; 
+                        if (student.level >= 3 && student.level <= 5) badge = "🥈";
+                        else if (student.level >= 6 && student.level <= 10) badge = "🥇";
+                        else if (student.level > 10) badge = "🏆";
+
+                        li.innerHTML = `
+                            <div class="details">
+                                <div class="level-badge">${badge}</div>
+                                <span class="roll-number">Roll: ${student.rollNumber}</span>
+                            </div>
+                            <span class="score-level">Level: ${student.level} | Score: ${student.score}</span>`;
+                        
+                        leaderboardList.appendChild(li);
+                    });
+                })
+                .catch(error => {
+                    console.error("Error fetching leaderboard data:", error);
+                    document.getElementById('errorMessage').textContent = "Error fetching leaderboard data. Please try again.";
+                });
+        };
+
+        function goTo() {
+            window.location.href = 'dashboard.html';
+        }
+    </script>
+</body>
+</html>

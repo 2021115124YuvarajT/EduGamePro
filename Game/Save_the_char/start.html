@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Save The King - Intro</title>
+    <style>
+        body { margin: 0; overflow: hidden; font-family: Arial, sans-serif; text-align: center; background-color: black; }
+        #canvas-container { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
+        h1 {
+            color: aliceblue;
+        }
+
+        /* Text Animation */
+        #intro-text {
+            position: absolute; top: -100px; width: 100%;
+            font-size: 28px; color: white; text-shadow: 2px 2px 4px black;
+            opacity: 0;
+            animation: slideIn 1.5s ease-out forwards;
+        }
+
+        @keyframes slideIn {
+            from { top: -100px; opacity: 0; }
+            to { top: 8%; opacity: 1; }
+        }
+
+        /* Button with Delayed Animation */
+        #start-button, #back-button {
+            position: absolute; bottom: 10%; left: 50%;
+            transform: translateX(-50%);
+            padding: 15px 30px; font-size: 20px; cursor: pointer;
+            opacity: 0;
+            animation: fadeIn 1.5s ease-out 3.5s forwards;
+            margin-left: 60px;
+            border-radius: 8px;
+        }
+
+        #back-button {
+            margin-left: -160px;
+        }
+
+        #back-button:hover {
+            background-color: #f16666;
+        }
+
+        #start-button:hover {
+            background-color: rgb(80, 156, 80);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+#start-button::after {
+    content: '☚'; /* Left arrow */
+    position: absolute;
+    left: 320px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 50px;
+    color: #28a745;
+    animation: moveRight 1s infinite alternate;
+}
+
+@keyframes moveRight {
+    from {
+        right: 30px;
+        opacity: 0.5;
+    }
+    to {
+        right: 40px;
+        opacity: 1;
+    }
+}
+    </style>
+</head>
+<body>
+    <div id="canvas-container"></div>
+    <h1>Save the Character</h1>
+    <div id="intro-text">The castle is on fire! The king is in danger!<br><br>You are a brave soldier, step forward to save him.</div>
+    <div id="button-container">
+        <button id="start-button">Let's go to save the king's life</button>
+        <button id="back-button" onclick="back()">⟸</button>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script>
+        const totalqns = localStorage.getItem("qns");
+        localStorage.setItem("qns",totalqns);
+        console.log(totalqns);
+        const container = document.getElementById('canvas-container');
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ alpha: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        container.appendChild(renderer.domElement);
+
+        const textureLoader = new THREE.TextureLoader();
+        const castleTexture = textureLoader.load('./assets/castle_fire.png'); 
+        const soldierTexture = textureLoader.load('./assets/brave_soldier.jpeg'); 
+
+        // Castle Sprite
+        const castleMaterial = new THREE.SpriteMaterial({ map: castleTexture });
+        const castle = new THREE.Sprite(castleMaterial);
+        castle.scale.set(12, 8, 1);
+        castle.position.set(-5, 0, -6);
+        scene.add(castle);
+
+        // Soldier Sprite
+        const soldierMaterial = new THREE.SpriteMaterial({ map: soldierTexture });
+        const soldier = new THREE.Sprite(soldierMaterial);
+        soldier.scale.set(6, 7, 1);
+        soldier.position.set(-10, 0, -5); // Start from left (out of screen)
+        scene.add(soldier);
+
+        camera.position.z = 6;
+
+        // Animation Variables
+        let soldierEntering = true;
+        let firePulsing = 0;
+
+        function animate() {
+            requestAnimationFrame(animate);
+
+            // Soldier enters scene
+            if (soldierEntering && soldier.position.x < 5) {
+                soldier.position.x += 0.1; // Move right
+                if (soldier.position.x >= 5) soldierEntering = false;
+            }
+
+            // Castle fire pulsing effect
+            firePulsing += 0.05;
+            castle.scale.set(12 + Math.sin(firePulsing) * 0.2, 8 + Math.sin(firePulsing) * 0.2, 1);
+
+            renderer.render(scene, camera);
+        }
+        animate();
+
+        // Start button click event
+        document.getElementById('start-button').addEventListener('click', function() {
+            window.location.href = 'game.html'; // Redirect to game page
+        });
+
+        function back() {
+            window.location.href = "input.html";
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Science Units</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f0f8ff; /* Light blue background */
+            color: #333;
+        }
+        h1 {
+            margin-top: 50px;
+            font-size: 3em;
+            color: #4CAF50; /* Green color for heading */
+            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        .button {
+            display: block;
+            margin: 20px auto;
+            padding: 15px 30px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 8px; /* Rounded corners */
+            cursor: pointer;
+            font-size: 20px;
+            transition: background-color 0.3s, transform 0.2s;
+            width: 250px; /* Fixed width for buttons */
+        }
+        .button:hover {
+            background-color: #45a049; /* Darker green on hover */
+            transform: scale(1.05); /* Slightly increase size on hover */
+        }
+        .button:active {
+            transform: scale(0.95); /* Slightly decrease size on click */
+        }
+        .footer {
+            margin-top: 50px;
+            font-size: 14px;
+            color: #777;
+        }
+        #backButton {
+            margin-top: 10px;
+            margin-left: 0px;
+            width: 100px;
+            background-color: red;
+        }
+    </style>
+</head>
+<body>
+    <button id="backButton" class="button" onclick="goTo()">Back</button>
+    <h1>SCIENCE</h1>
+    <div>
+        <button class="button" onclick="goToUnit('org_sys.html')">ORGAN SYSTEMS</button>
+    </div>
+    <div class="footer">
+        &copy; 2024 Science Learning Platform
+    </div>
+
+    <script>
+        function goToUnit(unit) {
+            window.location.href = unit;
+        }
+        function goTo() {
+            window.location.href = '../../frontend/learning.html';
+        }
+    </script>
+</body>
+</html>

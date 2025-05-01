@@ -1,0 +1,501 @@
+body {
+  font-family: Arial, sans-serif;
+  background-repeat: no-repeat;
+  background: linear-gradient(135deg, #e0f7fa, #80deea);
+  align-items: center;
+  text-align: center;
+}
+
+.roadmap {
+  position: relative;
+  height: 300px;
+  margin-top: 50px;
+}
+
+.level {
+  width: 100px;
+  height: 100px;
+  background-color: lightgray;
+  border: 5px solid gray;
+  border-radius: 50%;
+  display: flex; 
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  transition: background-color 0.3s;
+}
+
+.level.unlocked {
+  background-color: lightgreen;
+  border-color: green;
+}
+
+.avatar {
+  width: 100px;
+  height: 100px;
+  position: absolute;
+  transition: left 1s ease, top 1s ease;
+}
+
+/* Level positions for a zig-zag layout */
+#level1 {
+    left: 350px;
+    top: 400px; /* Start at the bottom */
+  }
+  
+  #level2 {
+    left: 850px;
+    top: 480px; /* Move to the right */
+  }
+  
+  #level3 {
+    left: 1000px;
+    top: 200px; /* Move to the left */
+  }
+  
+  #level4 {
+    left: 700px;
+    top: 230px; /* Move to the right again */
+  }
+  
+  #level5 {
+    left: 500px;
+    top: 50px; /* End at the right */
+  }
+
+  #level6 {
+    left: 900px;
+    top: 10px; /* End at the right */
+  }
+
+  .mountain, .stone, .river, .forest, .cave, .monster {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%; /* Makes the photo fit inside the circle */
+    object-fit: cover;
+  }
+
+  .step1 {
+    width: 50px;
+    height: 25px;
+    position: absolute;
+    left: 460px;  /* Position near level 1 */
+    top: 405px; 
+  }
+
+  .step2 {
+    width: 50px;
+    height: 25px;
+    position: absolute;
+    left: 520px;  /* Position near level 1 */
+    top: 415px; 
+  }
+
+  .step3 {
+    width: 50px;
+    height: 25px;
+    position: absolute;
+    left: 580px;  /* Position near level 1 */
+    top: 425px; 
+  }
+
+  .step4 {
+    width: 50px;
+    height: 25px;
+    position: absolute;
+    left: 640px;  /* Position near level 1 */
+    top: 435px;
+  }
+  
+  .step5 {
+    width: 50px;
+    height: 25px;
+    position: absolute;
+    left: 700px;  /* Position near level 1 */
+    top: 445px; 
+  }
+
+  .step6 {
+    width: 50px;
+    height: 25px;
+    position: absolute;
+    left: 760px;  /* Position near level 1 */
+    top: 455px; 
+  }
+
+  .step7 {
+    width: 50px;
+    height: 25px;
+    position: absolute;
+    left: 820px;  /* Position near level 1 */
+    top: 465px; 
+  }
+
+  .step8 {
+    width: 50px;
+    height: 25px;
+    position: absolute;
+    left: 950px;  /* Position near level 1 */
+    top: 480px; 
+  }
+
+  .step9 {
+    width: 50px;
+    height: 25px;
+    position: absolute;
+    left: 1000px;  /* Position near level 1 */
+    top: 470px; 
+  }
+
+  .step10 {
+    width: 50px;
+    height: 25px;
+    position: absolute;
+    left: 1050px;  /* Position near level 1 */
+    top: 460px; 
+  }
+
+  .step11 {
+    width: 50px;
+    height: 25px;
+    position: absolute;
+    left: 1100px;  /* Position near level 1 */
+    top: 450px; 
+  }
+
+  .step12 {
+    width: 50px;
+    height: 25px;
+    position: absolute;
+    left: 1150px;  /* Position near level 1 */
+    top: 440px; 
+  }
+
+  .step13 {
+    width: 50px;
+    height: 25px;
+    position: absolute;
+    left: 1200px;  /* Position near level 1 */
+    top: 430px;  
+  }
+
+  .step14 {
+    width: 50px;
+    height: 25px;
+    position: absolute;
+    left: 1200px;  /* Position near level 1 */
+    top: 400px; 
+  }
+
+  .step14a {
+    width: 50px;
+    height: 25px;
+    position: absolute;
+    left: 1200px;  /* Position near level 1 */
+    top: 375px; 
+  }
+
+  .step15 {
+    width: 50px;
+    height: 25px;
+    position: absolute;
+    left: 1200px;  /* Position near level 1 */
+    top: 350px; 
+  }
+
+  .step15a {
+    width: 50px;
+    height: 25px;
+    position: absolute;
+    left: 1200px;  /* Position near level 1 */
+    top: 325px; 
+  }
+
+  .step16 {
+    width: 50px;
+    height: 25px;
+    position: absolute;
+    left: 1200px;  /* Position near level 1 */
+    top: 300px; 
+  }
+
+  .step16a {
+    width: 50px;
+    height: 25px;
+    position: absolute;
+    left: 1180px;  /* Position near level 1 */
+    top: 275px; 
+  }
+
+  .step17 {
+    width: 50px;
+    height: 25px;
+    position: absolute;
+    left: 1150px;  /* Position near level 1 */
+    top: 250px; 
+  }
+
+  .step17b {
+    width: 50px;
+    height: 25px;
+    position: absolute;
+    left: 1125px;  /* Position near level 1 */
+    top: 225px; 
+  }
+
+  .step17a {
+    width: 50px;
+    height: 25px;
+    position: absolute;
+    left: 1100px;  /* Position near level 1 */
+    top: 200px; 
+  }
+
+  .step18a {
+    width: 50px;
+    height: 25px;
+    position: absolute;
+    left: 960px;  /* Position near level 1 */
+    top: 200px; 
+  }
+
+  .step18b {
+    width: 50px;
+    height: 25px;
+    position: absolute;
+    left: 940px;  /* Position near level 1 */
+    top: 218px; 
+  }
+
+  .step19a {
+    width: 50px;
+    height: 25px;
+    position: absolute;
+    left: 890px;  /* Position near level 1 */
+    top: 225px; 
+  }
+
+  .step20a {
+    width: 50px;
+    height: 25px;
+    position: absolute;
+    left: 840px;  /* Position near level 1 */
+    top: 225px; 
+  }
+
+  .step21a {
+    width: 50px;
+    height: 25px;
+    position: absolute;
+    left: 790px;  /* Position near level 1 */
+    top: 225px; 
+  }
+
+  .step18 {
+    width: 50px;
+    height: 25px;
+    position: absolute;
+    left: 670px;  /* Position near level 1 */
+    top: 220px; 
+  }
+
+  .step19 {
+    width: 50px;
+    height: 25px;
+    position: absolute;
+    left: 650px;  /* Position near level 1 */
+    top: 200px; 
+  }
+
+  .step20 {
+    width: 50px;
+    height: 25px;
+    position: absolute;
+    left: 630px;  /* Position near level 1 */
+    top: 180px; 
+  }
+
+  .step21 {
+    width: 50px;
+    height: 25px;
+    position: absolute;
+    left: 610px;  /* Position near level 1 */
+    top: 160px; 
+  }
+
+  .step22 {
+    width: 50px;
+    height: 25px;
+    position: absolute;
+    left: 590px;  /* Position near level 1 */
+    top: 140px; 
+  }
+
+  .step23 {
+    width: 50px;
+    height: 25px;
+    position: absolute;
+    left: 610px;  /* Position near level 1 */
+    top: 160px; 
+  }
+
+  .step24 {
+    width: 50px;
+    height: 25px;
+    position: absolute;
+    left: 590px;  /* Position near level 1 */
+    top: 35px; 
+  }
+
+  .step25 {
+    width: 50px;
+    height: 25px;
+    position: absolute;
+    left: 640px;  /* Position near level 1 */
+    top: 30px; 
+  }
+
+  .step26 {
+    width: 50px;
+    height: 25px;
+    position: absolute;
+    left: 690px;  /* Position near level 1 */
+    top: 25px; 
+  }
+
+  .step27 {
+    width: 50px;
+    height: 25px;
+    position: absolute;
+    left: 740px;  /* Position near level 1 */
+    top: 20px; 
+  }
+
+  .step28 {
+    width: 50px;
+    height: 25px;
+    position: absolute;
+    left: 790px;  /* Position near level 1 */
+    top: 15px; 
+  }
+
+  .step29 {
+    width: 50px;
+    height: 25px;
+    position: absolute;
+    left: 840px;  /* Position near level 1 */
+    top: 10px; 
+  }
+
+  .step30 {
+    width: 50px;
+    height: 25px;
+    position: absolute;
+    left: 890px;  /* Position near level 1 */
+    top: 5px; 
+  }
+
+  /* Style the container div */
+.container {
+  display: flex;
+  justify-content: space-between; /* Space items between the left and right */
+  align-items: center; /* Center items vertically */
+  height: 100vh; /* Full viewport height */
+  padding: 0 20px; /* Add padding as needed */
+  box-sizing: border-box; /* Include padding in height calculation */
+}
+
+/* Style the endpic */
+.endpic {
+  flex: 1; /* Allow this to grow and fill space */
+}
+
+#end {
+  width: 500px; /* Set a fixed width or adjust as needed */
+  height: auto; /* Keep aspect ratio */
+}
+
+/* Style the text and button container */
+.text-button {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-center; /* Align items to the right */
+}
+
+/* Remove margin from h1 and button */
+#endpage, .doneButton {
+  margin: 100px; /* Remove default margin */
+}
+
+.doneButton {
+  margin-top: 10px; /* Space between heading and button */
+  margin-left: -20px;
+}
+
+#endpage {
+  color: green;
+}
+
+#done {
+  padding: 15px 30px;
+  background-color: #00796b;
+  color: white;
+  font-weight: bold;
+  font-size: large;
+  border-radius: 8px;
+  border: none;
+  position: fixed;
+  z-index: 100;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+#done:hover {
+  background-color: #004d40;
+  transform: translateY(-2px);
+  cursor: pointer;
+}
+
+/* Custom alert box styles */
+.custom-alert {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6);
+  justify-content: center;
+  align-items: center;
+}
+
+.custom-alert-content {
+  background-color: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  text-align: center;
+  max-width: 300px;
+  width: 80%;
+  color: #333;
+}
+
+#alert-message {
+  margin-bottom: 20px;
+  font-size: large;
+  font-weight: bold;
+}
+
+#alert-ok-btn {
+  padding: 10px 20px;
+  background-color: #00796b;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+#alert-ok-btn:hover {
+  background-color: #004d40;
+}

@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Places</title>
+    <style>
+        /* Full Page Styling */
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            overflow: hidden;
+            background-color: #ff6b81;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            position: relative;
+        }
+
+        /* Background Stars */
+        .star {
+          position: absolute;
+          width: 20px;  /* Increased size */
+          height: 20px; /* Increased size */
+          background-color: white;
+          clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%); /* Star shape */
+          opacity: 0;
+          animation: twinkle 3s infinite ease-in-out;
+        }
+
+        @keyframes twinkle {
+            0% { opacity: 0; transform: scale(0.8); }
+            50% { opacity: 1; transform: scale(1.2); }
+            100% { opacity: 0; transform: scale(0.8); }
+        }
+
+        /* Upload Form Container */
+        .container {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 10px rgba(255, 255, 255, 0.2);
+            text-align: center;
+            max-width: 400px;
+            width: 100%;
+            z-index: 10;
+            position: relative;
+        }
+
+        h2 {
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        input {
+            width: 90%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        button {
+            background-color: #ff6b81;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #f0415c;
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+            margin-top: 15px;
+        }
+
+        ul li {
+            background: #ffdde1;
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 5px;
+            font-size: 14px;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <!-- Background Stars Animation -->
+    <script>
+        function createStar() {
+            const star = document.createElement("div");
+            star.classList.add("star");
+
+            // Random position
+            const posX = Math.random() * window.innerWidth;
+            const posY = Math.random() * window.innerHeight;
+
+            star.style.left = `${posX}px`;
+            star.style.top = `${posY}px`;
+
+            // Random animation duration for natural effect
+            const duration = Math.random() * 2 + 2; 
+            star.style.animationDuration = `${duration}s`;
+
+            document.body.appendChild(star);
+
+            setTimeout(() => {
+                star.remove(); // Remove star after animation
+            }, duration * 1000);
+        }
+
+        setInterval(createStar, 300); // Create a new star every 300ms
+    </script>
+
+    <!-- Upload Form -->
+    <div class="container">
+        <h1>Chart based Learning</h1>
+        <h2>Upload Places</h2>
+        <form id="placeForm">
+            <input type="text" id="placeName" placeholder="Enter Place Name" required>
+            <input type="text" id="placeDescription" placeholder="Enter Description" required>
+            <button type="submit">Add Place</button>
+        </form>
+
+        <h3>Uploaded Places:</h3>
+        <ul id="placesList"></ul>
+
+        <button onclick="window.location.href='/render_map'">View Map</button><br><br>
+        <button onclick="back()">Back</button>
+    </div>
+
+    <script>
+        document.getElementById('placeForm').addEventListener('submit', function (event) {
+            event.preventDefault();
+
+            let placeName = document.getElementById('placeName').value;
+            let placeDescription = document.getElementById('placeDescription').value;
+
+            fetch('/api/upload_places', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ places: [{ name: placeName, description: placeDescription }] })
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert(data.message);
+                document.getElementById('placesList').innerHTML += `<li>${placeName}: ${placeDescription}</li>`;
+                document.getElementById('placeName').value = '';
+                document.getElementById('placeDescription').value = '';
+            })
+            .catch(error => console.error('Error:', error));
+        });
+
+        function back() {
+            window.location.href = "http://127.0.0.1:5500/template/learning.html";
+        }
+    </script>
+</body>
+</html>

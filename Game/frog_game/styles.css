@@ -1,0 +1,184 @@
+/* General page styling */
+body {
+    background-image: url('assets/bg3.png'); /* Replace with your actual image path */
+    background-size: cover;
+    background-repeat: repeat-x; /* Ensures seamless horizontal scrolling */
+    background-position: center center; /* Start at the leftmost position */
+    height: 100vh;
+    text-align: center;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    transition: background-position 0.5s linear; /* Smooth scrolling effect */
+}
+
+/* Form styling */
+label {
+    font-size: 18px;
+    font-weight: bold;
+    color: #edf4ee; /* Darker green */
+    display: block;
+    margin: 15px auto;
+}
+
+/* Input fields */
+input, select {
+    width: 250px;
+    padding: 10px;
+    font-size: 16px;
+    margin-top: 5px;
+    border: 2px solid #388E3C; /* Green border */
+    border-radius: 5px;
+    outline: none;
+}
+
+/* Input focus effect */
+input:focus, select:focus {
+    border-color: #1B5E20;
+    background-color: #E8F5E9; /* Light green background */
+}
+
+/* Button styling */
+button {
+    background-color: #388E3C; /* Frog green */
+    color: white;
+    font-size: 18px;
+    font-weight: bold;
+    padding: 12px 20px;
+    margin: 15px 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+/* Hover effect */
+button:hover {
+    background-color: #1B5E20; /* Darker green */
+}
+
+/* Button spacing */
+button:first-of-type {
+    margin-right: 10px;
+}
+
+/* Responsive design */
+@media (max-width: 600px) {
+    input, select {
+        width: 200px;
+    }
+    
+    button {
+        width: 80%;
+        font-size: 16px;
+    }
+}
+
+
+/* Title styling */
+h1 {
+    color: aliceblue; /* Dark green */
+    font-size: 32px;
+    margin-top: 20px;
+}
+
+/* Question styling */
+#question {
+    font-size: 22px;
+    font-weight: bold;
+    color: #ffffff; /* Darker green */
+    margin-top: 20px;
+}
+
+/* Options container */
+#options {
+    margin-top: 20px;
+}
+
+/* Option buttons */
+#options button {
+    background-color: #388E3C; /* Frog green */
+    color: white;
+    font-size: 18px;
+    font-weight: bold;
+    padding: 12px 20px;
+    margin: 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+/* Hover effect */
+#options button:hover {
+    background-color: #1B5E20; /* Darker green */
+}
+
+
+/* Game container */
+#game-container {
+    width: 100%; /* Adjust as needed */
+    height: 100vh;
+    background: transparent; /* Light background to contrast */
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Frog styling */
+#frog {
+    position: absolute;
+    left: 10px;
+    bottom: 70px;
+    width: 80px;
+}
+
+/* Smooth jumping effect */
+@keyframes jump {
+    0% { transform: translateY(0); }
+    50% { transform: translateY(-100px); } /* Peak */
+    100% { transform: translateY(0); }
+}
+
+/* Obstacle */
+.obstacle {
+    position: absolute;
+    width: 50px;
+    height: 50px;
+}
+
+/* Lives */
+#lives {
+    position: absolute;
+    top: 10px;
+    right: 20px;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+/* Responsive Design */
+@media (max-width: 600px) {
+    #frog {
+        width: 60px;
+    }
+
+    #options button {
+        font-size: 16px;
+        padding: 10px 15px;
+    }
+
+    h1 {
+        font-size: 28px;
+    }
+
+    #question {
+        font-size: 20px;
+    }
+
+    #lives {
+        font-size: 18px;
+        color: #ffffff;
+    }
+}

@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generate Quiz Questions</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center; 
+            background-size: cover; /* Ensures the image covers the full screen */
+            color: white;
+            overflow: hidden;
+        }
+
+        .container {
+            position: relative;
+            z-index: 2;
+            margin-top: 20px;
+            padding: 20px;
+            border-radius: 10px;
+            display: inline-block;
+        }
+
+        input, button {
+            padding: 10px;
+            margin: 10px;
+            font-size: 16px;
+            width: 250px;
+            border-radius: 8px; /* Added border-radius for rounded corners */
+            border: none;
+            outline: none;
+            background-color: white;
+            color: black;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .questions-container {
+            max-height: 300px; 
+            overflow-y: auto;
+            margin-top: 20px;
+            text-align: left;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+        }
+
+        canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: -1;
+        }
+        #backto {
+            font-weight: bolder;
+        }
+        #backto:hover {
+            background-color: rgb(165, 65, 65);
+        }
+        .go-btn-container {
+    position: relative;
+    display: inline-block;
+}
+
+#go-btn::after {
+    content: '☛'; /* Left arrow */
+    position: absolute;
+    left: -330px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 50px;
+    color: #28a745;
+    animation: moveLeft 1s infinite alternate;
+}
+
+@keyframes moveLeft {
+    from {
+        right: -30px;
+        opacity: 0.5;
+    }
+    to {
+        right: -40px;
+        opacity: 1;
+    }
+}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Input Page</h1>
+        <input type="text" id="topic" placeholder="Enter topic" required>
+        <input type="number" id="num_questions" placeholder="Number of questions" min="1" max="10" required>
+        <button onclick="fetchQuestions()">Generate Questions</button>
+        <img id="loading" src="assets/loading.gif" style="display: none; width: 50px; margin-left: 900px; margin-top: -50px;" alt="Loading...">
+        <div id="questions" class="questions-container"></div>
+        
+        <div class="button-container">
+            <div class="go-btn-container">
+                <button id="go-btn" onclick='window.location.href="start.html"'>Go</button>
+            </div>            
+            <button id="backto" onclick="back()">⟸</button>
+        </div>
+    </div>
+    
+
+    <script>
+        function fetchQuestions() {
+            const topic = document.getElementById("topic").value;
+            const numQuestions = document.getElementById("num_questions").value;
+            localStorage.setItem("qns", numQuestions);
+
+            if (!topic || !numQuestions) {
+                alert("Please enter both topic and number of questions");
+                return;
+            }
+
+            // ✅ Show the loading GIF
+            document.getElementById("loading").style.display = "block";
+
+            fetch("http://127.0.0.1:5200/generate_question", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ topic, num_questions: parseInt(numQuestions) })
+            })
+            .then(response => response.json())
+            .then(data => {
+                displayQuestions(data);
+            })
+            .catch(error => console.error("Error fetching questions:", error))
+            .finally(() => {
+                // ✅ Hide the loading GIF after fetching or if an error occurs
+                document.getElementById("loading").style.display = "none";
+            });
+        }
+
+        function displayQuestions(questions) {
+            const questionDiv = document.getElementById("questions");
+            questionDiv.innerHTML = "";  
+            
+            questions.forEach((q, index) => {
+                questionDiv.innerHTML += `<h3>Q${index + 1}: ${q.question}</h3>`;
+                q.options.forEach(opt => {
+                    questionDiv.innerHTML += `<p>${opt}</p>`;
+                });
+                questionDiv.innerHTML += `<p><strong>Answer:</strong> ${q.correctAnswer}</p><hr>`;
+            });
+        }
+
+        // THREE.JS ANIMATION (Background Cube)
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+
+
+        const geometry = new THREE.BoxGeometry();
+        const material = new THREE.MeshBasicMaterial({ color: 0x00ff00, wireframe: true });
+        const cube = new THREE.Mesh(geometry, material);
+        scene.add(cube);
+
+        camera.position.z = 5;
+
+        function animate() {
+            requestAnimationFrame(animate);
+            cube.rotation.x += 0.01;
+            cube.rotation.y += 0.01;
+            renderer.render(scene, camera);
+        }
+        animate();
+
+        function back() {
+            window.location.href = "play.html";
+        }
+    </script>
+</body>
+</html>

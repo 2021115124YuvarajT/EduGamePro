@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Analysis Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        h2 {
+            color: #333;
+        }
+
+        #images-container img {
+            width: 100%;
+            height: auto;
+            margin-bottom: 10px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        table,
+        th,
+        td {
+            border: 1px solid #ddd;
+        }
+
+        th,
+        td {
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        ul {
+            padding-left: 20px;
+            list-style-type: disc;
+        }
+
+        .logOut {
+            margin-left: 1200px;
+        }
+
+        button {
+            padding: 10px 20px;
+            margin: 10px;
+            font-size: 16px;
+            border-width: 1px;
+            border-radius: 10px;
+            background-color: #d32f2f;
+            cursor: pointer;
+            color: floralwhite;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="logOut">
+        <button class="log_out" onclick="logout()">Back</button>
+    </div>
+    <div class="container">
+        <h2>AutoViz Plots</h2>
+        <div id="images-container"></div>
+
+        <h2>AI-Generated Insights</h2>
+        <ul id="insights-list">
+            <!-- AI-generated insights will be displayed here as bullet points -->
+        </ul>
+
+        <h2>Summary Statistics</h2>
+        <div id="summary-table">Loading summary statistics...</div>
+
+        <h2>Correlation Matrix</h2>
+        <div id="correlation-table">Loading correlation matrix...</div>
+    </div>
+
+    <script>
+        // Function to load images from the backend
+        async function loadImages() {
+            const imagesContainer = document.getElementById('images-container');
+            for (let i = 1; i <= 3; i++) {
+                if (i == 1) {
+                    try {
+                        const img = document.createElement('img');
+                        img.src = 'http://127.0.0.1:5000/images/rank_vs_questions.svg'; // Correct backend URL
+                        img.alt = `AutoViz Plot ${i}`;
+                        // Check if the image exists
+                        const response = await fetch(img.src, { method: 'HEAD' });
+                        if (response.ok) {
+                            imagesContainer.appendChild(img);
+                        }
+                    } catch (error) {
+                        console.error(`Failed to load image ${i}:`, error);
+                    }
+                }
+                else if (i == 2) {
+                    try {
+                        const img = document.createElement('img');
+                        img.src = 'http://127.0.0.1:5000/images/level_vs_correctly_answered.svg'; // Correct backend URL
+                        img.alt = `AutoViz Plot ${i}`;
+                        // Check if the image exists
+                        const response = await fetch(img.src, { method: 'HEAD' });
+                        if (response.ok) {
+                            imagesContainer.appendChild(img);
+                        }
+                    } catch (error) {
+                        console.error(`Failed to load image ${i}:`, error);
+                    }
+                }
+                else {
+                    try {
+                        const img = document.createElement('img');
+                        img.src = 'http://127.0.0.1:5000/images/score_vs_correctly_answered.svg'; // Correct backend URL
+                        img.alt =` AutoViz Plot ${i}`;
+                        // Check if the image exists
+                        const response = await fetch(img.src, { method: 'HEAD' });
+                        if (response.ok) {
+                            imagesContainer.appendChild(img);
+                        }
+                    } catch (error) {
+                        console.error(`Failed to load image ${i}:`, error);
+                    }
+                }
+
+            }
+        }
+
+        // Function to load AI-generated insights and display them as bullet points
+        // Function to load AI-generated insights and display them as bullet points
+        async function loadInsights() {
+            try {
+                const response = await fetch('http://127.0.0.1:5000/insights'); // Correct backend URL
+                if (response.ok) {
+                    const data = await response.json();
+                    const insights = data.insights.split('\n'); // Split the insights by newline
+                    const insightsList = document.getElementById('insights-list');
+                    insightsList.innerHTML = ''; // Clear any existing content
+                    insights.forEach(insight => {
+                        if (insight.trim()) {
+                            // Remove leading hyphens or dashes and extra spaces
+                            const formattedInsight = insight.replace(/^[-–—\s]+/, '').trim();
+                            const listItem = document.createElement('li');
+                            listItem.textContent = formattedInsight;
+                            insightsList.appendChild(listItem);
+                        }
+                    });
+                } else {
+                    const insightsList = document.getElementById('insights-list');
+                    insightsList.innerHTML = '<li>Failed to load insights.</li>';
+                }
+            } catch (error) {
+                const insightsList = document.getElementById('insights-list');
+                insightsList.innerHTML = '<li>Error fetching insights.</li>';
+                console.error('Error fetching insights:', error);
+            }
+        }
+
+        // Function to load summary statistics and render as a table
+        async function loadSummary() {
+            try {
+                const response = await fetch('http://127.0.0.1:5000/summary'); // Correct backend URL
+                if (response.ok) {
+                    const data = await response.json();
+                    const summaryStats = data.summary_statistics;
+                    const table = generateTable(summaryStats);
+                    document.getElementById('summary-table').innerHTML = table;
+                } else {
+                    document.getElementById('summary-table').textContent = 'Failed to load summary statistics.';
+                }
+            } catch (error) {
+                document.getElementById('summary-table').textContent = 'Error fetching summary statistics.';
+                console.error('Error fetching summary statistics:', error);
+            }
+        }
+
+        // Function to load correlation matrix and render as a table
+        async function loadCorrelation() {
+            try {
+                const response = await fetch('http://127.0.0.1:5000/correlation'); // Correct backend URL
+                if (response.ok) {
+                    const data = await response.json();
+                    const correlationMatrix = data.correlation_matrix;
+                    const table = generateTable(correlationMatrix);
+                    document.getElementById('correlation-table').innerHTML = table;
+                } else {
+                    document.getElementById('correlation-table').textContent = 'Failed to load correlation matrix.';
+                }
+            } catch (error) {
+                document.getElementById('correlation-table').textContent = 'Error fetching correlation matrix.';
+                console.error('Error fetching correlation matrix:', error);
+            }
+        }
+
+        // Utility function to generate a table from JSON data
+        function generateTable(data) {
+            let table = '<table>';
+            // Generate header row
+            table += '<thead><tr><th></th>';
+            for (let col in data) {
+                table += <th>${col}</th>;
+            }
+            table += '</tr></thead>';
+            // Generate data rows
+            table += '<tbody>';
+            const keys = Object.keys(data);
+            const rowCount = Object.keys(data[keys[0]]).length;
+            for (let i = 0; i < rowCount; i++) {
+                table += '<tr>';
+                table += <th>${Object.keys(data[keys[0]])[i]}</th>;
+                for (let key of keys) {
+                    table += <td>${data[key][Object.keys(data[key])[i]]}</td>;
+                }
+                table += '</tr>';
+            }
+            table += '</tbody></table>';
+            return table;
+        }
+
+        function logout() {
+            window.location.href = '../frontend/teacher_homepage.html';
+        }
+
+        // Load all data when the page loads
+        window.onload = function () {
+            loadImages();
+            loadInsights();
+            loadSummary();
+            loadCorrelation();
+        };
+    </script>
+</body>
+
+</html>

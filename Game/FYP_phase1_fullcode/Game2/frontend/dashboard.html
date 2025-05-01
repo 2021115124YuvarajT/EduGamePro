@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <style>
+        @keyframes bounce {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-10px);
+                border-color: gold;
+                /* Apply gold border mid-bounce */
+            }
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            /*background: linear-gradient(to right, red, blue);*/
+            text-align: center;
+            background-image: url('https://png.pngtree.com/thumb_back/fh260/background/20230712/pngtree-nocturnal-fortress-3d-illustration-of-a-dark-castle-image_3840702.jpg');
+            background-size: cover;
+            /* Scales the image to cover the entire screen */
+            background-repeat: no-repeat;
+            /* Prevents the image from repeating */
+            background-position: center;
+            /* Centers the image on the screen */
+            background-attachment: fixed;
+        }
+
+        .container {
+            border: 2px solid floralwhite;
+            border-radius: 8px;
+            /* Rounded corners */
+            padding: 20px;
+            /* Space inside the container */
+            margin: 20px auto;
+            /* Center the container */
+            max-width: 600px;
+            /* Set a maximum width */
+            background-color: transparent;
+            /* Background color */
+            box-shadow: 0 4px 10px floralwhite;
+            color: floralwhite;
+        }
+
+        button {
+            padding: 10px 20px;
+            margin: 10px;
+            font-size: 16px;
+            border-width: 1px;
+            border-color: white;
+            border-radius: 10px;
+            background-color: transparent;
+            cursor: pointer;
+            color: floralwhite;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        .backButton {
+            margin-top: -650px;
+            margin-left: -350px;
+            margin-bottom: -100px;
+            margin-right: 250px;
+        }
+
+        #log-out {
+            box-shadow: 0 4px 10px floralwhite;
+        }
+
+        #log-out:hover {
+            background-color: #d32f2f;
+        }
+
+        #leaderboardBtn:hover {
+            background-color: #68cb54;
+        }
+
+        .league-image {
+            margin-top: 20px;
+            width: 150px;
+            /* Adjust width for responsiveness */
+            height: auto;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+        }
+
+        .league-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 20px;
+            margin-bottom: 20px;
+            color: floralwhite;
+            font-size: 1.2em;
+        }
+
+        .league-image:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .league-image.bounce {
+            animation: bounce 0.5s ease;
+            border: 3px solid gold;
+            /* Temporary gold border for bounce effect */
+            box-shadow: 0 6px 15px rgba(255, 215, 0, 0.6);
+            /* Sl*/
+        }
+
+
+        #leagueTitle {
+            color: #f2f5f3;
+            font-size: 40px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Welcome to the Dashboard</h1>
+        <h2 id="welcomeMessage"></h2>
+        <h3>Level: <span id="userLevel"></span></h3>
+        <h3>Score: <span id="userScore"></span></h3>
+        <div class="league-container">
+            <strong><span id="leagueTitle"></span></strong>
+            <img id="leagueImage" class="league-image" src="" alt="User's league image"
+                onclick="triggerBounceAnimation()">
+        </div>
+        <button id="learningBtn">Learning</button>
+        <button id="evaluationBtn">Evaluation</button>
+        <button id="leaderboardBtn">LeaderBoard</button>
+        <!-- Add this button in the container section of your dashboard.html -->
+        <button id="viewBadgesBtn">View Badges</button>
+
+    </div>
+    <div class="backButton">
+        <button id="log-out" onclick="goTo()">Back</button>
+    </div>
+
+    <script>
+        // Fetch user details from session storage
+        const token = sessionStorage.getItem('token');
+        const level = sessionStorage.getItem('level');
+        const score = sessionStorage.getItem('score');
+        const username = sessionStorage.getItem('username'); // Fetch the username
+        console.log("Username : ", username);
+        // Retrieve the roll number from localStorage
+        localStorage.setItem('username', username);
+        const rollNumber = localStorage.getItem('username'); // Get the roll number from localStorage
+        console.log(rollNumber);
+
+        // Use the roll number in your API request
+        fetch(`http://localhost:5000/api/students/${rollNumber}/progress`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(progress => {
+                document.getElementById('userLevel').textContent = progress.level;
+                document.getElementById('userScore').textContent = progress.score;
+            })
+            .catch(error => console.error('Error fetching user progress:', error));
+
+
+        // Display username, level, and score
+        document.getElementById('welcomeMessage').textContent = `User: ${username}`; // Update this line to show the stored username
+        document.getElementById('viewBadgesBtn').addEventListener('click', function () {
+            window.location.href = 'badges.html'; // Redirect to badges.html
+        });
+
+        document.getElementById('learningBtn').addEventListener('click', function () {
+            localStorage.setItem('username', username);
+            window.location.href = 'learning.html'; // Update with the actual path
+        });
+
+        document.getElementById('evaluationBtn').addEventListener('click', function () {
+            window.location.href = '../Game2-Evaluation/evaluation.html'; // Update with the actual path
+        });
+
+        document.getElementById('leaderboardBtn').addEventListener('click', function () {
+            window.location.href = 'leaderboard.html';
+        });
+
+        function goTo() {
+            updateScoreOnLogout(rollNumber);
+            window.location.href = 'game.html';
+        }
+
+        async function updateScoreOnLogout(rollNumber) {
+            try {
+                const response = await fetch('http://localhost:5000/api/students/update-score', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ rollNumber: rollNumber, experience: experience }), // Send experience to update score
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    console.log('Score updated on logout:', data.message);
+                } else {
+                    const error = await response.text();
+                    console.error('Error updating score on logout:', error);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+        function displayLeague(level) {
+            const leagueTitle = document.getElementById('leagueTitle');
+            const leagueImage = document.getElementById('leagueImage');
+            let league;
+
+            if (level >= 1 && level <= 2) {
+                league = { title: 'Bronze League', src: 'Bronze_League.png' };
+            } else if (level >= 3 && level <= 5) {
+                league = { title: 'Silver League', src: 'Silver_League.png' };
+            } else if (level >= 6 && level <= 10) {
+                league = { title: 'Gold League', src: 'Gold_league.png' };
+            } else {
+                league = { title: 'Platinum League', src: 'Platinum_League.png' };
+            }
+
+            leagueTitle.textContent = league.title;
+            leagueImage.src = league.src;
+            leagueImage.alt = `${league.title} badge`;
+        }
+        function triggerBounceAnimation() {
+            const leagueImage = document.getElementById('leagueImage');
+            leagueImage.classList.add('bounce');
+
+            // Remove the animation class after it finishes so it can be reapplied
+            leagueImage.addEventListener('animationend', () => {
+                leagueImage.classList.remove('bounce');
+            }, { once: true });
+        }
+        displayLeague(level);
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generate Questions</title>
+    <style>
+        /* General Styling */
+        body {
+            font-family: 'Orbitron', sans-serif;
+            background: url('images/bg.jpg') no-repeat center center/cover;
+            color: #fff;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Heading */
+        h2 {
+            font-size: 2rem;
+            text-shadow: 2px 2px 10px rgba(255, 255, 255, 0.8);
+            margin-top: -150px;
+        }
+
+        /* Input Styling */
+        input {
+            width: 250px;
+            padding: 10px;
+            font-size: 16px;
+            border: 2px solid #00e1ff;
+            background: rgba(0, 0, 0, 0.7);
+            color: #fff;
+            border-radius: 5px;
+            outline: none;
+        }
+
+        label {
+            font-weight: bold;
+            font-size: large;
+            margin-top: 40px;
+            margin-bottom: 20px;
+        }
+
+        /* Buttons */
+        button {
+            margin-top: 15px;
+            padding: 12px 20px;
+            font-size: 18px;
+            color: #fff;
+            background: linear-gradient(90deg, #00e1ff, #007eff);
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: 0.3s ease;
+            text-transform: uppercase;
+            font-weight: bold;
+            box-shadow: 0 0 15px rgba(0, 225, 255, 0.8);
+        }
+
+        button:hover {
+            background: linear-gradient(90deg, #007eff, #00e1ff);
+            transform: scale(1.1);
+        }
+
+        /* Message Styling */
+        #message {
+            margin-top: 20px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        /* Centering Content */
+        body, html {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        #go {
+            position: relative;
+        }
+
+        #go::after {
+            content: '☚'; /* Hand emoji */
+            position: absolute;
+            left: 70px; /* Adjust left position to point at the GO button */
+            top: -10px; /* Adjust top position to align vertically with the button */
+            font-size: 50px;
+            color: #f1f6f2;
+            animation: moveLeft 1s infinite alternate;
+        }
+
+        @keyframes moveLeft {
+            from {
+                left: 80px; /* Adjust the animation range */
+                opacity: 0.5;
+            }
+            to {
+                left: 60px;
+                opacity: 1;
+            }
+        }
+    </style>
+    <script>
+        async function generateQuestions() {
+            const topic = document.getElementById("topic").value.trim();
+            const messageDiv = document.getElementById("message");
+            localStorage.setItem("topic", topic);
+
+            if (!topic) {
+                messageDiv.innerHTML = "<span style='color: red;'>⚠️ Please enter a topic.</span>";
+                return;
+            }
+
+            messageDiv.innerHTML = '<p><img src="images/loading.gif" alt="Loading" width="150"></p>';
+
+            try {
+                const response = await fetch("http://localhost:5104/generate_questions", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ topic: topic, num_questions: 10 })
+                });
+
+                if (!response.ok) throw new Error("Failed to generate questions");
+
+                const data = await response.json();
+                console.log("Questions Generated:", data);
+
+                messageDiv.innerHTML = `<span style='color: white;'>✅ ${data.message}</span>`;
+            } catch (error) {
+                console.error("Error generating questions:", error);
+                messageDiv.innerHTML = "<span style='color: red;'>❌ Failed to generate questions. Please try again.</span>";
+            }
+        }
+
+        function goTo() {
+            window.location.href = "play.html";
+        }
+
+        function back() {
+            window.location.href = "../template/games.html";
+        }
+    </script>
+</head>
+<body>
+    <h2>Rocketry Adventure</h2>
+    <label for="topic">Enter Topic:</label>
+    <input type="text" id="topic" placeholder="e.g. Space, Mathematics, History">
+    <button onclick="generateQuestions()">Generate Questions</button>
+    <button id="go" onclick="goTo()">Go</button>
+    <button onclick="back()">Back</button>
+
+    <p id="message"></p> <!-- Message area -->
+</body>
+</html>

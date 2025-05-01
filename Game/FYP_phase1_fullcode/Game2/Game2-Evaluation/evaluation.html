@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-image: url('hall.jpeg'); /* Teal gradient background */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-size: cover;
+            /* Scales the image to cover the entire screen */
+            background-repeat: no-repeat;
+            /* Prevents the image from repeating */
+            background-position: center;
+            /* Centers the image on the screen */
+            background-attachment: fixed;
+        } 
+
+        h1 {
+            text-align: center;
+            margin: 0;
+            padding-bottom: 20px;
+            /* Adds space between heading and button */
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: transparent;
+            color: white;
+            border-width: 1px;
+            border-radius: 4px;
+            border-color: rgb(74, 224, 67);
+            font-size: 16px;
+            cursor: pointer;
+            margin-bottom: 10px;
+        }
+
+        .eval-container {
+            background-color: transparent;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0px 0px 15px rgb(58, 84, 231);
+            width: 300px;
+            color: floralwhite;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            /* Centers button horizontally */
+            margin-top: -200px;
+        }
+
+        .exitBtn {
+            width: 100px;
+        }
+
+        .exitBtn:hover {
+            background-color: #d32f2f;
+        }
+
+        .endless:hover {
+            background-color: #45a049;
+        }
+
+        .exit {
+            margin-top: -500px;
+            margin-left: -150px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="exit">
+        <button class="exitBtn" onclick="exitTo()">Exit</button>
+    </div>
+    <div class="eval-container">
+        <h1>Evaluation</h1>
+        <div>
+            <button class="endless" onclick="goTo()">Endless</button>
+        </div>
+        <div>
+            <button class="endless" onclick="goTo1()">Textbook Based</button>
+        </div>
+    </div>
+
+    <script>
+        let flag1 = localStorage.getItem('q1Flag') || 0;
+        let shown1 = localStorage.getItem('shownQ1') || 1;
+        let flag2 = localStorage.getItem('q2Flag') || 0;
+        let shown2 = localStorage.getItem('shownQ2') || 1;
+        const badges = JSON.parse(localStorage.getItem('badges')) || [];
+        checkAllCompleted();
+
+        function checkAllCompleted() {
+            console.log("i am entering into checkAll completed");
+            if (flag1 == 1 && shown1 == 0) {
+                console.log("condition 1 is satisfied");
+                console.log(localStorage.getItem('shownQ1'));
+                localStorage.setItem('shownQ1', 1);
+                if (!badges.includes('Curious_learner')) {
+                    badges.push('Curious_learner');
+                }
+                localStorage.setItem("badges", JSON.stringify(badges));
+                showBadgeAnimation1();
+            }
+            if (flag2 == 1 && shown2 == 0) {
+                console.log("condition 2 is satisfied");
+                console.log(localStorage.getItem('shownQ2'));
+                localStorage.setItem('shownQ2', 1);
+                if (!badges.includes('Quiz_whiz')) {
+                    badges.push('Quiz_whiz');
+                }
+                localStorage.setItem("badges", JSON.stringify(badges));
+                showBadgeAnimation2();
+            }
+        }
+        function goTo() {
+            window.location.href = './mcq_app/frontend/index.html';
+        }
+        function goTo1() {
+            window.location.href = './finetuningGpt2/frontend/index.html'
+        }
+        function exitTo() {
+            window.location.href = '../../frontend/dashboard.html';
+        }
+        function showBadgeAnimation2() {
+            window.location.href = './finetuningGpt2/frontend/badge_animator.html';
+        }
+        function showBadgeAnimation1(){
+            window.location.href = './mcq_app/frontend/badge_animator.html';
+        }
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Respiratory System</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f0f8ff;
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        h3 {
+            margin-top: 0px;
+            margin-bottom: 0px;
+            text-align: left;
+            margin-left: 35%;
+        }
+        .description-box {
+            background-color: #e0f7fa;
+            padding: 7px;
+            border-radius: 10px;
+            display: inline-block;
+            text-align: left;
+            width: 80%;
+            margin: 10px auto;
+        }
+        .button-container, .gif-container {
+            margin-top: 2px;
+        }
+        .button-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex: 1;
+        }
+        .button-container button {
+            background-color: #007bff;
+            color: white;
+            border-color: #0056b3;
+            padding: 7px 20px;
+            font-size: 12px;
+            cursor: pointer;
+            border-radius: 5px;
+            text-align: left; /* Align buttons to the left */
+            margin-left: 0%;
+            align-items: left;
+        }
+        .button-container button:hover {
+            background-color: #0056b3;
+        }
+        #backButton {
+            position: fixed;
+            left: 20px;
+            bottom: 20px;
+            background-color: #007bff;
+        }
+        #nextButton {
+            position: fixed;
+            right: 20px;
+            bottom: 20px;
+            background-color: #007bff;
+        }
+        .part-button {
+            width: 200px;
+            padding: 10px;
+            background-color: #f0f0f0;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin: 5px 0;
+        }
+        .part-button:hover {
+            background-color: #d0d0d0;
+        }
+        .flow-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 80%;
+            margin: 20px auto;
+            flex: 1;
+            margin-top: 0px;
+            margin-bottom: 0px;
+        }
+        .gif-container {
+            width: 300px;
+            margin-right: 10px;
+        }
+        .gif-container img {
+            width: 100%;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Respiratory System</h1>
+    <div class="description-box">
+        <p id="description">The respiratory system provides oxygen 
+            to the tissues of the body and removes carbon 
+            dioxide from the tissues. There are three major 
+            parts forming the respiratory system. 
+            <span style="color:blueviolet">1.</span> Airway <span style="color:blueviolet">
+            2.</span> Lungs <span style="color:blueviolet">3.</span> Muscles of respiration
+            <button id="descriptionButton" onclick="toggleDescription()">🔊 Listen</button>
+        </p>
+    </div>
+
+    <h3>FLOW OF AIR</h3>
+
+    <div class="flow-container">
+        <div class="button-container">
+            <div class="part-button" onclick="explainPart('Nostrils', nostrilsSpeech)">Nostrils</div>
+            <div class="part-button" onclick="explainPart('Nasal cavity', nasalCavitySpeech)">Nasal cavity</div>
+            <div class="part-button" onclick="explainPart('Pharynx', pharynxSpeech)">Pharynx</div>
+            <div class="part-button" onclick="explainPart('Larynx', larynxSpeech)">Larynx</div>
+            <div class="part-button" onclick="explainPart('Trachea', tracheaSpeech)">Trachea</div>
+            <div class="part-button" onclick="explainPart('Bronchi', bronchiSpeech)">Bronchi</div>
+            <div class="part-button" onclick="explainPart('Bronchioles', bronchiolesSpeech)">Bronchioles</div>
+            <div class="part-button" onclick="explainPart('Alveoli', alveoliSpeech)">Alveoli</div>
+        </div>
+
+        <div class="gif-container">
+            <img src="./gif/resp_gif.webp" alt="Respiratory System GIF">
+        </div>
+    </div>
+    
+    <div class="button-container">
+        <button onclick="toggleExplanation()">Play/Stop Explanation</button>
+    </div>
+
+    <button id="backButton" onclick="window.location.href='dig.html'">Back</button>
+    <button id="nextButton" onclick="window.location.href='circ.html'">Next System >></button>
+
+    <script>
+        let descriptionSpeech;
+        let explanationSpeech;
+        let isDescriptionSpeaking = false;
+        let isExplanationSpeaking = false;
+        let currentPartIndex = 0;
+
+        function speak(text, rate = 1) {
+            const speech = new SpeechSynthesisUtterance(text);
+            speech.rate = rate;
+            window.speechSynthesis.speak(speech);
+            return speech;
+        }
+
+        function toggleDescription() {
+            if (isDescriptionSpeaking) {
+                window.speechSynthesis.cancel();
+                isDescriptionSpeaking = false;
+            } else {
+                const descriptionText = document.getElementById('description').innerText;
+                descriptionSpeech = speak(descriptionText, 1);
+                isDescriptionSpeaking = true;
+                descriptionSpeech.onend = () => {
+                    isDescriptionSpeaking = false;
+                };
+            }
+        }
+
+        const nostrilsSpeech = 'The nostrils are the entry points for air into the respiratory system.';
+        const nasalCavitySpeech = 'The nasal cavity filters, warms, and moistens the air.';
+        const pharynxSpeech = 'The pharynx serves as a passageway for air, food, and liquid.';
+        const larynxSpeech = 'The larynx, also known as the voice box, routes air and food into the proper channels and plays a role in speech.';
+        const tracheaSpeech = 'The trachea, or windpipe, filters the air we breathe and branches into the bronchi.';
+        const bronchiSpeech = 'The bronchi are two air tubes that branch off from the trachea and carry air directly into the lungs.';
+        const bronchiolesSpeech = 'The bronchioles are small branches of the bronchi that lead to the alveoli.';
+        const alveoliSpeech = 'The alveoli are tiny air sacs where the exchange of oxygen and carbon dioxide takes place.';
+
+        function explainPart(part, speechText) {
+            window.speechSynthesis.cancel();
+            speak(speechText);
+        }
+
+        function toggleExplanation() {
+            if (isExplanationSpeaking) {
+                window.speechSynthesis.cancel();
+                isExplanationSpeaking = false;
+            } else {
+                playFlow();
+                isExplanationSpeaking = true;
+            }
+        }
+
+        function playFlow() {
+            const parts = [
+                { name: 'Nostrils', speech: nostrilsSpeech },
+                { name: 'Nasal cavity', speech: nasalCavitySpeech },
+                { name: 'Pharynx', speech: pharynxSpeech },
+                { name: 'Larynx', speech: larynxSpeech },
+                { name: 'Trachea', speech: tracheaSpeech },
+                { name: 'Bronchi', speech: bronchiSpeech },
+                { name: 'Bronchioles', speech: bronchiolesSpeech },
+                { name: 'Alveoli', speech: alveoliSpeech }
+            ];
+
+            let index = 0;
+            function nextPart() {
+                if (index < parts.length) {
+                    const part = parts[index];
+                    explanationSpeech = new SpeechSynthesisUtterance(part.speech);
+                    explanationSpeech.onend = () => {
+                        index++;
+                        nextPart();
+                    };
+                    window.speechSynthesis.speak(explanationSpeech);
+                } else {
+                    isExplanationSpeaking = false;
+                }
+            }
+            nextPart();
+        }
+    </script>
+</body>
+</html>

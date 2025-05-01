@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nervous System</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f8ff;
+            margin: 0;
+            padding: 20px;
+            text-align: left; /* Align text to the left */
+        }
+        h1 {
+            color: #007bff;
+            text-align: center; /* Center the heading */
+        }
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start; /* Align items to the start (left) */
+            padding-left: 10px; /* Add space to the left */
+        }
+        #description {
+            width: 700px;
+        }
+        .description-box {
+            background-color: #e0f7fa;
+            padding: 15px;
+            border-radius: 10px;
+            display: inline-block;
+            text-align: left;
+            width: 60%;
+            margin: 20px auto;
+            position: relative;
+        }
+        .description-box p {
+            font-size: 16px;
+        }
+        .image-container {
+            position: absolute;
+            right: -200px;
+            top: 0;
+            bottom: 0;
+            display: flex;
+            align-items: center;
+        }
+        .image-container img {
+            width: 250px; /* Increase the image width */
+            height: auto;
+        }
+        .question-section {
+            margin: 20px 0;
+            text-align: left;
+            width: 75%;
+        }
+        .question-block {
+            margin-bottom: 20px;
+        }
+        .button-container button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 5px;
+            margin: 10px;
+        }
+        .button-container button:hover {
+            background-color: #0056b3;
+        }
+        #backButton {
+            position: fixed;
+            left: 20px;
+            bottom: 20px;
+            background-color: #007bff;
+        }
+    </style>
+</head>
+<body>
+    <h1>Nervous System</h1>
+    <div class="container">
+        <div class="description-box" id="desc_box">
+            <p id="description">Nervous system is an integration of nerves and they are composed of specialised 
+                cells called Neurons. The human nervous system is divided into the following. <br>
+                <span style="color:blueviolet">1.</span> Central Nervous System (CNS)
+                <span style="color:blueviolet">2.</span> Peripheral Nervous System (PNS)</p>
+            <button onclick="speakText('desc_box')">🔊 Listen</button>
+            <div class="image-container">
+                <img src="./gif/nerv.gif" alt="Kidney">
+            </div>
+        </div>
+
+        <div id="question-section" class="question-section">
+            <h2>LEARN BY GUESSING!!</h2>
+            <div class="question-block">
+                <p id="question"><span style="color:#d95615; font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif; font-weight: 600;">Any Guess?</span> What does the central nervous system consist of?</p>
+                <div id="options">
+                    <button onclick="checkAnswer(this, 'A')">A. Brain, spinal cord, and nerves</button>
+                    <button onclick="checkAnswer(this, 'B')">B. Brain and spinal cord</button>
+                    <button onclick="checkAnswer(this, 'C')">C. Nerves and spinal cord</button>
+                </div>
+                <p id="feedback"></p>
+                <p id="explanation"></p>
+            </div>
+        </div>
+
+        <div class="button-container">
+            <button id="nextButton" onclick="nextQuestion()">Next Question</button>
+        </div>
+    </div>
+
+    <button id="backButton" onclick="window.location.href='exc.html'">Back</button>
+
+    <script>
+        // Function to strip HTML tags from a string
+        function stripHTML(html) {
+            let temporalDivElement = document.createElement("div");
+            temporalDivElement.innerHTML = html;
+            return temporalDivElement.textContent || temporalDivElement.innerText || "";
+        }
+
+        // Your speak function
+        function speak(text, rate = 1) {
+            const speech = new SpeechSynthesisUtterance(text);
+            speech.rate = rate;
+            window.speechSynthesis.speak(speech);
+            return speech;
+        }
+
+        const questions = [
+            {
+                question: "What does the central nervous system consist of?",
+                options: {
+                    A: "Brain, spinal cord, and nerves",
+                    B: "Brain and spinal cord",
+                    C: "Nerves and spinal cord"
+                },
+                correct: "A",
+                explanation: "The <b>central nervous system</b> consists of the <b>brain</b>, the <b>spinal cord</b>, and the <b>nerves</b>. It is responsible for processing and sending out information throughout the body. The brain is the control center, while the spinal cord acts as a conduit for signals between the brain and the rest of the body."
+            },
+            {
+                question: "What protects the central nervous system?",
+                options: {
+                    A: "Skin",
+                    B: "Bones",
+                    C: "Meninges"
+                },
+                correct: "C",
+                explanation: "The <b>central nervous system</b> is covered by three membranes called <b>meninges</b>: <b>dura mater</b>, <b>arachnoid membrane</b>, and <b>pia mater</b>. These layers protect the CNS from mechanical shock and infections. Additionally, the brain is encased in the skull and the spinal cord is protected by the vertebrae."
+            },
+            {
+                question: "Which part of the brain is the largest?",
+                options: {
+                    A: "Mid Brain",
+                    B: "Fore Brain",
+                    C: "Hind Brain"
+                },
+                correct: "B",
+                explanation: "The <b>fore brain</b> is the largest part of the brain, comprising the <b>cerebrum</b>, <b>thalamus</b>, and <b>hypothalamus</b>. It is responsible for higher cognitive functions, sensory and motor activities, and regulating autonomic functions. It plays a key role in memory, intelligence, and reasoning."
+            },
+            {
+                question: "What is the center of human memory?",
+                options: {
+                    A: "Fore Brain",
+                    B: "Mid Brain",
+                    C: "Hind Brain"
+                },
+                correct: "A",
+                explanation: "The <b>fore brain</b> is the center of <b>human memory</b>, intelligence, and reasoning. It involves the cerebrum, which is the largest part of the brain and is divided into two hemispheres. The cerebrum handles cognitive processes like thought, perception, and decision-making."
+            },
+            {
+                question: "What part of the brain regulates vision, hearing, sleep, and body temperature?",
+                options: {
+                    A: "Fore Brain",
+                    B: "Mid Brain",
+                    C: "Hind Brain"
+                },
+                correct: "B",
+                explanation: "The <b>mid brain</b> is responsible for regulating <b>vision</b>, <b>hearing</b>, <b>sleep</b>, and <b>body temperature</b>. It acts as a relay station for auditory and visual information. The mid brain also plays a role in motor control and alertness."
+            },
+            {
+                question: "Which part of the brain is called the 'vital knot'?",
+                options: {
+                    A: "Fore Brain",
+                    B: "Mid Brain",
+                    C: "Hind Brain"
+                },
+                correct: "C",
+                explanation: "The <b>hind brain</b>, specifically the <b>medulla oblongata</b>, is called the '<b>vital knot</b>' because it controls vital functions like <b>breathing</b>, <b>heart beat</b>, and other <b>involuntary muscles</b>. It connects the brain to the spinal cord and is essential for autonomic functions."
+            },
+            {
+                question: "What does the peripheral nervous system consist of?",
+                options: {
+                    A: "Brain and spinal cord",
+                    B: "Nerves extending from the spinal cord",
+                    C: "Brain and nerves"
+                },
+                correct: "B",
+                explanation: "The <b>peripheral nervous system</b> consists of <b>nerves extending from the spinal cord</b> to all parts of the body. It includes both the <b>somatic nervous system</b>, which controls voluntary movements, and the <b>autonomous nervous system</b>, which controls involuntary actions."
+            },
+            {
+                question: "What are the three main parts of the human brain?",
+                options: {
+                    A: "Cerebrum, Thalamus, Hypothalamus",
+                    B: "Fore Brain, Mid Brain, Hind Brain",
+                    C: "Meninges, Pia mater, Arachnoid membrane"
+                },
+                correct: "B",
+                explanation: "The <b>human brain</b> is divided into three main parts: the <b>Fore Brain</b>, <b>Mid Brain</b>, and <b>Hind Brain</b>. Each part has distinct functions, with the fore brain handling higher cognitive functions, the mid brain processing sensory and motor information, and the hind brain controlling basic life functions."
+            },
+            {
+                question: "What part of the brain controls breathing and heart beat?",
+                options: {
+                    A: "Fore Brain",
+                    B: "Mid Brain",
+                    C: "Hind Brain"
+                },
+                correct: "C",
+                explanation: "The <b>hind brain</b>, particularly the <b>medulla oblongata</b>, controls <b>breathing</b> and <b>heart beat</b>. It is also involved in regulating other autonomic functions like digestion and blood pressure. The medulla oblongata acts as a relay between the spinal cord and higher brain centers."
+            },
+            {
+                question: "What is the function of the spinal cord?",
+                options: {
+                    A: "Transmit signals between the brain and the body",
+                    B: "Store memories",
+                    C: "Control emotions"
+                },
+                correct: "A",
+                explanation: "The <b>spinal cord</b> functions to <b>transmit signals</b> between the <b>brain</b> and the <b>body</b>. It is a long, tube-like structure that extends from the brain and lies within the backbone. The spinal cord carries motor commands from the brain to muscles and sensory information from the body to the brain."
+            },
+            {
+                question: "What does the somatic nervous system control?",
+                options: {
+                    A: "Involuntary actions",
+                    B: "Voluntary movements",
+                    C: "Heart rate"
+                },
+                correct: "B",
+                explanation: "The <b>somatic nervous system</b> controls <b>voluntary movements</b>. It transmits signals from the brain to the <b>skeletal muscles</b>, enabling actions like walking, typing, and speaking. The somatic system also processes sensory information from external stimuli, allowing the body to respond accordingly."
+            },
+            {
+                question: "What part of the nervous system is responsible for fight or flight responses?",
+                options: {
+                    A: "Somatic nervous system",
+                    B: "Autonomous nervous system",
+                    C: "Central nervous system"
+                },
+                correct: "B",
+                explanation: "The <b>autonomous nervous system</b> is responsible for <b>fight or flight responses</b>. It regulates involuntary body functions, such as heart rate, digestion, and respiratory rate. This system has two main divisions: the sympathetic system, which prepares the body for stressful situations, and the parasympathetic system, which calms the body down."
+            },
+            {
+                question: "Which membrane is the outermost covering of the brain?",
+                options: {
+                    A: "Dura mater",
+                    B: "Arachnoid membrane",
+                    C: "Pia mater"
+                },
+                correct: "A",
+                explanation: "The <b>dura mater</b> is the <b>outermost covering</b> of the brain. It is a tough and thick membrane that protects the brain from mechanical shock. Below the dura mater are the arachnoid membrane and pia mater, which provide additional layers of protection and support."
+            },
+            {
+                question: "What role does the cerebellum play in the nervous system?",
+                options: {
+                    A: "Processing sensory information",
+                    B: "Coordinating movement and balance",
+                    C: "Regulating heart rate"
+                },
+                correct: "B",
+                explanation: "The <b>cerebellum</b> plays a crucial role in <b>coordinating movement and balance</b>. It helps maintain posture and equilibrium by integrating sensory inputs from the eyes, ears, and muscles. The cerebellum also fine-tunes motor activities, ensuring smooth and accurate movements."
+            },
+            {
+                question: "Where is the hypothalamus located?",
+                options: {
+                    A: "Fore Brain",
+                    B: "Mid Brain",
+                    C: "Hind Brain"
+                },
+                correct: "A",
+                explanation: "The <b>hypothalamus</b> is located in the <b>fore brain</b>, just below the thalamus. It regulates essential body functions such as temperature, hunger, thirst, sleep, and emotional activity. The hypothalamus also controls the pituitary gland, linking the nervous system to the endocrine system."
+            },
+            {
+                question: "Which part of the brain processes visual information?",
+                options: {
+                    A: "Temporal lobe",
+                    B: "Parietal lobe",
+                    C: "Occipital lobe"
+                },
+                correct: "C",
+                explanation: "The <b>occipital lobe</b> processes <b>visual information</b>. It is located at the back of the brain and is responsible for interpreting data received from the eyes. The occipital lobe enables us to recognize shapes, colors, and motion, and to understand spatial relationships."
+            }
+        ];
+
+        // Function to read the explanation
+        function readExplanation(explanation) {
+            const cleanExplanation = stripHTML(explanation);
+            speak(cleanExplanation); // Use the speak function to read the cleaned explanation
+        }
+
+        // Test the function
+        //questions.forEach(question => {
+         //   readExplanation(question.explanation);
+        //});
+
+        let currentQuestionIndex = 0;
+        let isSpeakingDescription = false;
+        let isSpeakingExplanation = false;
+        let descriptionSpeechInstance;
+        let explanationSpeechInstance;
+
+        function speakText(sectionId) {
+            if (isSpeakingDescription) {
+                window.speechSynthesis.cancel();
+                isSpeakingDescription = false;
+            } else {
+                const section = document.getElementById(sectionId);
+                const text = section.querySelector('p').innerText;
+
+                descriptionSpeechInstance = new SpeechSynthesisUtterance();
+                descriptionSpeechInstance.text = text;
+                descriptionSpeechInstance.lang = 'en-US';
+                descriptionSpeechInstance.volume = 1;
+                descriptionSpeechInstance.rate = 1;
+                descriptionSpeechInstance.pitch = 1;
+
+                window.speechSynthesis.speak(descriptionSpeechInstance);
+                isSpeakingDescription = true;
+                descriptionSpeechInstance.onend = () => {
+                    isSpeakingDescription = false;
+                };
+            }
+        }
+
+        function toggleExplanation(explanationText) {
+            if (isSpeakingExplanation) {
+                window.speechSynthesis.cancel();
+                isSpeakingExplanation = false;
+            } else {
+                explanationSpeechInstance = new SpeechSynthesisUtterance();
+                explanationSpeechInstance.text = stripHTML(explanationText);
+                explanationSpeechInstance.lang = 'en-US';
+                explanationSpeechInstance.volume = 1;
+                explanationSpeechInstance.rate = 1;
+                explanationSpeechInstance.pitch = 1;
+
+                window.speechSynthesis.speak(explanationSpeechInstance);
+                isSpeakingExplanation = true;
+                explanationSpeechInstance.onend = () => {
+                    isSpeakingExplanation = false;
+                };
+            }
+        }
+
+        function checkAnswer(button, answer) {
+            const feedback = button.parentNode.nextElementSibling;
+            const explanation = feedback.nextElementSibling;
+            const currentQuestion = questions[currentQuestionIndex];
+
+            if (answer === currentQuestion.correct) {
+                feedback.textContent = "Correct!";
+                feedback.style.color = "green";
+                button.style.backgroundColor = "green"; // Correct option turns green
+            } else {
+                feedback.textContent = "Wrong!";
+                feedback.style.color = "red";
+                button.style.backgroundColor = "red"; // Incorrect option turns red
+                // Highlight the correct answer
+                button.parentNode.querySelector(`[onclick="checkAnswer(this, '${currentQuestion.correct}')"]`).style.backgroundColor = "green";
+            }
+
+            explanation.innerHTML = currentQuestion.explanation;
+
+            // Add listen button for explanation
+            const listenButton = document.createElement('button');
+            listenButton.textContent = '🔊';
+            listenButton.onclick = () => toggleExplanation(currentQuestion.explanation);
+            explanation.parentNode.appendChild(listenButton);
+
+            // Disable buttons after answering
+            button.parentNode.querySelectorAll('button').forEach(btn => {
+                btn.disabled = true;
+            });
+        }
+
+        function checkAnswer(button, answer) {
+            const feedback = button.parentNode.nextElementSibling;
+            const explanation = feedback.nextElementSibling;
+            const currentQuestion = questions[currentQuestionIndex];
+
+            if (answer === currentQuestion.correct) {
+                feedback.textContent = "Correct!";
+                feedback.style.color = "green";
+                button.style.backgroundColor = "green"; // Correct option turns green
+            } else {
+                feedback.textContent = "Wrong!";
+                feedback.style.color = "red";
+                button.style.backgroundColor = "red"; // Incorrect option turns red
+                // Highlight the correct answer
+                button.parentNode.querySelector(`[onclick="checkAnswer(this, '${currentQuestion.correct}')"]`).style.backgroundColor = "green";
+            }
+
+            explanation.innerHTML = currentQuestion.explanation;
+
+            // Add listen button for explanation
+            const listenButton = document.createElement('button');
+            listenButton.textContent = '🔊';
+            listenButton.onclick = () => toggleExplanation(currentQuestion.explanation);
+            explanation.parentNode.appendChild(listenButton);
+
+            // Disable buttons after answering
+            button.parentNode.querySelectorAll('button').forEach(btn => {
+                btn.disabled = true;
+            });
+        }
+
+
+        function nextQuestion() {
+            currentQuestionIndex++;
+            if (currentQuestionIndex >= questions.length) {
+                currentQuestionIndex = 0; // Reset to the first question if out of questions
+            }
+
+            const currentQuestion = questions[currentQuestionIndex];
+
+            const questionSection = document.getElementById('question-section');
+            const newQuestionBlock = document.createElement('div');
+            newQuestionBlock.classList.add('question-block');
+
+            newQuestionBlock.innerHTML = `
+                <p><span style="color:#d95615; font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif; font-weight: 600;">Any Guess?</span> ${currentQuestion.question}</p>
+                <div id="options">
+                    <button onclick="checkAnswer(this, 'A')">A. ${currentQuestion.options.A}</button>
+                    <button onclick="checkAnswer(this, 'B')">B. ${currentQuestion.options.B}</button>
+                    <button onclick="checkAnswer(this, 'C')">C. ${currentQuestion.options.C}</button>
+                </div>
+                <p id="feedback"></p>
+                <p id="explanation"></p>
+            `;
+
+            questionSection.appendChild(newQuestionBlock);
+        }
+    </script>
+</body>
+</html>

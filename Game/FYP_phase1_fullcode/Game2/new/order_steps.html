@@ -1,0 +1,326 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Order the Steps Game</title>
+    <style>
+        body {
+            font-family: 'Comic Sans MS', sans-serif;
+            background: linear-gradient(to right, #ffefba, #ffffff);
+            text-align: center;
+            padding: 20px;
+        }
+        h1 {
+            color: #ff6347;
+        }
+        .game-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            position: relative;
+            margin-left: 250px;
+        }
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .step-list {
+            list-style: none;
+            padding: 0;
+            margin: 20px 0;
+        }
+        .step-item {
+            padding: 10px;
+            margin: 10px 0;
+            background: #eee45d;
+            border: 2px solid #ff6347;
+            border-radius: 5px;
+            cursor: grab;
+            font-size: 1.2em;
+            transition: background 0.3s, transform 0.3s;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        .step-item.dragging {
+            background: #ff9800;
+            opacity: 0.8;
+            transform: rotate(-3deg);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+        }
+        .correct {
+            color: green;
+        }
+        .incorrect {
+            color: red;
+        }
+        .button {
+            background-color: #4CAF50;
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 4px 2px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .anime-character {
+            position: fixed;
+            top: 170px;
+            right: 50px;
+            width: 200px;
+            transition: right 1s;
+        }
+        .anime-character.correct {
+            animation: correctAnimation 2s linear;
+        }
+        .anime-character.incorrect {
+            animation: incorrectAnimation 2s linear;
+        }
+        @keyframes correctAnimation {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+        @keyframes incorrectAnimation {
+            0%, 100% { transform: translateX(0); }
+            25%, 75% { transform: translateX(-10px); }
+            50% { transform: translateX(10px); }
+        }
+        .dialogue-bubble {
+            position: fixed;
+            top: 100px;
+            right: 200px;
+            background: #fff;
+            border: 2px solid #ff6347;
+            border-radius: 10px;
+            padding: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            display: none;
+            width: 150px;
+            font-size: 1em;
+        }
+        #back-button {
+            background-color: red;
+            margin-left: -1000px;
+        }
+    </style>
+</head>
+<body>
+    <button id="back-button" class="button" onclick="goto()">Back</button>
+    <h1>Order the Steps Game</h1>
+    <div class="game-container">
+        <div class="header-container">
+            <h2 id="concept-heading"></h2>
+            <button id="check-button" class="button">Check (3)</button>
+        </div>
+        <ul id="step-list" class="step-list"></ul>
+    </div>
+    <div class="dialogue-bubble" id="dialogue-bubble">Welcome! Please order the steps.</div>
+    <img src="normal.png" alt="Anime Character" id="anime-character" class="anime-character">
+
+    <audio id="swap-sound" src="audio/swap.mp3"></audio>
+    <audio id="success-sound" src="audio/correct.mp3"></audio>
+    <audio id="error-sound" src="audio/wrong.mp3"></audio>
+
+    <script>
+        const stepsData = {
+            "Airflow Path": [
+                "Nose/Mouth",
+                "Pharynx",
+                "Larynx",
+                "Trachea",
+                "Bronchi",
+                "Lungs"
+            ],
+            "Digestive Path": [
+                "Mouth",
+                "Esophagus",
+                "Stomach",
+                "Small Intestine",
+                "Large Intestine",
+                "Anus"
+            ],
+            "Circulatory Path": [
+                "Heart",
+                "Arteries",
+                "Capillaries",
+                "Veins",
+                "Heart"
+            ],
+            "Nervous Path": [
+                "Brain",
+                "Spinal Cord",
+                "Nerves",
+                "Muscles"
+            ],
+            "Urinary Path": [
+                "Kidneys",
+                "Ureters",
+                "Bladder",
+                "Urethra"
+            ]
+        };
+
+        // Shuffle concepts so the order is random each time the page loads
+        const concepts = Object.keys(stepsData).sort(() => Math.random() - 0.5);
+        
+        let currentConceptIndex = 0;
+        let incorrectAttempts = 3;
+        const stepList = document.getElementById('step-list');
+        const conceptHeading = document.getElementById('concept-heading');
+        const checkButton = document.getElementById('check-button');
+        const swapSound = document.getElementById('swap-sound');
+        const successSound = document.getElementById('success-sound');
+        const errorSound = document.getElementById('error-sound');
+        const animeCharacter = document.getElementById('anime-character');
+        const dialogueBubble = document.getElementById('dialogue-bubble');
+
+        checkButton.addEventListener('click', checkOrder);
+
+        function loadNextConcept() {
+            if (currentConceptIndex >= concepts.length) {
+                conceptHeading.textContent = "Well done! You've completed all the tasks.";
+                stepList.innerHTML = '';
+                checkButton.style.display = 'none';
+                animeCharacter.style.display = 'none';
+                dialogueBubble.style.display = 'none';
+                return;
+            }
+
+            const concept = concepts[currentConceptIndex];
+            const steps = stepsData[concept].slice();
+
+            conceptHeading.textContent = concept;
+
+            steps.sort(() => Math.random() - 0.5);
+
+            stepList.innerHTML = '';
+            steps.forEach((step, index) => {
+                const li = document.createElement('li');
+                li.classList.add('step-item');
+                li.draggable = true;
+                li.dataset.index = index;
+                li.textContent = step;
+                stepList.appendChild(li);
+            });
+
+            addDragAndDropListeners();
+            checkButton.textContent = `Check(${incorrectAttempts})`;
+            dialogueBubble.style.display = 'block';
+            dialogueBubble.textContent = 'Hii! Can we order this?';
+            animeCharacter.src = 'normal.png';
+        }
+
+        function checkOrder() {
+            const stepItems = stepList.querySelectorAll('.step-item');
+            const correctSteps = stepsData[concepts[currentConceptIndex]];
+
+            for (let i = 0; i < stepItems.length; i++) {
+                if (stepItems[i].textContent !== correctSteps[i]) {
+                    incorrectAttempts--;
+                    if (incorrectAttempts <= 0) {
+                        animeCharacter.src = 'normal.png';
+                        dialogueBubble.textContent = 'Oh no! Here is the correct order.';
+                        errorSound.play();
+                        animeCharacter.classList.add('incorrect');
+
+                        setTimeout(() => {
+                            displayCorrectOrder();
+                            setTimeout(() => {
+                                moveToNextConcept();
+                            }, 5000);
+                        }, 2000);
+                    } else {
+                        animeCharacter.src = 'sad.png';
+                        dialogueBubble.textContent = 'Try again! You have ${incorrectAttempts} attempt(s) left.';
+                        errorSound.play();
+                        animeCharacter.classList.add('incorrect');
+                    }
+                    checkButton.textContent = `Check (${incorrectAttempts})`;
+                    return false;
+                }
+            }
+            dialogueBubble.textContent = 'Great job!';
+            animeCharacter.src = 'happy.png';
+            successSound.play();
+            animeCharacter.classList.add('correct');
+            setTimeout(moveToNextConcept, 2000);
+            return true;
+        }
+
+        function displayCorrectOrder() {
+            const correctSteps = stepsData[concepts[currentConceptIndex]];
+            stepList.innerHTML = '';
+            correctSteps.forEach(step => {
+                const li = document.createElement('li');
+                li.classList.add('step-item');
+                li.textContent = step;
+                li.style.backgroundColor = '#a5d6a7';
+                li.style.borderColor = '#1aa621';
+                stepList.appendChild(li);
+            });
+            checkButton.style.display = 'none';
+        }
+
+        function moveToNextConcept() {
+            incorrectAttempts = 3;
+            currentConceptIndex++;
+            checkButton.style.display = 'inline-block';
+            loadNextConcept();
+        }
+
+        function addDragAndDropListeners() {
+            const items = stepList.querySelectorAll('.step-item');
+            let draggedItem = null;
+
+            items.forEach(item => {
+                item.addEventListener('dragstart', () => {
+                    draggedItem = item;
+                    item.classList.add('dragging');
+                });
+
+                item.addEventListener('dragend', () => {
+                    draggedItem = null;
+                    item.classList.remove('dragging');
+                });
+
+                item.addEventListener('dragover', e => {
+                    e.preventDefault();
+                    const afterElement = getDragAfterElement(e.clientY);
+                    if (afterElement === null) {
+                        stepList.appendChild(draggedItem);
+                    } else {
+                        stepList.insertBefore(draggedItem, afterElement);
+                    }
+                    swapSound.play();
+                });
+            });
+        }
+
+        function getDragAfterElement(y) {
+            const draggableElements = [...stepList.querySelectorAll('.step-item:not(.dragging)')];
+            return draggableElements.reduce((closest, child) => {
+                const box = child.getBoundingClientRect();
+                const offset = y - box.top - box.height / 2;
+                if (offset < 0 && offset > closest.offset) {
+                    return { offset: offset, element: child };
+                } else {
+                    return closest;
+                }
+            }, { offset: Number.NEGATIVE_INFINITY }).element;
+        }
+
+        function goto() {
+            window.location.href = '../Game2-Learning/learning_parts/org_sys.html';
+        }
+
+        loadNextConcept();
+    </script>
+</body>
+</html>

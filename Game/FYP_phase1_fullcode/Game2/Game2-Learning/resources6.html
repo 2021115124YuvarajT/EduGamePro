@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Types of Grains</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 20px;
+        }
+
+        #progress-container {
+            background-color: #ccc;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+
+        #progress-bar {
+            height: 20px;
+            width: 0%;
+            background-color: #28a745;
+            position: relative;
+        }
+
+        #progress-text {
+            position: absolute;
+            width: 100%;
+            text-align: center;
+            font-weight: bold;
+            color: white;
+        }
+
+        .grain-type {
+            background-color: #fff;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        button {
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .completed {
+            background-color: #28a745;
+        }
+
+        /* Congratulatory popup styles */
+        #congratulations-popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #fff;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            text-align: center;
+            animation: popup 0.5s ease-out;
+        }
+
+        #congratulations-popup h2 {
+            color: #28a745;
+        }
+
+        #congratulations-popup button {
+            margin-top: 15px;
+            background-color: #ff9800;
+        }
+
+        @keyframes popup {
+            0% {
+                transform: translate(-50%, -50%) scale(0.5);
+                opacity: 0;
+            }
+
+            100% {
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 1;
+            }
+        }
+
+        .backButton:hover {
+            background-color: #d32f2f;
+        }
+
+        .backButton {
+            width: 120px;
+        }
+    </style>
+</head>
+
+<body>
+    <button class="backButton" onclick="goTo()">Back</button>
+    <h1>Grains</h1>
+    <div id="progress-container">
+        <div id="progress-bar"><span id="progress-text"></span></div>
+    </div>
+
+    <div class="grain-type" id="grains" data-completed="false">
+        <h2>Grains</h2>
+        <img src="/Game2-Learning/pics/classificationImages/grains.jpg" alt="Grains Image">
+        <p>Grain is a small, hard, dry seed. Each grain is protected by a husk and the husk encloses the seed. Two main types of commercial grain crops are cereals and legumes. Wheat, maize, rice, beans, peas, barley, and millets are some of the whole grains.</p>
+        <button onclick="speakText('grains')">Read Aloud</button>
+    </div>
+
+    <div class="grain-type" id="wheat" data-completed="false">
+        <h2>Wheat</h2>
+        <img src="/Game2-Learning/pics/classificationImages/wheat.jpg" alt="Corn Image">
+        <p>Wheat is one of the most common grains used for making bread, pasta, and other baked goods. It is grown worldwide and is a staple in many diets.</p>
+        <button onclick="speakText('wheat')">Read Aloud</button>
+    </div>
+
+    <div class="grain-type" id="rice" data-completed="false">
+        <h2>Rice</h2>
+        <img style="width: 650px;" src="/Game2-Learning/pics/classificationImages/rice.jpg" alt="Rice Image">
+        <p>Rice is a staple food for over half the world's population. It comes in many varieties, such as white, brown, and wild rice, and is commonly served with meals.</p>
+        <button onclick="speakText('rice')">Read Aloud</button>
+    </div>
+
+    <div class="grain-type" id="corn" data-completed="false">
+        <h2>Corn</h2>
+        <img src="/Game2-Learning/pics/classificationImages/corn.png" alt="Corn Image">
+        <p>Corn, also known as maize, is used for making products like tortillas, popcorn, and cornmeal. It is also used as a feed crop for livestock.</p>
+        <button onclick="speakText('corn')">Read Aloud</button>
+    </div>
+
+    <div id="congratulations-popup">
+        <h2>Congratulations!</h2>
+        <p>Great job! You have learned about the different types of grains. Would you like to test your knowledge with a fun quiz?</p>
+        <button onclick="selectLevel(6)">Let's play</button>
+    </div>
+
+    <script>
+        localStorage.setItem('selectedLevel',6); 
+        const level = 6;
+        let completedSections = 0;
+        let ttsCompletedSections = 0;
+        let progress = 0;
+        let maxScrollProgress = 0; // Track the max scroll progress reached
+        const totalSections = document.querySelectorAll('.grain-type').length;
+        const progressBar = document.getElementById('progress-bar');
+        const progressText = document.getElementById('progress-text');
+        const username = localStorage.getItem("username");
+        console.log("Roll Number : ", username);
+
+        function speakText(sectionId) {
+            if (window.speechSynthesis.speaking) {
+                window.speechSynthesis.cancel();
+            }
+            const section = document.getElementById(sectionId);
+            const text = section.querySelector('p').innerText;
+    
+            const speech = new SpeechSynthesisUtterance();
+            speech.text = text;
+            speech.lang = 'en-US';
+            speech.volume = 1;
+            speech.rate = 100;
+            speech.pitch = 1;
+    
+            speech.onend = function () {
+                section.dataset.completed = "true";
+                ttsCompletedSections++;
+                updateProgressBar();
+                section.classList.add('completed');
+            };
+    
+            window.speechSynthesis.speak(speech);
+        }
+    
+        window.addEventListener('scroll', handleScroll);
+    
+        function handleScroll() {
+            const scrollProgress = calculateScrollProgress();
+    
+            // Only update if the scroll progress increases
+            if (scrollProgress > maxScrollProgress) {
+                maxScrollProgress = scrollProgress;
+                updateProgressBar();
+            }
+        }
+    
+        function updateProgressBar() {
+            const ttsProgress = (ttsCompletedSections / totalSections) * 50;
+            progress = maxScrollProgress + ttsProgress;
+    
+            // Ensure progress doesn't exceed 100%
+            if (progress > 100) {
+                progress = 100;
+            }
+    
+            // Update the progress bar and text
+            progressBar.style.width = progress + '%';
+            progressText.innerText = Math.round(progress) + '%';
+            console.log(progress);
+            // Show congratulations popup when progress reaches 100%
+            if (Math.round(progress) >= 100) {
+                checkCompletion();
+                showCongratulations();
+                updateUserScoreInDatabase();
+            }
+        }
+        function selectLevel(level) {
+            localStorage.setItem('selectedLevel', level);
+            window.location.href = 'level.html';
+        }
+        function checkCompletion() {
+            if (progress === 100) {
+                let completedTopics = JSON.parse(localStorage.getItem('completedTopics')) || [];
+
+                // Mark topic as completed if not already marked
+                if (!completedTopics.includes(level)) {
+                    completedTopics.push(level);
+                    localStorage.setItem('completedTopics', JSON.stringify(completedTopics));
+                }
+                showCongratulations();
+            }
+        }
+        function updateUserScoreInDatabase() {
+            const experience = 10;  // Increment score by 10
+
+            const data = { rollNumber: username, experience: experience };
+
+            console.log("Sending data to update score:", data);
+
+            fetch('http://localhost:5000/api/students/update-score', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Failed to update score');
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('Score updated:', data);
+            })
+            .catch(error => {
+                console.error('Error updating score:', error);
+            });
+        }
+    
+        function calculateScrollProgress() {
+            const scrollTop = document.documentElement.scrollTop;
+            const scrollHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrollPercentage = (scrollTop / scrollHeight) * 50; // 50% from scroll
+            return scrollPercentage;
+        }
+    
+        function showCongratulations() {
+            const popup = document.getElementById('congratulations-popup');
+            popup.style.display = 'block';
+        }
+    
+        function goTo() {
+            window.location.href = 'main.html';
+        }
+    </script>
+</body>
+
+</html>

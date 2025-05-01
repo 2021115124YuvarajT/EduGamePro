@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Start Page</title>
+  <style>
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background-color: #7e3e8e;
+      font-family: 'Pacifico', sans-serif;
+      color: white;
+      margin: 0;
+    }
+
+    .start-btn {
+      padding: 20px 40px;
+      font-size: 24px;
+      border: none;
+      border-radius: 10px;
+      background-color: #4c6482;
+      color: white;
+      cursor: pointer;
+    }
+
+    .start-btn:hover {
+      background-color: #9ac3e7;
+    }
+  </style>
+</head>
+
+<body>
+  <button class="start-btn" onclick="startLearning()">Start Learning</button>
+
+  <script>
+    function startLearning() {
+      // Store a flag in localStorage
+      localStorage.setItem('startLearning', 'true');
+      // Navigate to the learning page
+      window.location.href = 'classification.html';
+    }
+  </script>
+</body>
+
+</html>

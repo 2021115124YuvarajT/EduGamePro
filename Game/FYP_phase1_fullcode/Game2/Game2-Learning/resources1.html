@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Types of Waste</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 20px;
+        }
+
+        #progress-container {
+            background-color: #ccc;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+
+        #progress-bar {
+            height: 20px;
+            width: 0%;
+            background-color: #28a745;
+            position: relative;
+        }
+
+        #progress-text {
+            position: absolute;
+            width: 100%;
+            text-align: center;
+            font-weight: bold;
+            color: white;
+        }
+
+        .waste-type {
+            background-color: #fff;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .waste-type img {
+            width: 100%;
+            max-width: 300px;
+            height: auto;
+            border-radius: 5px;
+            margin-bottom: 15px;
+        }
+
+        button {
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .completed {
+            background-color: #28a745;
+        }
+
+        #congratulations-popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #fff;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            text-align: center;
+            animation: popup 0.5s ease-out;
+        }
+
+        #congratulations-popup h2 {
+            color: #28a745;
+        }
+
+        #congratulations-popup button {
+            margin-top: 15px;
+            background-color: #ff9800;
+        }
+
+        @keyframes popup {
+            0% {
+                transform: translate(-50%, -50%) scale(0.5);
+                opacity: 0;
+            }
+
+            100% {
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 1;
+            }
+        }
+
+        .backButton:hover {
+            background-color: #d32f2f;
+        }
+
+        .backButton {
+            width: 120px;
+        }
+
+        .completed {
+            background-color: #28a745 !important;
+            /* Apply green background */
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+    <button class="backButton" onclick="goTo()">Back</button>
+    <h1>Types of Waste</h1>
+    <div id="progress-container">
+        <div id="progress-bar"><span id="progress-text"></span></div>
+    </div>
+
+    <!-- Organic Waste Section -->
+    <div class="waste-type" id="organic">
+        <h2>Organic Waste</h2>
+        <img src="/Game2-Learning/pics/classificationImages/organicwaste.jpg" alt="Organic Waste Image">
+        <p>Organic waste is anything that comes from plants or animals. This can be things like leftover food, fruit
+            peels, or leaves. We can turn this into compost, which helps plants grow better.</p>
+        <button onclick="speakText('organic')">Read Aloud</button>
+    </div>
+
+    <!-- Recyclable Waste Section -->
+    <div class="waste-type" id="recyclable">
+        <h2>Recyclable Waste</h2>
+        <img src="/Game2-Learning/pics/classificationImages/recylablewaste.jpg" alt="Recyclable Waste Image">
+        <p>Recyclable waste includes things like paper, plastic bottles, and metal cans. We can reuse these materials to
+            make new things, which helps keep our planet clean and healthy.</p>
+        <button onclick="speakText('recyclable')">Read Aloud</button>
+    </div>
+
+    <!-- Hazardous Waste Section -->
+    <div class="waste-type" id="hazardous">
+        <h2>Toxic Waste</h2>
+        <img src="/Game2-Learning/pics/classificationImages/toxicwaste.webp" alt="Toxic Waste Image">
+        <p>Hazardous waste is dangerous, like old batteries, paint, or chemicals. These things need special care so they
+            don't hurt people or the environment.</p>
+        <button onclick="speakText('hazardous')">Read Aloud</button>
+    </div>
+
+    <div class="waste-type" id="soiled">
+        <h2>Soiled Waste</h2>
+        <img src="/Game2-Learning/pics/classificationImages/solidedwaste.jpg" alt="Soiled Waste Image">
+        <p>Items contaminated with body fluids, like used tissues, diapers, or medical waste. These often require
+            incineration or special disposal methods.These are called Soiled wastes.</p>
+        <button onclick="speakText('soiled')">Read Aloud</button>
+    </div>
+
+    <div class="waste-type" id="ewaste">
+        <h2>E-Waste</h2>
+        <img src="/Game2-Learning/pics/classificationImages/ewaste.jpeg" alt="E-Waste Image">
+        <p>Discarded electronic devices like computers, phones, and appliances. E-waste contains materials that can be
+            harmful and valuable, so proper recycling is necessary.</p>
+        <button onclick="speakText('ewaste')">Read Aloud</button>
+    </div>
+
+    <div id="congratulations-popup">
+        <h2>Congratulations!</h2>
+        <p>Great job! You have learned about all the types of waste. Would you like to play a fun matching game now?</p>
+        <button onclick="selectLevel(1)">Let's play</button>
+    </div>
+
+    <script>
+         localStorage.setItem('selectedLevel',1); 
+         const level = 1;
+        console.log("level is " + level);
+        let completedSections = 0;
+        let progress = 100;
+        const username = localStorage.getItem("username");
+        const ttsCompleted = {
+            organic: false,
+            recyclable: false,
+            hazardous: false,
+            soiled: false,
+            ewaste: false
+        };
+        let hasScrolledEnough = false;
+        const totalSections = 5;
+        const ttsWeight = 50; // Weight for TTS completion
+        const scrollWeight = 50; // Weight for scrolling
+        const sectionTtsProgress = ttsWeight / totalSections;
+
+        function speakText(sectionId) {
+            if (window.speechSynthesis.speaking) {
+                window.speechSynthesis.cancel();
+            }
+            const section = document.getElementById(sectionId);
+            const text = section.querySelector('p').innerText;
+
+            const speech = new SpeechSynthesisUtterance();
+            speech.text = text;
+            speech.lang = 'en-US';
+            speech.volume = 1;
+            speech.rate = 7;
+            speech.pitch = 1;
+
+            speech.onend = function () {
+                ttsCompleted[sectionId] = true;
+                section.classList.add('completed'); // Apply completed class to change background color
+                updateProgressBar();
+                checkCompletion();
+            };
+
+            window.speechSynthesis.speak(speech);
+        }
+
+        
+        function checkCompletion() {
+            if (progress === 100) {
+                //let completedTopics = JSON.parse(localStorage.getItem('completedTopics')) || [];
+                //localStorage.setItem('completedTopics', JSON.stringify([1, 2, 3]));
+                let completedTopics = [];
+                try {
+                    const storedTopics = localStorage.getItem('completedTopics');
+                    if (storedTopics) {
+                        completedTopics = JSON.parse(storedTopics);
+                    }
+                } catch (error) {
+                    console.error('Error parsing completedTopics:', error);
+                    completedTopics = []; // Fallback to an empty array
+                }
+                console.log(completedTopics);
+                // Mark topic as completed if not already marked
+                if (!completedTopics.includes(level)) {
+                    
+                    completedTopics.push(level);
+                    console.log("the topic is pushed into the completedTopics");
+                    localStorage.setItem('completedTopics', JSON.stringify(completedTopics));
+                }
+                showCongratulations();
+            }
+        }
+
+        window.addEventListener('scroll', function () {
+            let scrollPosition = window.scrollY + window.innerHeight;
+            let totalHeight = document.documentElement.scrollHeight;
+
+            if ((scrollPosition / totalHeight) >= 0.8) {
+                hasScrolledEnough = true;
+                updateProgressBar();
+                checkCompletion();
+            }
+        });
+
+        window.addEventListener('beforeunload', function () {
+            updateProgressBar();
+        });
+
+        function updateProgressBar() {
+            const completedTtsSections = Object.values(ttsCompleted).filter(value => value === true).length;
+            const ttsProgress = completedTtsSections * sectionTtsProgress;
+            const scrollProgress = hasScrolledEnough ? scrollWeight : 0;
+
+            progress = ttsProgress + scrollProgress;
+
+            const progressBar = document.getElementById('progress-bar');
+            const progressText = document.getElementById('progress-text');
+            progressBar.style.width = progress + '%';
+            progressText.innerText = Math.round(progress) + '%';
+
+            if (progress >= 100) {
+                showCongratulations();
+                updateUserScoreInDatabase();
+            }
+        }
+
+        function showCongratulations() {
+            document.getElementById('congratulations-popup').style.display = 'block';
+        }
+
+        function goTo() {
+            window.location.href = "main.html";
+        }
+
+        function selectLevel(level) {
+            window.location.href = 'level.html';
+        }
+
+        function updateUserScoreInDatabase() { // Assuming this contains the roll number
+            const experience = 10; // Increment score by 10
+
+            const data = { rollNumber: username, score: experience }; // Ensure roll number is a number
+
+            console.log("Sending data to update score:", data); // Log the data being sent
+
+            fetch('http://localhost:5000/api/students/update-score', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Failed to update score');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('Score updated:', data);
+                })
+                .catch(error => {
+                    console.error('Error updating score:', error);
+                });
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            updateProgressBar();
+        });
+    </script>
+</body>
+
+</html>

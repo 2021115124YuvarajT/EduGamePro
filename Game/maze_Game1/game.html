@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maze Game</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="game-header">
+        <button onclick="back()">Back</button>
+        <h1>Maze Game</h1>
+        <p>Use arrow keys to move!</p>
+    </div>
+    <canvas id="mazeCanvas"></canvas>
+    <button onclick="restartGame()">Restart</button>
+
+    <script src="script.js"></script>
+    <script>
+        const topic = localStorage.getItem("selectedtopic");
+        localStorage.setItem("topic",topic)
+    </script>
+</body> 
+</html>

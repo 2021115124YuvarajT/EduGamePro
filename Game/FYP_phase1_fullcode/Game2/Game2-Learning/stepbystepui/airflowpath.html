@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Airflow Path in the Human Body</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #e0f7fa;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        h1 {
+            color: #00796b;
+            margin-top: 20px;
+        }
+
+        .flowchart {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 40px;
+            width: 100%;
+            max-width: 1200px;
+        }
+
+        .step-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            margin: 0 20px;
+        }
+
+        .step {
+            text-align: center;
+            cursor: pointer;
+            transition: transform 0.3s;
+            border: 3px solid transparent;
+            border-radius: 10px;
+            padding: 10px;
+        }
+
+        .step.active {
+            border: 3px solid #00796b;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .step:hover {
+            transform: scale(1.05);
+        }
+
+        .step img {
+            width: 150px;
+            height: auto;
+            border-radius: 10px;
+        }
+
+        .number {
+            background-color: #00796b;
+            color: white;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        .line {
+            width: 100px;
+            height: 0;
+            border-top: 2px dotted #00796b;
+            position: absolute;
+            top: 50%;
+            left: 100%;
+            z-index: -1;
+            margin-left: 50px;
+        }
+
+        .line::after {
+            content: '';
+            position: absolute;
+            right: -10px;
+            top: -5px;
+            border-top: 8px solid transparent;
+            border-bottom: 8px solid transparent;
+            border-left: 12px solid #00796b;
+        }
+
+        .step-container:last-child .line {
+            display: none;
+        }
+
+        #description {
+            margin-top: 20px;
+            padding: 20px;
+            width: 80%;
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            font-size: 1.2em;
+            color: #004d40;
+            text-align: center;
+        }
+
+        #message {
+            margin-top: 20px;
+            font-size: 1.2em;
+            color: #00796b;
+            text-align: center;
+        }
+
+        button {
+            margin-top: 50px;
+            margin-left: -1000px;
+            padding: 10px 20px;
+            font-size: large;
+            background-color: #00796b;
+            color: #e0f7fa;
+            border-radius: 5px;
+            border: none;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+    <button onclick="goTo()">Back</button>
+
+    <h1>Airflow Path in the Human Body</h1>
+
+    <div class="flowchart">
+        <!-- Step 1: Nasal Cavity -->
+        <div class="step-container">
+            <div class="number">1</div>
+            <div class="step" id="nasal-cavity" onclick="displayStep(0)">
+                <img src="gifs/airflow_nasal.gif" alt="Nasal Cavity">
+                <p>Nasal Cavity</p>
+            </div>
+            <div class="line"></div>
+        </div>
+
+        <!-- Step 2: Pharynx -->
+        <div class="step-container">
+            <div class="number">2</div>
+            <div class="step" id="pharynx" onclick="displayStep(1)">
+                <img src="gifs/airflow_pharynx.gif" alt="Pharynx">
+                <p>Pharynx</p>
+            </div>
+            <div class="line"></div>
+        </div>
+
+        <!-- Step 3: Larynx -->
+        <div class="step-container">
+            <div class="number">3</div>
+            <div class="step" id="larynx" onclick="displayStep(2)">
+                <img src="gifs/airflow_larynx.gif" alt="Larynx">
+                <p>Larynx</p>
+            </div>
+            <div class="line"></div>
+        </div>
+
+        <!-- Step 4: Trachea -->
+        <div class="step-container">
+            <div class="number">4</div>
+            <div class="step" id="trachea" onclick="displayStep(3)">
+                <img src="gifs/airflow_trachea.gif" alt="Trachea">
+                <p>Trachea</p>
+            </div>
+            <div class="line"></div>
+        </div>
+
+        <!-- Step 5: Bronchi -->
+        <div class="step-container">
+            <div class="number">5</div>
+            <div class="step" id="bronchi" onclick="displayStep(4)">
+                <img src="gifs/airflow_bronchioles.gif" alt="Bronchi">
+                <p>Bronchi</p>
+            </div>
+            <div class="line"></div>
+        </div>
+
+        <!-- Step 6: Lungs (Alveoli) -->
+        <div class="step-container">
+            <div class="number">6</div>
+            <div class="step" id="lungs" onclick="displayStep(5)">
+                <img src="gifs/airflow_alveoli.gif" alt="Lungs (Alveoli)">
+                <p>Lungs (Alveoli)</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Description Section -->
+    <div id="description">
+        Click on a step to learn about the airflow path in the human body.
+    </div>
+
+    <!-- Message Section -->
+    <div id="message"></div>
+
+    <script>
+        const steps = [
+            {
+                text: "Nasal Cavity: Air enters the body through the nose, where it is filtered, warmed, and moistened.",
+                tts: "Nasal Cavity. Air enters the body through the nose, where it is filtered, warmed, and moistened."
+            },
+            {
+                text: "Pharynx: Air passes from the nasal cavity to the pharynx, a shared passage for both air and food.",
+                tts: "Pharynx. Air passes from the nasal cavity to the pharynx, a shared passage for both air and food."
+            },
+            {
+                text: "Larynx: The larynx, or voice box, is where air passes and the vocal cords are located.",
+                tts: "Larynx. The larynx, or voice box, is where air passes and the vocal cords are located."
+            },
+            {
+                text: "Trachea: Air then moves down the trachea, or windpipe, which connects the larynx to the bronchi.",
+                tts: "Trachea. Air then moves down the trachea, or windpipe, which connects the larynx to the bronchi."
+            },
+            {
+                text: "Bronchi: The trachea divides into two bronchi, each leading to one lung, further branching into bronchioles.",
+                tts: "Bronchi. The trachea divides into two bronchi, each leading to one lung, further branching into bronchioles."
+            },
+            {
+                text: "Lungs (Alveoli): Air reaches the alveoli, tiny sacs in the lungs where oxygen and carbon dioxide are exchanged.",
+                tts: "Lungs. Air reaches the alveoli, tiny sacs in the lungs where oxygen and carbon dioxide are exchanged."
+            }
+        ];
+
+        let currentSpeech = null;
+        let currentStep = 0;
+        let level = 1;
+        //let completedTopics = localStorage.getItem('completedSbsTopics')|[];
+        // Initialize the first step to be highlighted
+        highlightStep(currentStep);
+
+        function displayStep(stepIndex) {
+            // Ensure the user follows the correct sequence
+            if (stepIndex !== currentStep) return;
+
+            // Stop the previous speech if it's playing
+            if (currentSpeech) {
+                window.speechSynthesis.cancel();
+            }
+
+            // Update description text
+            const description = document.getElementById("description");
+            description.innerText = steps[stepIndex].text;
+
+            // Initiate TTS for the current step
+            currentSpeech = new SpeechSynthesisUtterance(steps[stepIndex].tts);
+            currentSpeech.lang = 'en-US';
+            currentSpeech.rate = 100;
+
+            // When TTS ends, move to the next step
+            currentSpeech.onend = () => {
+                // Show alert or message after speech completion
+                if (currentStep < steps.length - 1) {
+                    document.getElementById("message").innerText = "You completed this step. Move to the next part.";
+                } else {
+                    checkCompletion(level);
+                    document.getElementById("message").innerText = "You have completed all the stages of the airflow path in the human body!";
+                }
+                // Move to the next step
+                currentStep++;
+                if (currentStep < steps.length) {
+                    highlightStep(currentStep);
+                }
+            };
+
+            window.speechSynthesis.speak(currentSpeech);
+        }
+        function checkCompletion(level) {
+            let completedTopics = JSON.parse(localStorage.getItem('completedSbsTopics')) || [];
+
+            // Mark topic as completed if not already marked
+            if (!completedTopics.includes(level)) {
+                completedTopics.push(level);
+                localStorage.setItem('completedSbsTopics', JSON.stringify(completedTopics));
+            }
+
+            console.log("Completion recorded:", completedTopics);
+        }
+
+        function highlightStep(stepIndex) {
+            // Remove the 'active' class from all steps
+            document.querySelectorAll('.step').forEach(step => {
+                step.classList.remove('active');
+            });
+
+            // Highlight the current step
+            document.querySelectorAll('.step')[stepIndex].classList.add('active');
+        }
+
+        function goTo() {
+            window.location.href = 'stepbystep.html';
+        }
+    </script>
+
+</body>
+
+</html>
